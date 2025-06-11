@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Stock Ticker Terminal Theme */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@layer base {
+  body {
+    font-family: 'JetBrains Mono', 'Inter', monospace;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* Terminal-style text selection */
+  ::selection {
+    background: #22d3ee;
+    color: #0f172a;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-gray-900 border border-gray-700 rounded-lg shadow-2xl hover:shadow-green-500/10 transition-all duration-300;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  }
+  
+  .btn-primary {
+    @apply bg-green-600 text-gray-900 px-4 py-2 rounded font-mono font-bold hover:bg-green-500 transition-all duration-200 border border-green-500;
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-800 text-green-400 px-4 py-2 rounded font-mono font-bold hover:bg-gray-700 transition-all duration-200 border border-gray-600;
+  }
+  
+  .live-indicator {
+    @apply inline-block w-2 h-2 bg-red-500 rounded-full animate-pulse;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent font-mono font-bold;
+  }
+
+  /* Terminal-style input fields */
+  .terminal-input {
+    @apply bg-gray-900 border border-gray-600 text-green-400 font-mono px-3 py-2 rounded focus:border-green-500 focus:ring-1 focus:ring-green-500;
+  }
+
+  /* Stock ticker number styles */
+  .ticker-positive {
+    @apply text-green-400 font-mono font-bold;
+  }
+  
+  .ticker-negative {
+    @apply text-red-400 font-mono font-bold;
+  }
+  
+  .ticker-neutral {
+    @apply text-gray-400 font-mono font-bold;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
+
+  /* Terminal-style scrollbars */
+  .sidebar-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .sidebar-scroll::-webkit-scrollbar-track {
+    background: #1e293b;
+    border-radius: 10px;
+  }
+  
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 10px;
+  }
+  
+  .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+    background: #22d3ee;
+  }
+
+  /* Custom scrollbar for general content */
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-track {
+    background: #1e293b;
+    border-radius: 10px;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 10px;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #22d3ee;
+  }
+
+  /* Custom scrollbar for horizontal content */
+  .overflow-x-auto::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .overflow-x-auto::-webkit-scrollbar-track {
+    background: #1e293b;
+    border-radius: 9999px;
+  }
+  
+  .overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #22c55e;
+    border-radius: 9999px;
+  }
+  
+  .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    background: #16a34a;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
