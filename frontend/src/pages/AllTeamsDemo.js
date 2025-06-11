@@ -38,7 +38,9 @@ const AllTeamsDemo = () => {
         {/* Breadcrumb Navigation */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2 text-sm font-mono text-gray-500">
-            <Link to="/" className="hover:text-cyan-400 transition-colors">NBA Analytics</Link>
+            <Link to="/" className="hover:text-cyan-400 transition-colors">
+              NBA Analytics
+            </Link>
             <span>/</span>
             <span className="text-cyan-400">Teams</span>
           </div>
@@ -57,7 +59,7 @@ const AllTeamsDemo = () => {
             <h2 className="text-2xl font-mono font-bold text-red-400 mb-6 text-center">
               WESTERN CONFERENCE
             </h2>
-            
+
             <DivisionSection
               title="NORTHWEST DIVISION"
               teams={teams}
@@ -88,7 +90,7 @@ const AllTeamsDemo = () => {
             <h2 className="text-2xl font-mono font-bold text-green-400 mb-6 text-center">
               EASTERN CONFERENCE
             </h2>
-            
+
             <DivisionSection
               title="ATLANTIC DIVISION"
               teams={teams}
@@ -115,24 +117,24 @@ const AllTeamsDemo = () => {
           </div>
         </div>
 
-      <div className="mt-12 text-center">
-        <div className="inline-flex items-center space-x-4 px-6 py-3 bg-gray-800 rounded-lg border border-gray-600">
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-green-400 font-mono text-sm">
-              SYSTEM_STATUS: ACTIVE
+        <div className="mt-12 text-center">
+          <div className="inline-flex items-center space-x-4 px-6 py-3 bg-gray-800 rounded-lg border border-gray-600">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-green-400 font-mono text-sm">
+                SYSTEM_STATUS: ACTIVE
+              </span>
+            </div>
+            <div className="text-gray-500">|</div>
+            <span className="text-cyan-400 font-mono text-sm">
+              30 TEAMS LOADED
+            </span>
+            <div className="text-gray-500">|</div>
+            <span className="text-purple-400 font-mono text-sm">
+              AUTO_PERSONALIZATION: ONNN
             </span>
           </div>
-          <div className="text-gray-500">|</div>
-          <span className="text-cyan-400 font-mono text-sm">
-            30 TEAMS LOADED
-          </span>
-          <div className="text-gray-500">|</div>
-          <span className="text-purple-400 font-mono text-sm">
-            AUTO_PERSONALIZATION: ONNN
-          </span>
         </div>
-      </div>
       </div>
     </div>
   );

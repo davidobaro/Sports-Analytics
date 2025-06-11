@@ -44,7 +44,9 @@ const TeamTrendsAndLeaders = ({ teamData, teamColors }) => {
         </h3>
         <div className="space-y-3">
           {/* Placeholder content - will be populated later */}
-          <div className={`text-center text-xs font-mono ${teamColors.accent} py-4`}>
+          <div
+            className={`text-center text-xs font-mono ${teamColors.accent} py-4`}
+          >
             LOADING_LEADERS_DATA...
           </div>
         </div>

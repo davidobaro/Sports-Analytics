@@ -30,12 +30,19 @@ const TeamCard = ({ teamData, teamId, teamColors }) => {
             <h1
               className={`text-2xl font-mono font-bold ${teamColors.accent} mb-1`}
             >
-              {teamData.basic_info?.city || teamData.basic_info?.full_name?.split(' ').slice(0, -1).join(' ') || "CITY"}
+              {teamData.basic_info?.city ||
+                teamData.basic_info?.full_name
+                  ?.split(" ")
+                  .slice(0, -1)
+                  .join(" ") ||
+                "CITY"}
             </h1>
             <h2
               className={`text-lg font-mono font-medium ${teamColors.secondary} mb-2`}
             >
-              {teamData.basic_info?.nickname || teamData.basic_info?.full_name?.split(' ').slice(-1)[0] || "TEAM"}
+              {teamData.basic_info?.nickname ||
+                teamData.basic_info?.full_name?.split(" ").slice(-1)[0] ||
+                "TEAM"}
             </h2>
             <div className="flex items-center space-x-3">
               <p className="text-sm font-mono text-gray-400">
@@ -82,19 +89,23 @@ const TeamCard = ({ teamData, teamId, teamColors }) => {
           <div
             className={`text-sm font-mono font-bold ${teamColors.secondary}`}
           >
-            {teamData.season_stats?.avg_points || 0}
+            {teamData.season_stats?.offensive_stats?.avg_points || 0}
           </div>
         </div>
         <div className="text-center p-2 bg-gray-800 rounded border border-gray-600">
           <div className="text-sm font-mono text-gray-500">OPP</div>
           <div className="text-sm font-mono font-bold text-red-400">
-            {teamData.season_stats?.avg_opp_points || 0}
+            {teamData.season_stats?.defensive_stats?.avg_opp_points || "N/A"}
           </div>
         </div>
         <div className="text-center p-2 bg-gray-800 rounded border border-gray-600">
           <div className="text-sm font-mono text-gray-500">FG%</div>
           <div className="text-sm font-mono font-bold text-yellow-400">
-            {((teamData.season_stats?.fg_pct || 0) * 100).toFixed(1)}%
+            {teamData.season_stats?.offensive_stats?.fg_pct
+              ? (teamData.season_stats.offensive_stats.fg_pct * 100).toFixed(
+                  1
+                ) + "%"
+              : "N/A"}
           </div>
         </div>
       </div>
@@ -104,35 +115,30 @@ const TeamCard = ({ teamData, teamId, teamColors }) => {
         <div className="text-center p-2 bg-gray-800 rounded border border-gray-600">
           <div className="text-xs font-mono text-gray-500">3PT%</div>
           <div className="text-sm font-mono font-bold text-yellow-400">
-            {((teamData.season_stats?.three_pt_pct || 0) * 100).toFixed(1)}%
+            {teamData.season_stats?.offensive_stats?.three_pt_pct
+              ? (
+                  teamData.season_stats.offensive_stats.three_pt_pct * 100
+                ).toFixed(1) + "%"
+              : "N/A"}
           </div>
         </div>
         <div className="text-center p-2 bg-gray-800 rounded border border-gray-600">
-          <div className="text-xs font-mono text-gray-500">MARGIN</div>
+          <div className="text-xs font-mono text-gray-500">AST/TO</div>
           <div
-            className={`text-sm font-mono font-bold ${
-              teamData.season_stats?.avg_points -
-                teamData.season_stats?.avg_opp_points >
-              0
-                ? teamColors.secondary
-                : "text-red-400"
-            }`}
+            className={`text-sm font-mono font-bold ${teamColors.secondary}`}
           >
-            {teamData.season_stats?.avg_points -
-              teamData.season_stats?.avg_opp_points >
-            0
-              ? "+"
-              : ""}
-            {(
-              (teamData.season_stats?.avg_points || 0) -
-              (teamData.season_stats?.avg_opp_points || 0)
-            ).toFixed(1)}
+            {teamData.season_stats?.advanced_stats?.assist_to_turnover_ratio ||
+              "N/A"}
           </div>
         </div>
         <div className="text-center p-2 bg-gray-800 rounded border border-gray-600">
-          <div className="text-xs font-mono text-gray-500">REMAINING</div>
+          <div className="text-xs font-mono text-gray-500">TS%</div>
           <div className={`text-sm font-mono font-bold ${teamColors.accent}`}>
-            {82 - (teamData.season_stats?.games_played || 0)}
+            {teamData.season_stats?.advanced_stats?.true_shooting_pct
+              ? (
+                  teamData.season_stats.advanced_stats.true_shooting_pct * 100
+                ).toFixed(1) + "%"
+              : "N/A"}
           </div>
         </div>
       </div>
@@ -181,26 +187,40 @@ const TeamCard = ({ teamData, teamId, teamColors }) => {
 
       {/* Season Outlook */}
       <div className="border-t border-gray-600 pt-4">
-        <h4 className={`text-sm font-mono font-semibold ${teamColors.accent} mb-3`}>
-          SEASON_OUTLOOK
+        <h4
+          className={`text-sm font-mono font-semibold ${teamColors.accent} mb-3`}
+        >
+          TEAM_STATS
         </h4>
         <div className="grid grid-cols-3 gap-2">
           <div className="text-center p-2 bg-gray-800 rounded border border-gray-600">
-            <div className="text-xs font-mono text-gray-500">PLAYOFF_ODDS</div>
-            <div className={`text-sm font-mono font-bold ${teamColors.secondary}`}>
-              87%
+            <div className="text-xs font-mono text-gray-500">REB/G</div>
+            <div
+              className={`text-sm font-mono font-bold ${teamColors.secondary}`}
+            >
+              {teamData.season_stats?.defensive_stats?.total_rebounds || "N/A"}
             </div>
           </div>
           <div className="text-center p-2 bg-gray-800 rounded border border-gray-600">
-            <div className="text-xs font-mono text-gray-500">CHAMPIONSHIP</div>
+            <div className="text-xs font-mono text-gray-500">AST/G</div>
             <div className="text-sm font-mono font-bold text-yellow-400">
-              12%
+              {teamData.season_stats?.offensive_stats?.assists || "N/A"}
             </div>
           </div>
           <div className="text-center p-2 bg-gray-800 rounded border border-gray-600">
-            <div className="text-xs font-mono text-gray-500">SCHEDULE</div>
-            <div className="text-sm font-mono font-bold text-red-400">
-              HARD
+            <div className="text-xs font-mono text-gray-500">+/-</div>
+            <div
+              className={`text-sm font-mono font-bold ${
+                (teamData.season_stats?.advanced_stats?.plus_minus || 0) > 0
+                  ? "text-green-400"
+                  : "text-red-400"
+              }`}
+            >
+              {teamData.season_stats?.advanced_stats?.plus_minus
+                ? (teamData.season_stats.advanced_stats.plus_minus > 0
+                    ? "+"
+                    : "") + teamData.season_stats.advanced_stats.plus_minus
+                : "N/A"}
             </div>
           </div>
         </div>

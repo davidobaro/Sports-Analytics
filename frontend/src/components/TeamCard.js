@@ -34,26 +34,32 @@ const TeamCard = ({ team }) => {
               e.target.nextSibling.style.display = "flex";
             }}
           />
-          <span className="text-white font-mono font-bold text-sm"
+          <span
+            className="text-white font-mono font-bold text-sm"
             style={{ display: "none" }}
           >
             {team.abbreviation}
           </span>
-        </div>          <div>
-            <h4 className="font-mono font-bold text-white">
-              {team.city || team.full_name?.split(' ').slice(0, -1).join(' ') || "City"}
-            </h4>
-            <p className="text-sm text-gray-400 font-mono">
-              {team.nickname || team.full_name?.split(' ').slice(-1)[0] || "Team"}
-            </p>
-          </div>
+        </div>{" "}
+        <div>
+          <h4 className="font-mono font-bold text-white">
+            {team.city ||
+              team.full_name?.split(" ").slice(0, -1).join(" ") ||
+              "City"}
+          </h4>
+          <p className="text-sm text-gray-400 font-mono">
+            {team.nickname || team.full_name?.split(" ").slice(-1)[0] || "Team"}
+          </p>
+        </div>
       </div>
       <div className="flex justify-between items-center text-xs font-mono">
         <span className="text-yellow-400">
           {team.championships} Championships
         </span>
         <span
-          className={`px-2 py-1 rounded ${getPerformanceTierStyle(team.performance_tier)}`}
+          className={`px-2 py-1 rounded ${getPerformanceTierStyle(
+            team.performance_tier
+          )}`}
         >
           {team.performance_tier.toUpperCase()}
         </span>

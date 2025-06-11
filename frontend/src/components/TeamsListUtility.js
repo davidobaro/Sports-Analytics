@@ -3,51 +3,235 @@ import { Link } from "react-router-dom";
 
 // This is a utility component for displaying teams in compact format
 // For the full teams page, use AllTeamsDemo instead
-const TeamsListUtility = ({ maxTeams = 30, showTitle = true, compact = false }) => {
+const TeamsListUtility = ({
+  maxTeams = 30,
+  showTitle = true,
+  compact = false,
+}) => {
   // Memoize team data to prevent recalculation
   const allTeams = useMemo(
     () => [
       // Eastern Conference - Atlantic
-      { id: 1610612738, abbr: "BOS", name: "Boston Celtics", division: "Atlantic", conference: "Eastern" },
-      { id: 1610612751, abbr: "BRK", name: "Brooklyn Nets", division: "Atlantic", conference: "Eastern" },
-      { id: 1610612752, abbr: "NYK", name: "New York Knicks", division: "Atlantic", conference: "Eastern" },
-      { id: 1610612755, abbr: "PHI", name: "Philadelphia 76ers", division: "Atlantic", conference: "Eastern" },
-      { id: 1610612761, abbr: "TOR", name: "Toronto Raptors", division: "Atlantic", conference: "Eastern" },
+      {
+        id: 1610612738,
+        abbr: "BOS",
+        name: "Boston Celtics",
+        division: "Atlantic",
+        conference: "Eastern",
+      },
+      {
+        id: 1610612751,
+        abbr: "BRK",
+        name: "Brooklyn Nets",
+        division: "Atlantic",
+        conference: "Eastern",
+      },
+      {
+        id: 1610612752,
+        abbr: "NYK",
+        name: "New York Knicks",
+        division: "Atlantic",
+        conference: "Eastern",
+      },
+      {
+        id: 1610612755,
+        abbr: "PHI",
+        name: "Philadelphia 76ers",
+        division: "Atlantic",
+        conference: "Eastern",
+      },
+      {
+        id: 1610612761,
+        abbr: "TOR",
+        name: "Toronto Raptors",
+        division: "Atlantic",
+        conference: "Eastern",
+      },
 
       // Eastern Conference - Central
-      { id: 1610612741, abbr: "CHI", name: "Chicago Bulls", division: "Central", conference: "Eastern" },
-      { id: 1610612739, abbr: "CLE", name: "Cleveland Cavaliers", division: "Central", conference: "Eastern" },
-      { id: 1610612765, abbr: "DET", name: "Detroit Pistons", division: "Central", conference: "Eastern" },
-      { id: 1610612754, abbr: "IND", name: "Indiana Pacers", division: "Central", conference: "Eastern" },
-      { id: 1610612749, abbr: "MIL", name: "Milwaukee Bucks", division: "Central", conference: "Eastern" },
+      {
+        id: 1610612741,
+        abbr: "CHI",
+        name: "Chicago Bulls",
+        division: "Central",
+        conference: "Eastern",
+      },
+      {
+        id: 1610612739,
+        abbr: "CLE",
+        name: "Cleveland Cavaliers",
+        division: "Central",
+        conference: "Eastern",
+      },
+      {
+        id: 1610612765,
+        abbr: "DET",
+        name: "Detroit Pistons",
+        division: "Central",
+        conference: "Eastern",
+      },
+      {
+        id: 1610612754,
+        abbr: "IND",
+        name: "Indiana Pacers",
+        division: "Central",
+        conference: "Eastern",
+      },
+      {
+        id: 1610612749,
+        abbr: "MIL",
+        name: "Milwaukee Bucks",
+        division: "Central",
+        conference: "Eastern",
+      },
 
       // Eastern Conference - Southeast
-      { id: 1610612737, abbr: "ATL", name: "Atlanta Hawks", division: "Southeast", conference: "Eastern" },
-      { id: 1610612766, abbr: "CHA", name: "Charlotte Hornets", division: "Southeast", conference: "Eastern" },
-      { id: 1610612748, abbr: "MIA", name: "Miami Heat", division: "Southeast", conference: "Eastern" },
-      { id: 1610612753, abbr: "ORL", name: "Orlando Magic", division: "Southeast", conference: "Eastern" },
-      { id: 1610612764, abbr: "WAS", name: "Washington Wizards", division: "Southeast", conference: "Eastern" },
+      {
+        id: 1610612737,
+        abbr: "ATL",
+        name: "Atlanta Hawks",
+        division: "Southeast",
+        conference: "Eastern",
+      },
+      {
+        id: 1610612766,
+        abbr: "CHA",
+        name: "Charlotte Hornets",
+        division: "Southeast",
+        conference: "Eastern",
+      },
+      {
+        id: 1610612748,
+        abbr: "MIA",
+        name: "Miami Heat",
+        division: "Southeast",
+        conference: "Eastern",
+      },
+      {
+        id: 1610612753,
+        abbr: "ORL",
+        name: "Orlando Magic",
+        division: "Southeast",
+        conference: "Eastern",
+      },
+      {
+        id: 1610612764,
+        abbr: "WAS",
+        name: "Washington Wizards",
+        division: "Southeast",
+        conference: "Eastern",
+      },
 
       // Western Conference - Northwest
-      { id: 1610612743, abbr: "DEN", name: "Denver Nuggets", division: "Northwest", conference: "Western" },
-      { id: 1610612750, abbr: "MIN", name: "Minnesota Timberwolves", division: "Northwest", conference: "Western" },
-      { id: 1610612760, abbr: "OKC", name: "Oklahoma City Thunder", division: "Northwest", conference: "Western" },
-      { id: 1610612757, abbr: "POR", name: "Portland Trail Blazers", division: "Northwest", conference: "Western" },
-      { id: 1610612762, abbr: "UTA", name: "Utah Jazz", division: "Northwest", conference: "Western" },
+      {
+        id: 1610612743,
+        abbr: "DEN",
+        name: "Denver Nuggets",
+        division: "Northwest",
+        conference: "Western",
+      },
+      {
+        id: 1610612750,
+        abbr: "MIN",
+        name: "Minnesota Timberwolves",
+        division: "Northwest",
+        conference: "Western",
+      },
+      {
+        id: 1610612760,
+        abbr: "OKC",
+        name: "Oklahoma City Thunder",
+        division: "Northwest",
+        conference: "Western",
+      },
+      {
+        id: 1610612757,
+        abbr: "POR",
+        name: "Portland Trail Blazers",
+        division: "Northwest",
+        conference: "Western",
+      },
+      {
+        id: 1610612762,
+        abbr: "UTA",
+        name: "Utah Jazz",
+        division: "Northwest",
+        conference: "Western",
+      },
 
       // Western Conference - Pacific
-      { id: 1610612744, abbr: "GSW", name: "Golden State Warriors", division: "Pacific", conference: "Western" },
-      { id: 1610612746, abbr: "LAC", name: "LA Clippers", division: "Pacific", conference: "Western" },
-      { id: 1610612747, abbr: "LAL", name: "Los Angeles Lakers", division: "Pacific", conference: "Western" },
-      { id: 1610612756, abbr: "PHX", name: "Phoenix Suns", division: "Pacific", conference: "Western" },
-      { id: 1610612758, abbr: "SAC", name: "Sacramento Kings", division: "Pacific", conference: "Western" },
+      {
+        id: 1610612744,
+        abbr: "GSW",
+        name: "Golden State Warriors",
+        division: "Pacific",
+        conference: "Western",
+      },
+      {
+        id: 1610612746,
+        abbr: "LAC",
+        name: "LA Clippers",
+        division: "Pacific",
+        conference: "Western",
+      },
+      {
+        id: 1610612747,
+        abbr: "LAL",
+        name: "Los Angeles Lakers",
+        division: "Pacific",
+        conference: "Western",
+      },
+      {
+        id: 1610612756,
+        abbr: "PHX",
+        name: "Phoenix Suns",
+        division: "Pacific",
+        conference: "Western",
+      },
+      {
+        id: 1610612758,
+        abbr: "SAC",
+        name: "Sacramento Kings",
+        division: "Pacific",
+        conference: "Western",
+      },
 
       // Western Conference - Southwest
-      { id: 1610612742, abbr: "DAL", name: "Dallas Mavericks", division: "Southwest", conference: "Western" },
-      { id: 1610612745, abbr: "HOU", name: "Houston Rockets", division: "Southwest", conference: "Western" },
-      { id: 1610612763, abbr: "MEM", name: "Memphis Grizzlies", division: "Southwest", conference: "Western" },
-      { id: 1610612740, abbr: "NOP", name: "New Orleans Pelicans", division: "Southwest", conference: "Western" },
-      { id: 1610612759, abbr: "SAS", name: "San Antonio Spurs", division: "Southwest", conference: "Western" },
+      {
+        id: 1610612742,
+        abbr: "DAL",
+        name: "Dallas Mavericks",
+        division: "Southwest",
+        conference: "Western",
+      },
+      {
+        id: 1610612745,
+        abbr: "HOU",
+        name: "Houston Rockets",
+        division: "Southwest",
+        conference: "Western",
+      },
+      {
+        id: 1610612763,
+        abbr: "MEM",
+        name: "Memphis Grizzlies",
+        division: "Southwest",
+        conference: "Western",
+      },
+      {
+        id: 1610612740,
+        abbr: "NOP",
+        name: "New Orleans Pelicans",
+        division: "Southwest",
+        conference: "Western",
+      },
+      {
+        id: 1610612759,
+        abbr: "SAS",
+        name: "San Antonio Spurs",
+        division: "Southwest",
+        conference: "Western",
+      },
     ],
     []
   );
@@ -119,8 +303,8 @@ const TeamsListUtility = ({ maxTeams = 30, showTitle = true, compact = false }) 
     );
   });
 
-  const containerClass = compact 
-    ? "space-y-1" 
+  const containerClass = compact
+    ? "space-y-1"
     : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4";
 
   return (

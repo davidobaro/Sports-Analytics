@@ -143,24 +143,30 @@ const TeamDetails = () => {
       {/* Personalized Breadcrumb with Action Buttons */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2 text-sm font-mono text-gray-500">
-          <Link to="/" className="hover:text-cyan-400 transition-colors">NBA Analytics</Link>
+          <Link to="/" className="hover:text-cyan-400 transition-colors">
+            NBA Analytics
+          </Link>
           <span>/</span>
-          <Link to="/teams" className="hover:text-cyan-400 transition-colors">Teams</Link>
+          <Link to="/teams" className="hover:text-cyan-400 transition-colors">
+            Teams
+          </Link>
           <span>/</span>
           <span className={teamColors.accent}>
             {teamData.basic_info?.full_name || "Team Details"}
           </span>
         </div>
-        
+
         {/* Action Buttons */}
         <div className="flex space-x-3">
-          <Link 
+          <Link
             to={`/team/${teamId}/roster`}
             className={`btn-secondary text-sm px-4 py-2 ${teamColors.accent}`}
           >
             VIEW_{teamData.basic_info?.abbreviation || "TEAM"}_ROSTER
           </Link>
-          <button className={`btn-secondary text-sm px-4 py-2 ${teamColors.accent}`}>
+          <button
+            className={`btn-secondary text-sm px-4 py-2 ${teamColors.accent}`}
+          >
             ADVANCED_STATS
           </button>
         </div>
