@@ -1,34 +1,120 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams, Link } from "react-router-dom";
+import {
+  generateUpcomingGames,
+  generateNextMatchup,
+} from "../utils/nbaTeamData";
+import {
+  TeamCard,
+  ScheduleCard,
+  NextMatchupAnalysis,
+  TeamTrendsAndLeaders,
+  RecentGamesTable,
+} from "../components/TeamDetailsComponents";
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = "http://localhost:8000/api";
+
+// Simple cache for team data
+const teamDataCache = new Map();
 
 const TeamDetails = () => {
   const { teamId } = useParams();
   const [teamData, setTeamData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchTeamDetails();
-  }, [teamId]);
-
-  const fetchTeamDetails = async () => {
+  const fetchTeamDetails = useCallback(async () => {
     try {
+      // Check cache first for instant loading
+      if (teamDataCache.has(teamId)) {
+        setTeamData(teamDataCache.get(teamId));
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/team/${teamId}`);
-      setTeamData(response.data);
+
+      // Use fetch instead of axios for better performance
+      const response = await fetch(`${API_BASE_URL}/team/${teamId}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Cache the result
+      teamDataCache.set(teamId, data);
+      setTeamData(data);
+
+      // Update document title with team name
+      if (data?.basic_info?.full_name) {
+        document.title = `${data.basic_info.full_name} - NBA Analytics`;
+      }
     } catch (error) {
-      console.error('Error fetching team details:', error);
+      console.error("Error fetching team details:", error);
     } finally {
       setLoading(false);
     }
+  }, [teamId]);
+
+  useEffect(() => {
+    fetchTeamDetails();
+  }, [fetchTeamDetails]);
+
+  // Simple static values instead of complex calculations
+  const teamColors = {
+    primary: "from-gray-600 to-gray-700",
+    accent: "text-cyan-400",
+    secondary: "text-cyan-300",
   };
+
+  const predictionConfidence = 75;
+
+  // Use dynamic functions if teamData is available, fallback to static
+  const upcomingGames = teamData
+    ? generateUpcomingGames(teamData)
+    : [
+        {
+          date: "JUN 15",
+          opp: "LAL",
+          time: "8:00 PM",
+          home: true,
+          difficulty: "MEDIUM",
+          prediction: "Pick em",
+          importance: "MEDIUM",
+        },
+        {
+          date: "JUN 18",
+          opp: "BOS",
+          time: "7:30 PM",
+          home: false,
+          difficulty: "HARD",
+          prediction: "Underdog +3",
+          importance: "HIGH",
+        },
+        {
+          date: "JUN 21",
+          opp: "GSW",
+          time: "9:00 PM",
+          home: true,
+          difficulty: "HARD",
+          prediction: "Favored -2",
+          importance: "HIGH",
+        },
+      ];
+
+  const nextMatchup = teamData ? generateNextMatchup(teamData) : null;
+
+  // Simple helper functions
+  const getPredictionConfidence = () =>
+    nextMatchup?.confidence || predictionConfidence;
+  const getUpcomingGames = () => upcomingGames;
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-nba-blue"></div>
+      <div className="flex flex-col justify-center items-center min-h-screen bg-gray-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mb-4"></div>
+        <p className="font-mono text-cyan-400 text-sm">LOADING_TEAM_DATA...</p>
       </div>
     );
   }
@@ -36,89 +122,74 @@ const TeamDetails = () => {
   if (!teamData) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Team Not Found</h2>
-        <p className="text-gray-600">The requested team could not be found.</p>
+        <h2 className="text-2xl font-mono font-bold text-red-400 mb-4">
+          TEAM_NOT_FOUND
+        </h2>
+        <p className="text-gray-400 font-mono">
+          Error: Requested team data unavailable
+        </p>
+        <button
+          onClick={() => window.history.back()}
+          className="mt-4 btn-secondary"
+        >
+          Go Back
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 fade-in-up">
-      {/* Team Header */}
-      <div className="card p-8">
-        <div className="flex items-center space-x-6">
-          <div className="w-20 h-20 bg-gradient-to-br from-nba-blue to-nba-red rounded-full flex items-center justify-center">
-            <span className="text-white font-bold text-2xl">
-              {teamData.basic_info?.abbreviation || 'NBA'}
-            </span>
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              {teamData.basic_info?.full_name || 'Team Details'}
-            </h1>
-            <p className="text-lg text-gray-600">
-              {teamData.season_stats?.wins}-{teamData.season_stats?.losses} Record
-            </p>
-          </div>
+    <div className="space-y-6 fade-in-up">
+      {/* Personalized Breadcrumb with Action Buttons */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2 text-sm font-mono text-gray-500">
+          <span>NBA Analytics</span>
+          <span>/</span>
+          <span>Teams</span>
+          <span>/</span>
+          <span className={teamColors.accent}>
+            {teamData.basic_info?.full_name || "Team Details"}
+          </span>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="flex space-x-3">
+          <Link 
+            to={`/team/${teamId}/roster`}
+            className={`btn-secondary text-sm px-4 py-2 ${teamColors.accent}`}
+          >
+            VIEW_{teamData.basic_info?.abbreviation || "TEAM"}_ROSTER
+          </Link>
+          <button className={`btn-secondary text-sm px-4 py-2 ${teamColors.accent}`}>
+            ADVANCED_STATS
+          </button>
         </div>
       </div>
 
-      {/* Season Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="card p-6 text-center">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Games Played</h3>
-          <p className="text-3xl font-bold text-nba-blue">{teamData.season_stats?.games_played || 0}</p>
-        </div>
-        <div className="card p-6 text-center">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Points Per Game</h3>
-          <p className="text-3xl font-bold text-green-600">{teamData.season_stats?.avg_points || 0}</p>
-        </div>
-        <div className="card p-6 text-center">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Opp Points Per Game</h3>
-          <p className="text-3xl font-bold text-red-600">{teamData.season_stats?.avg_opp_points || 0}</p>
-        </div>
-        <div className="card p-6 text-center">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Field Goal %</h3>
-          <p className="text-3xl font-bold text-purple-600">
-            {((teamData.season_stats?.fg_pct || 0) * 100).toFixed(1)}%
-          </p>
-        </div>
+      {/* Team Header and Schedule Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <TeamCard teamData={teamData} teamId={teamId} teamColors={teamColors} />
+
+        <ScheduleCard
+          teamColors={teamColors}
+          upcomingGames={getUpcomingGames()}
+        />
       </div>
 
-      {/* Recent Games */}
-      <div className="card p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Recent Games</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-4 font-semibold text-gray-700">Date</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-700">Matchup</th>
-                <th className="text-center py-3 px-4 font-semibold text-gray-700">Result</th>
-                <th className="text-center py-3 px-4 font-semibold text-gray-700">Points</th>
-                <th className="text-center py-3 px-4 font-semibold text-gray-700">Opp Points</th>
-              </tr>
-            </thead>
-            <tbody>
-              {teamData.recent_form?.slice(0, 10).map((game, index) => (
-                <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-3 px-4">{game.GAME_DATE}</td>
-                  <td className="py-3 px-4">{game.MATCHUP}</td>
-                  <td className="py-3 px-4 text-center">
-                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                      game.WL === 'W' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {game.WL}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-center font-semibold">{game.PTS}</td>
-                  <td className="py-3 px-4 text-center font-semibold">{game.OPP_PTS}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {/* Layout with Matchup Analysis aligned with Team Card */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <NextMatchupAnalysis
+          teamData={teamData}
+          teamId={teamId}
+          teamColors={teamColors}
+          nextMatchup={nextMatchup}
+          getPredictionConfidence={getPredictionConfidence}
+        />
+
+        <TeamTrendsAndLeaders teamData={teamData} teamColors={teamColors} />
       </div>
+
+      <RecentGamesTable teamData={teamData} teamColors={teamColors} />
     </div>
   );
 };

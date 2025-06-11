@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import axios from 'axios';
-import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
-import LiveGamesBar from './components/LiveGamesBar';
-import Dashboard from './pages/Dashboard';
-import TeamDetails from './pages/TeamDetails';
-import PlayerDetails from './pages/PlayerDetails';
-import './index.css';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import axios from "axios";
+import { preloadCommonLogos } from "./utils/nbaTeamData";
+import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
+import LiveGamesBar from "./components/LiveGamesBar";
+import Dashboard from "./pages/Dashboard";
+import TeamDetails from "./pages/TeamDetails";
+import PlayerDetails from "./pages/PlayerDetails";
+import PlayerList from "./pages/PlayerList";
+import AllTeamsDemo from "./pages/AllTeamsDemo";
+import TeamsList from "./components/TeamsList";
+import "./index.css";
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = "http://localhost:8000/api";
 
 function App() {
   const [teams, setTeams] = useState([]);
@@ -17,19 +21,21 @@ function App() {
 
   useEffect(() => {
     fetchData();
+    // Preload common team logos for better performance
+    preloadCommonLogos();
   }, []);
 
   const fetchData = async () => {
     try {
       const [teamsRes, gamesRes] = await Promise.all([
         axios.get(`${API_BASE_URL}/teams`),
-        axios.get(`${API_BASE_URL}/live-games`)
+        axios.get(`${API_BASE_URL}/live-games`),
       ]);
-      
+
       setTeams(teamsRes.data.teams || []);
       setLiveGames(gamesRes.data.games || []);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -40,19 +46,23 @@ function App() {
         <div className="fixed top-0 left-0 right-0 z-50 bg-gray-900 border-b border-gray-700">
           <LiveGamesBar games={liveGames} />
         </div>
-        
-        <div className="flex flex-1 pt-16"> {/* Reduced padding for smaller live games bar */}
+
+        <div className="flex flex-1 pt-16">
+          {" "}
+          {/* Reduced padding for smaller live games bar */}
           {/* Fixed Sidebar */}
           <Sidebar teams={teams} />
-          
           {/* Main Content Area */}
           <div className="flex-1 ml-64 flex flex-col">
             <Navbar />
             <main className="flex-1 p-6">
               <Routes>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="/teams" element={<AllTeamsDemo />} />
                 <Route path="/team/:teamId" element={<TeamDetails />} />
+                <Route path="/team/:teamId/roster" element={<PlayerList />} />
                 <Route path="/player/:playerId" element={<PlayerDetails />} />
+                <Route path="/all-teams-demo" element={<AllTeamsDemo />} />
               </Routes>
             </main>
           </div>
