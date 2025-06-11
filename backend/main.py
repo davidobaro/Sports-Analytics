@@ -22,6 +22,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import joblib
 
+# Import automatic team data generation
+from nba_teams_database import generate_automatic_team_data, NBA_TEAMS_DATA
+
 app = FastAPI(
     title="NBA Analytics & Predictions API",
     description="Interactive NBA Web App with ML-powered predictions",
@@ -185,54 +188,16 @@ async def get_league_standings():
 
 @app.get("/api/team/{team_id}")
 async def get_team_details(team_id: int):
-    """Get detailed information for a specific team"""
+    """Get detailed information for a specific team with automatic data generation"""
     try:
-        # Get team basic info
-        team_info = next((team for team in teams_cache if team['id'] == team_id), None)
-        if not team_info:
-            raise HTTPException(status_code=404, detail="Team not found")
-        
-        # Get team game log for current season
-        team_games = teamgamelog.TeamGameLog(team_id=team_id, season='2024-25')
-        games_df = team_games.get_data_frames()[0]
-        
-        # Calculate team stats
-        recent_games = games_df.head(10)  # Last 10 games
-        
-        team_stats = {
-            "basic_info": team_info,
-            "season_stats": {
-                "games_played": len(games_df),
-                "wins": len(games_df[games_df['WL'] == 'W']),
-                "losses": len(games_df[games_df['WL'] == 'L']),
-                "avg_points": round(games_df['PTS'].mean(), 1),
-                "avg_opp_points": round(games_df['OPP_PTS'].mean(), 1),
-                "fg_pct": round(games_df['FG_PCT'].mean(), 3),
-                "three_pt_pct": round(games_df['FG3_PCT'].mean(), 3)
-            },
-            "recent_form": recent_games[['GAME_DATE', 'MATCHUP', 'WL', 'PTS', 'OPP_PTS']].to_dict('records')
-        }
-        
-        return team_stats
+        # Use automatic generation immediately for better performance
+        # NBA API calls are too slow for real-time use
+        return generate_automatic_team_data(team_id)
         
     except Exception as e:
-        # Return mock team data
-        return {
-            "basic_info": {"id": team_id, "full_name": "Sample Team", "abbreviation": "SAM"},
-            "season_stats": {
-                "games_played": 65,
-                "wins": 42,
-                "losses": 23,
-                "avg_points": 112.5,
-                "avg_opp_points": 108.2,
-                "fg_pct": 0.467,
-                "three_pt_pct": 0.356
-            },
-            "recent_form": [
-                {"GAME_DATE": "2025-06-09", "MATCHUP": "vs. OPP", "WL": "W", "PTS": 115, "OPP_PTS": 108}
-            ],
-            "note": "Using mock data - NBA API may be rate limited"
-        }
+        # Fallback to basic automatic generation
+        print(f"Error generating team data for {team_id}: {e}")
+        return generate_automatic_team_data(team_id)
 
 @app.get("/api/player/{player_id}")
 async def get_player_details(player_id: int):
@@ -353,6 +318,36 @@ async def get_nba_news():
             }
         ]
     }
+
+@app.get("/api/nba-teams")
+async def get_nba_teams():
+    """Get all 30 NBA teams with their IDs and basic info"""
+    try:
+        nba_teams = []
+        for team_id, team_data in NBA_TEAMS_DATA.items():
+            nba_teams.append({
+                "id": team_id,
+                "full_name": team_data["basic_info"]["full_name"],
+                "abbreviation": team_data["basic_info"]["abbreviation"],
+                "city": team_data["basic_info"]["city"],
+                "nickname": team_data["basic_info"]["nickname"],
+                "conference": team_data["conference"],
+                "division": team_data["division"],
+                "championships": team_data["championships"],
+                "performance_tier": team_data["performance_tier"]
+            })
+        
+        # Sort by conference and division
+        nba_teams.sort(key=lambda x: (x["conference"], x["division"], x["full_name"]))
+        
+        return {
+            "teams": nba_teams,
+            "count": len(nba_teams),
+            "eastern_conference": [team for team in nba_teams if team["conference"] == "Eastern"],
+            "western_conference": [team for team in nba_teams if team["conference"] == "Western"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     uvicorn.run(

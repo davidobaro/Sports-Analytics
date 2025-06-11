@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import axios from "axios";
 import StandingsTable from "../components/StandingsTable";
 import NewsSection from "../components/NewsSection";
@@ -11,11 +11,7 @@ const Dashboard = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -31,7 +27,24 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
+
+  // Memoize expensive calculations
+  const dashboardStats = useMemo(
+    () => ({
+      newsCount: news.length,
+      teamsCount: standings.length,
+      conferenceStats: {
+        east: standings.filter((team) => team.conference === "East").length,
+        west: standings.filter((team) => team.conference === "West").length,
+      },
+    }),
+    [news.length, standings]
+  );
 
   if (loading) {
     return (
@@ -77,7 +90,7 @@ const Dashboard = () => {
                   NEWS_ARTICLES
                 </span>
                 <span className="text-xl font-mono font-bold text-green-400">
-                  {news.length}
+                  {dashboardStats.newsCount}
                 </span>
               </div>
               <div className="flex justify-between items-center p-3 bg-gray-800 rounded border border-gray-600">
@@ -85,7 +98,7 @@ const Dashboard = () => {
                   ACTIVE_TEAMS
                 </span>
                 <span className="text-xl font-mono font-bold text-cyan-400">
-                  30
+                  {dashboardStats.teamsCount || 30}
                 </span>
               </div>
               <div className="flex justify-between items-center p-3 bg-gray-800 rounded border border-gray-600">
