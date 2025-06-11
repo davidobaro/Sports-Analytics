@@ -10,7 +10,6 @@ import TeamDetails from "./pages/TeamDetails";
 import PlayerDetails from "./pages/PlayerDetails";
 import PlayerList from "./pages/PlayerList";
 import AllTeamsDemo from "./pages/AllTeamsDemo";
-import TeamsList from "./components/TeamsList";
 import "./index.css";
 
 const API_BASE_URL = "http://localhost:8000/api";
@@ -62,7 +61,6 @@ function App() {
                 <Route path="/team/:teamId" element={<TeamDetails />} />
                 <Route path="/team/:teamId/roster" element={<PlayerList />} />
                 <Route path="/player/:playerId" element={<PlayerDetails />} />
-                <Route path="/all-teams-demo" element={<AllTeamsDemo />} />
               </Routes>
             </main>
           </div>

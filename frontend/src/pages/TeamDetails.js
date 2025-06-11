@@ -143,9 +143,9 @@ const TeamDetails = () => {
       {/* Personalized Breadcrumb with Action Buttons */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2 text-sm font-mono text-gray-500">
-          <span>NBA Analytics</span>
+          <Link to="/" className="hover:text-cyan-400 transition-colors">NBA Analytics</Link>
           <span>/</span>
-          <span>Teams</span>
+          <Link to="/teams" className="hover:text-cyan-400 transition-colors">Teams</Link>
           <span>/</span>
           <span className={teamColors.accent}>
             {teamData.basic_info?.full_name || "Team Details"}

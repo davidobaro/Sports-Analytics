@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import DivisionSection from "../components/DivisionSection";
 
 const API_BASE_URL = "http://localhost:8000/api";
@@ -34,73 +35,85 @@ const AllTeamsDemo = () => {
   return (
     <div className="min-h-screen bg-gray-900 p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Breadcrumb Navigation */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-2 text-sm font-mono text-gray-500">
+            <Link to="/" className="hover:text-cyan-400 transition-colors">NBA Analytics</Link>
+            <span>/</span>
+            <span className="text-cyan-400">Teams</span>
+          </div>
+        </div>
+
         <div className="text-center mb-8">
           <h1 className="text-3xl font-mono font-bold text-cyan-400 mb-2">
             ALL_NBA_TEAMS
           </h1>
         </div>
 
-      {/* Eastern Conference */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-mono font-bold text-green-400 mb-6">
-          EASTERN CONFERENCE
-        </h2>
-        
-        <DivisionSection
-          title="ATLANTIC DIVISION"
-          teams={teams}
-          conference="Eastern"
-          division="Atlantic"
-          titleColor="text-green-300"
-        />
+        {/* Two-column layout for conferences */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Western Conference - Left Side */}
+          <div>
+            <h2 className="text-2xl font-mono font-bold text-red-400 mb-6 text-center">
+              WESTERN CONFERENCE
+            </h2>
+            
+            <DivisionSection
+              title="NORTHWEST DIVISION"
+              teams={teams}
+              conference="Western"
+              division="Northwest"
+              titleColor="text-red-300"
+            />
 
-        <DivisionSection
-          title="CENTRAL DIVISION"
-          teams={teams}
-          conference="Eastern"
-          division="Central"
-          titleColor="text-green-300"
-        />
+            <DivisionSection
+              title="PACIFIC DIVISION"
+              teams={teams}
+              conference="Western"
+              division="Pacific"
+              titleColor="text-red-300"
+            />
 
-        <DivisionSection
-          title="SOUTHEAST DIVISION"
-          teams={teams}
-          conference="Eastern"
-          division="Southeast"
-          titleColor="text-green-300"
-        />
-      </div>
+            <DivisionSection
+              title="SOUTHWEST DIVISION"
+              teams={teams}
+              conference="Western"
+              division="Southwest"
+              titleColor="text-red-300"
+            />
+          </div>
 
-      {/* Western Conference */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-mono font-bold text-red-400 mb-6">
-          WESTERN CONFERENCE
-        </h2>
-        
-        <DivisionSection
-          title="NORTHWEST DIVISION"
-          teams={teams}
-          conference="Western"
-          division="Northwest"
-          titleColor="text-red-300"
-        />
+          {/* Eastern Conference - Right Side */}
+          <div>
+            <h2 className="text-2xl font-mono font-bold text-green-400 mb-6 text-center">
+              EASTERN CONFERENCE
+            </h2>
+            
+            <DivisionSection
+              title="ATLANTIC DIVISION"
+              teams={teams}
+              conference="Eastern"
+              division="Atlantic"
+              titleColor="text-green-300"
+            />
 
-        <DivisionSection
-          title="PACIFIC DIVISION"
-          teams={teams}
-          conference="Western"
-          division="Pacific"
-          titleColor="text-red-300"
-        />
+            <DivisionSection
+              title="CENTRAL DIVISION"
+              teams={teams}
+              conference="Eastern"
+              division="Central"
+              titleColor="text-green-300"
+            />
 
-        <DivisionSection
-          title="SOUTHWEST DIVISION"
-          teams={teams}
-          conference="Western"
-          division="Southwest"
-          titleColor="text-red-300"
-        />
-      </div>
+            <DivisionSection
+              title="SOUTHEAST DIVISION"
+              teams={teams}
+              conference="Eastern"
+              division="Southeast"
+              titleColor="text-green-300"
+            />
+          </div>
+        </div>
 
       <div className="mt-12 text-center">
         <div className="inline-flex items-center space-x-4 px-6 py-3 bg-gray-800 rounded-lg border border-gray-600">

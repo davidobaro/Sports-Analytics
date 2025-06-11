@@ -4,19 +4,6 @@ import { useNavigate } from "react-router-dom";
 const TeamCard = ({ team }) => {
   const navigate = useNavigate();
 
-  const getTeamColors = (abbreviation) => {
-    // Simple color mapping for demo
-    const colorMap = {
-      LAL: "from-purple-600 to-yellow-400",
-      BOS: "from-green-600 to-green-400",
-      GSW: "from-blue-600 to-yellow-400",
-      MIA: "from-red-600 to-red-400",
-      CHI: "from-red-700 to-red-500",
-      NYK: "from-blue-700 to-orange-500",
-    };
-    return colorMap[abbreviation] || "from-cyan-400 to-blue-400";
-  };
-
   const getPerformanceTierStyle = (tier) => {
     switch (tier) {
       case "championship":
@@ -36,13 +23,22 @@ const TeamCard = ({ team }) => {
       className="card p-4 hover:scale-105 transition-transform cursor-pointer hover:border-cyan-400"
     >
       <div className="flex items-center space-x-3 mb-3">
-        <div
-          className={`w-12 h-12 bg-gradient-to-br ${getTeamColors(
-            team.abbreviation
-          )} rounded-full flex items-center justify-center`}
-        >        <span className="text-white font-mono font-bold text-sm">
-          {team.abbreviation}
-        </span>
+        <div className="w-12 h-12 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center">
+          <img
+            src={`https://cdn.nba.com/logos/nba/${team.id}/global/L/logo.svg`}
+            alt={`${team.full_name || team.nickname} logo`}
+            className="w-8 h-8 object-contain"
+            loading="lazy"
+            onError={(e) => {
+              e.target.style.display = "none";
+              e.target.nextSibling.style.display = "flex";
+            }}
+          />
+          <span className="text-white font-mono font-bold text-sm"
+            style={{ display: "none" }}
+          >
+            {team.abbreviation}
+          </span>
         </div>          <div>
             <h4 className="font-mono font-bold text-white">
               {team.city || team.full_name?.split(' ').slice(0, -1).join(' ') || "City"}

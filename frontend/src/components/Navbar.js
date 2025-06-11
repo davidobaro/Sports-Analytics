@@ -68,10 +68,10 @@ const Navbar = ({ onMenuClick }) => {
               DASHBOARD
             </Link>
             <Link 
-              to="/analytics" 
+              to="/teams" 
               className="text-gray-300 hover:text-cyan-400 font-mono font-medium transition-colors duration-200 px-3 py-1 rounded border border-transparent hover:border-gray-600"
             >
-              ANALYTICS
+              ALL_TEAMS
             </Link>
             <Link 
               to="/predictions" 
@@ -80,7 +80,7 @@ const Navbar = ({ onMenuClick }) => {
               PREDICTIONS
             </Link>
             <button className="btn-primary">
-              EXECUTE
+              HIDDEN_GEMS
             </button>
           </div>
 
