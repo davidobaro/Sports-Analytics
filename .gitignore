@@ -143,7 +143,6 @@ Thumbs.db
 
 # Data files (can be large)
 *.csv
-*.json
 *.xml
 *.parquet
 *.feather
