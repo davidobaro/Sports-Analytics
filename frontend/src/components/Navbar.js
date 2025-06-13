@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Navbar = ({ onMenuClick }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       // Implement search functionality
-      console.log('Searching for:', searchQuery);
+      console.log("Searching for:", searchQuery);
     }
   };
 
@@ -21,8 +21,18 @@ const Navbar = ({ onMenuClick }) => {
             onClick={onMenuClick}
             className="lg:hidden p-2 rounded-lg hover:bg-gray-800 transition-colors border border-gray-600"
           >
-            <svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            <svg
+              className="w-6 h-6 text-cyan-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           </button>
 
@@ -31,7 +41,9 @@ const Navbar = ({ onMenuClick }) => {
             <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-cyan-400 rounded-lg flex items-center justify-center border border-gray-600">
               <span className="text-gray-900 font-mono font-bold text-xl"></span>
             </div>
-            <span className="text-2xl font-mono font-bold gradient-text">NBA_ANALYTICS_PRO</span>
+            <span className="text-2xl font-mono font-bold gradient-text">
+              NBA_ANALYTICS_PRO
+            </span>
           </Link>
 
           {/* Mobile Logo - Only visible on mobile */}
@@ -52,8 +64,18 @@ const Navbar = ({ onMenuClick }) => {
                 className="w-full px-4 py-2 pl-10 pr-4 text-green-400 bg-gray-800 border border-gray-600 rounded font-mono focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-30"
               />
               <div className="absolute left-3 top-2.5">
-                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <svg
+                  className="w-5 h-5 text-gray-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
               </div>
             </form>
@@ -61,34 +83,42 @@ const Navbar = ({ onMenuClick }) => {
 
           {/* Navigation Links - Hidden on mobile */}
           <div className="hidden lg:flex items-center space-x-6">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="text-gray-300 hover:text-cyan-400 font-mono font-medium transition-colors duration-200 px-3 py-1 rounded border border-transparent hover:border-gray-600"
             >
               DASHBOARD
             </Link>
-            <Link 
-              to="/teams" 
+            <Link
+              to="/teams"
               className="text-gray-300 hover:text-cyan-400 font-mono font-medium transition-colors duration-200 px-3 py-1 rounded border border-transparent hover:border-gray-600"
             >
               ALL_TEAMS
             </Link>
-            <Link 
-              to="/predictions" 
+            <Link
+              to="/predictions"
               className="text-gray-300 hover:text-cyan-400 font-mono font-medium transition-colors duration-200 px-3 py-1 rounded border border-transparent hover:border-gray-600"
             >
               PREDICTIONS
             </Link>
-            <button className="btn-primary">
-              HIDDEN_GEMS
-            </button>
+            <button className="btn-primary">HIDDEN_GEMS</button>
           </div>
 
           {/* Mobile Action Button */}
           <div className="lg:hidden">
             <button className="p-2 rounded-lg hover:bg-gray-800 transition-colors border border-gray-600">
-              <svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+              <svg
+                className="w-6 h-6 text-cyan-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                />
               </svg>
             </button>
           </div>

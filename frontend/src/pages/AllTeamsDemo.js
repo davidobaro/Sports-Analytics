@@ -1,36 +1,29 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import { Link } from "react-router-dom";
 import DivisionSection from "../components/DivisionSection";
+import { NBA_TEAMS, TEAM_ABBR_TO_ID } from "../utils/nbaTeamData";
 
-const API_BASE_URL = "http://localhost:8000/api";
+// ⚠️ CRITICAL NOTE: AllTeamsDemo should NEVER call APIs or fetch data
+// It should ONLY use static data from nbaTeamData.js
+// This component demonstrates the UI with static data already in the codebase
+// DO NOT add useEffect, useState for loading, or any fetch calls to this component
+// Convert NBA_TEAMS object to array format with conference and division info
+const convertNBATeamsToArray = () => {
+  return Object.entries(NBA_TEAMS).map(([abbreviation, teamData]) => ({
+    id: TEAM_ABBR_TO_ID[abbreviation], // Use proper NBA team ID
+    full_name: teamData.fullName,
+    abbreviation: abbreviation,
+    nickname: teamData.fullName.split(' ').pop(), // Extract nickname from full name
+    city: teamData.city,
+    conference: teamData.conference,
+    division: teamData.division
+  }));
+};
 
 const AllTeamsDemo = () => {
-  const [teams, setTeams] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchAllTeams();
-  }, []);
-
-  const fetchAllTeams = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/nba-teams`);
-      setTeams(response.data.teams);
-    } catch (error) {
-      console.error("Error fetching teams:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-cyan-400"></div>
-      </div>
-    );
-  }
+  // ⚠️ NEVER add useState for loading, error, or teams - use static data only
+  // ⚠️ NEVER add useEffect to fetch data - this component uses static data
+  const teams = convertNBATeamsToArray();
 
   return (
     <div className="min-h-screen bg-gray-900 p-6">
@@ -38,16 +31,22 @@ const AllTeamsDemo = () => {
         {/* Breadcrumb Navigation */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2 text-sm font-mono text-gray-500">
-            <Link to="/" className="hover:text-cyan-400 transition-colors">NBA Analytics</Link>
+            <Link to="/" className="hover:text-cyan-400 transition-colors">
+              NBA Analytics
+            </Link>
             <span>/</span>
             <span className="text-cyan-400">Teams</span>
           </div>
         </div>
 
-        <div className="text-center mb-8">
+        <div className="mb-8">
           <h1 className="text-3xl font-mono font-bold text-cyan-400 mb-2">
             ALL_NBA_TEAMS
           </h1>
+          {/* ⚠️ STATIC DATA DEMO - No API calls, uses nbaTeamData.js only */}
+          <p className="text-sm font-mono text-gray-500">
+            STATIC_DATA_DEMO // Using built-in team data
+          </p>
         </div>
 
         {/* Two-column layout for conferences */}
@@ -57,7 +56,7 @@ const AllTeamsDemo = () => {
             <h2 className="text-2xl font-mono font-bold text-red-400 mb-6 text-center">
               WESTERN CONFERENCE
             </h2>
-            
+
             <DivisionSection
               title="NORTHWEST DIVISION"
               teams={teams}
@@ -88,7 +87,7 @@ const AllTeamsDemo = () => {
             <h2 className="text-2xl font-mono font-bold text-green-400 mb-6 text-center">
               EASTERN CONFERENCE
             </h2>
-            
+
             <DivisionSection
               title="ATLANTIC DIVISION"
               teams={teams}
@@ -115,24 +114,24 @@ const AllTeamsDemo = () => {
           </div>
         </div>
 
-      <div className="mt-12 text-center">
-        <div className="inline-flex items-center space-x-4 px-6 py-3 bg-gray-800 rounded-lg border border-gray-600">
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-green-400 font-mono text-sm">
-              SYSTEM_STATUS: ACTIVE
+        <div className="mt-12 text-center">
+          <div className="inline-flex items-center space-x-4 px-6 py-3 bg-gray-800 rounded-lg border border-gray-600">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+              <span className="text-green-400 font-mono text-sm">
+                STATIC_DATA_MODE: ACTIVE
+              </span>
+            </div>
+            <div className="text-gray-500">|</div>
+            <span className="text-cyan-400 font-mono text-sm">
+              {teams.length} TEAMS LOADED
+            </span>
+            <div className="text-gray-500">|</div>
+            <span className="text-purple-400 font-mono text-sm">
+              NO_API_CALLS: TRUE
             </span>
           </div>
-          <div className="text-gray-500">|</div>
-          <span className="text-cyan-400 font-mono text-sm">
-            30 TEAMS LOADED
-          </span>
-          <div className="text-gray-500">|</div>
-          <span className="text-purple-400 font-mono text-sm">
-            AUTO_PERSONALIZATION: ONNN
-          </span>
         </div>
-      </div>
       </div>
     </div>
   );

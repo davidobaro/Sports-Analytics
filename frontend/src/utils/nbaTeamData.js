@@ -698,22 +698,22 @@ export const generateTeamColors = (teamAbbr) => {
   };
 };
 
-// Simple static message generation
+// Simple static message generation - no random data
 export const generateTeamMessage = (teamData) => {
   return "";
 };
 
-// Simple static team fact generation
+// Simple static team fact generation - no random data
 export const generateTeamFact = (teamAbbr) => {
   return "";
 };
 
-// Simple static prediction confidence
+// Simple static prediction confidence - no random data
 export const calculatePredictionConfidence = (teamData) => {
   return 75; // Fixed confidence value
 };
 
-// Generate realistic upcoming games based on team data
+// Generate static upcoming games - no random data
 export const generateUpcomingGames = (teamData) => {
   if (!teamData?.basic_info?.abbreviation) {
     return [
@@ -723,7 +723,7 @@ export const generateUpcomingGames = (teamData) => {
         time: "8:00 PM",
         home: true,
         difficulty: "MEDIUM",
-        prediction: "Pick em",
+        prediction: "N/A",
         importance: "MEDIUM",
       },
       {
@@ -732,7 +732,7 @@ export const generateUpcomingGames = (teamData) => {
         time: "7:30 PM",
         home: false,
         difficulty: "HARD",
-        prediction: "Underdog +3",
+        prediction: "N/A",
         importance: "HIGH",
       },
       {
@@ -741,7 +741,7 @@ export const generateUpcomingGames = (teamData) => {
         time: "9:00 PM",
         home: true,
         difficulty: "HARD",
-        prediction: "Favored -2",
+        prediction: "N/A",
         importance: "HIGH",
       },
     ];
@@ -750,65 +750,35 @@ export const generateUpcomingGames = (teamData) => {
   const teamAbbr = teamData.basic_info.abbreviation;
   const team = NBA_TEAMS[teamAbbr];
 
-  // Get team's rivals and conference opponents
+  // Get team's rivals for static opponents
   const rivals = team?.rivalries || ["LAL", "BOS", "GSW"];
-  const conference = team?.conference || "Eastern";
-
-  // Conference opponents
-  const conferenceTeams = Object.keys(NBA_TEAMS).filter(
-    (abbr) => NBA_TEAMS[abbr].conference === conference && abbr !== teamAbbr
-  );
-
-  // Mix of rivals and conference opponents
-  const opponents = [...rivals, ...conferenceTeams].slice(0, 8);
+  const opponents = rivals.slice(0, 3);
 
   const games = [];
   const today = new Date();
 
   for (let i = 0; i < 3; i++) {
     const gameDate = new Date(today);
-    gameDate.setDate(
-      today.getDate() + (i + 1) * 2 + Math.floor(Math.random() * 2)
-    ); // Every 2-3 days
+    gameDate.setDate(today.getDate() + (i + 1) * 3); // Every 3 days - static spacing
 
     const opponent = opponents[i % opponents.length];
     const opponentData = NBA_TEAMS[opponent];
-    const isHome = Math.random() > 0.5;
+    const isHome = i % 2 === 0; // Alternate home/away - static pattern
 
     // Determine difficulty based on opponent strength
     let difficulty = "MEDIUM";
     if (opponentData?.championships >= 3) difficulty = "HARD";
     else if (opponentData?.championships === 0) difficulty = "EASY";
 
-    // Generate realistic predictions
-    const teamStrength = (team?.championships || 0) + Math.random() * 2;
-    const oppStrength = (opponentData?.championships || 0) + Math.random() * 2;
+    // No random predictions - use static placeholder
+    const prediction = "N/A";
 
-    let prediction;
-    const diff = teamStrength - oppStrength + (isHome ? 0.5 : -0.5);
+    // Importance based on rivalry - no random factor
+    const importance = rivals.includes(opponent) ? "HIGH" : "MEDIUM";
 
-    if (diff > 1) prediction = `${teamAbbr} favored by ${Math.ceil(diff * 2)}`;
-    else if (diff < -1)
-      prediction = `${opponent} favored by ${Math.ceil(Math.abs(diff) * 2)}`;
-    else prediction = "Pick em game";
-
-    // Importance based on rivalry and standings impact
-    const importance = rivals.includes(opponent)
-      ? "HIGH"
-      : Math.random() > 0.6
-      ? "MEDIUM"
-      : "LOW";
-
-    // Realistic game times
-    const times = [
-      "7:00 PM",
-      "7:30 PM",
-      "8:00 PM",
-      "8:30 PM",
-      "9:00 PM",
-      "10:00 PM",
-    ];
-    const time = times[Math.floor(Math.random() * times.length)];
+    // Static game time based on position
+    const times = ["7:00 PM", "7:30 PM", "8:00 PM"];
+    const time = times[i % times.length];
 
     games.push({
       date: gameDate
@@ -872,29 +842,16 @@ export const generateNextMatchup = (teamData) => {
   const opponent = nextGame.opp;
   const opponentData = NBA_TEAMS[opponent];
 
-  // Generate season series record
-  const seriesWins = Math.floor(Math.random() * 3);
-  const seriesLosses = Math.floor(Math.random() * 3);
-  const seasonSeries = `${seriesWins}-${seriesLosses}`;
-
-  // Generate last meeting result
-  const lastMeetingWin = Math.random() > 0.5;
-  const lastScore1 = 100 + Math.floor(Math.random() * 20);
-  const lastScore2 = 100 + Math.floor(Math.random() * 20);
-  const lastMeeting = lastMeetingWin
-    ? `W ${lastScore1}-${Math.min(lastScore1 - 1, lastScore2)}`
-    : `L ${lastScore2}-${Math.max(lastScore2 + 1, lastScore1)}`;
-
-  // Generate home record
-  const homeWins = 20 + Math.floor(Math.random() * 15);
-  const homeLosses = Math.floor(Math.random() * 12);
-  const homeRecord = `${homeWins}-${homeLosses}`;
+  // No random data generation - return static placeholders
+  const seasonSeries = "N/A";
+  const lastMeeting = "N/A";
+  const homeRecord = "N/A";
 
   // Generate dynamic key factors based on team strengths
   const keyFactors = [];
 
   // Pace factor
-  if (team?.strengths?.includes("Fast pace") || Math.random() > 0.6) {
+  if (team?.strengths?.includes("Fast pace")) {
     keyFactors.push({
       factor: "PACE_ADVANTAGE",
       team: "TEAM",
@@ -927,7 +884,7 @@ export const generateNextMatchup = (teamData) => {
   } else {
     keyFactors.push({
       factor: "DEFENSIVE_MATCHUP",
-      team: Math.random() > 0.5 ? "TEAM" : "OPPONENT",
+      team: "TEAM",
       description: "Interior defense will be key",
     });
   }
@@ -948,20 +905,16 @@ export const generateNextMatchup = (teamData) => {
   } else {
     keyFactors.push({
       factor: "REST_ADVANTAGE",
-      team: Math.random() > 0.5 ? "TEAM" : "OPPONENT",
+      team: "TEAM",
       description: "2 days rest vs back-to-back",
     });
   }
 
-  // Generate prediction score
-  const teamScore = 105 + Math.floor(Math.random() * 20);
-  const oppScore = 105 + Math.floor(Math.random() * 20);
-  const prediction = `${teamAbbr} ${teamScore} - ${oppScore} ${opponent}`;
+  // No random prediction scores - use static placeholders
+  const prediction = `${teamAbbr} vs ${opponent}`;
 
-  // Calculate confidence based on factors
-  let confidence = 65;
-  if (nextGame.home) confidence += 5;
-  if (team?.championships > opponentData?.championships) confidence += 10;
+  // Fixed confidence - no random calculation
+  let confidence = 75;
   if (nextGame.difficulty === "EASY") confidence += 10;
   else if (nextGame.difficulty === "HARD") confidence -= 10;
   confidence = Math.min(95, Math.max(55, confidence));
@@ -1031,8 +984,8 @@ export const preloadCommonLogos = () => {
     1610612743, // DEN
   ];
 
-  popularTeams.forEach((teamId) => {
-    setTimeout(() => preloadTeamLogo(teamId), Math.random() * 1000);
+  popularTeams.forEach((teamId, index) => {
+    setTimeout(() => preloadTeamLogo(teamId), index * 100);
   });
 };
 

@@ -4,19 +4,6 @@ import { useNavigate } from "react-router-dom";
 const TeamCard = ({ team }) => {
   const navigate = useNavigate();
 
-  const getPerformanceTierStyle = (tier) => {
-    switch (tier) {
-      case "championship":
-        return "bg-yellow-900 text-yellow-400";
-      case "elite":
-        return "bg-green-900 text-green-400";
-      case "playoff":
-        return "bg-blue-900 text-blue-400";
-      default:
-        return "bg-gray-900 text-gray-400";
-    }
-  };
-
   return (
     <div
       onClick={() => navigate(`/team/${team.id}`)}
@@ -34,28 +21,27 @@ const TeamCard = ({ team }) => {
               e.target.nextSibling.style.display = "flex";
             }}
           />
-          <span className="text-white font-mono font-bold text-sm"
+          <span
+            className="text-white font-mono font-bold text-sm"
             style={{ display: "none" }}
           >
             {team.abbreviation}
           </span>
-        </div>          <div>
-            <h4 className="font-mono font-bold text-white">
-              {team.city || team.full_name?.split(' ').slice(0, -1).join(' ') || "City"}
-            </h4>
-            <p className="text-sm text-gray-400 font-mono">
-              {team.nickname || team.full_name?.split(' ').slice(-1)[0] || "Team"}
-            </p>
-          </div>
+        </div>{" "}
+        <div>
+          <h4 className="font-mono font-bold text-white">
+            {team.city ||
+              team.full_name?.split(" ").slice(0, -1).join(" ") ||
+              "City"}
+          </h4>
+          <p className="text-sm text-gray-400 font-mono">
+            {team.nickname || team.full_name?.split(" ").slice(-1)[0] || "Team"}
+          </p>
+        </div>
       </div>
-      <div className="flex justify-between items-center text-xs font-mono">
+      <div className="flex justify-center items-center text-xs font-mono">
         <span className="text-yellow-400">
-          {team.championships} Championships
-        </span>
-        <span
-          className={`px-2 py-1 rounded ${getPerformanceTierStyle(team.performance_tier)}`}
-        >
-          {team.performance_tier.toUpperCase()}
+          {team.championships || 0} Championships
         </span>
       </div>
     </div>

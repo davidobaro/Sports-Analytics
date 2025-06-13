@@ -15,13 +15,12 @@ const Dashboard = () => {
     try {
       setLoading(true);
 
-      const [standingsRes, newsRes] = await Promise.all([
-        axios.get(`${API_BASE_URL}/standings`),
-        axios.get(`${API_BASE_URL}/news`),
-      ]);
+      // SUSPENDED: News API calls per user request
+      // Only fetch standings now
+      const standingsRes = await axios.get(`${API_BASE_URL}/standings`);
 
       setStandings(standingsRes.data.standings || []);
-      setNews(newsRes.data.articles || []);
+      setNews([]); // No news while suspended
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
