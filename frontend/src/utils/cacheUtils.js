@@ -2,7 +2,8 @@
 // Comprehensive caching system with compression, prefetching, and performance monitoring
 
 export class EnhancedCache {
-  constructor(maxSize = 100, ttl = 30 * 60 * 1000) { // 30 minutes default TTL
+  constructor(maxSize = 100, ttl = 30 * 60 * 1000) {
+    // 30 minutes default TTL
     this.cache = new Map();
     this.maxSize = maxSize;
     this.ttl = ttl;
@@ -12,13 +13,13 @@ export class EnhancedCache {
       hits: 0,
       misses: 0,
       sets: 0,
-      evictions: 0
+      evictions: 0,
     };
   }
 
   set(key, value, customTTL = null) {
     const now = Date.now();
-    
+
     // Implement intelligent cache eviction
     if (this.cache.size >= this.maxSize && !this.cache.has(key)) {
       this.evictLeastValuable();
@@ -26,7 +27,9 @@ export class EnhancedCache {
     }
 
     // Simple compression for large datasets
-    const processedValue = this.compressionEnabled ? this.compress(value) : value;
+    const processedValue = this.compressionEnabled
+      ? this.compress(value)
+      : value;
 
     this.cache.set(key, {
       value: processedValue,
@@ -34,7 +37,7 @@ export class EnhancedCache {
       ttl: customTTL || this.ttl,
       accessCount: 0,
       lastAccess: now,
-      size: this.estimateSize(processedValue)
+      size: this.estimateSize(processedValue),
     });
 
     this.stats.sets++;
@@ -48,7 +51,7 @@ export class EnhancedCache {
     }
 
     const now = Date.now();
-    
+
     if (now - entry.timestamp > entry.ttl) {
       this.cache.delete(key);
       this.stats.misses++;
@@ -58,7 +61,7 @@ export class EnhancedCache {
     entry.accessCount++;
     entry.lastAccess = now;
     this.stats.hits++;
-    
+
     // Decompress if needed
     return this.compressionEnabled ? this.decompress(entry.value) : entry.value;
   }
@@ -71,20 +74,22 @@ export class EnhancedCache {
       // Compress roster data by keeping only essential fields
       return {
         ...data,
-        roster: data.roster.map(player => ({
+        roster: data.roster.map((player) => ({
           player_id: player.player_id,
           name: player.name,
           jersey_number: player.jersey_number,
           position: player.position,
           height: player.height,
           age: player.age,
-          stats: player.stats ? {
-            ppg: player.stats.ppg,
-            rpg: player.stats.rpg,
-            apg: player.stats.apg
-          } : null
+          stats: player.stats
+            ? {
+                ppg: player.stats.ppg,
+                rpg: player.stats.rpg,
+                apg: player.stats.apg,
+              }
+            : null,
         })),
-        _compressed: true
+        _compressed: true,
       };
     }
 
@@ -92,15 +97,15 @@ export class EnhancedCache {
       // Compress team lists
       return {
         ...data,
-        teams: data.teams.map(team => ({
+        teams: data.teams.map((team) => ({
           id: team.id,
           full_name: team.full_name,
           abbreviation: team.abbreviation,
           city: team.city,
           conference: team.conference,
-          division: team.division
+          division: team.division,
         })),
-        _compressed: true
+        _compressed: true,
       };
     }
 
@@ -123,31 +128,32 @@ export class EnhancedCache {
   evictLeastValuable() {
     let leastValuableKey = null;
     let lowestScore = Infinity;
-    
+
     for (const [key, entry] of this.cache) {
       // Score based on access frequency, recency, and size
       const accessScore = entry.accessCount;
       const recencyScore = (Date.now() - entry.lastAccess) / (1000 * 60); // minutes ago
       const sizeScore = entry.size / 1024; // KB
-      const totalScore = accessScore - (recencyScore * 0.1) - (sizeScore * 0.01);
-      
+      const totalScore = accessScore - recencyScore * 0.1 - sizeScore * 0.01;
+
       if (totalScore < lowestScore) {
         lowestScore = totalScore;
         leastValuableKey = key;
       }
     }
-    
+
     if (leastValuableKey) {
       this.cache.delete(leastValuableKey);
     }
   }
 
-  prefetch(key, fetchFunction, priority = 'low') {
+  prefetch(key, fetchFunction, priority = "low") {
     if (!this.cache.has(key) && !this.prefetchQueue.has(key)) {
       this.prefetchQueue.add(key);
-      
-      const delay = priority === 'high' ? 10 : priority === 'medium' ? 100 : 300;
-      
+
+      const delay =
+        priority === "high" ? 10 : priority === "medium" ? 100 : 300;
+
       setTimeout(async () => {
         try {
           const data = await fetchFunction();
@@ -164,16 +170,20 @@ export class EnhancedCache {
 
   getStats() {
     const totalRequests = this.stats.hits + this.stats.misses;
-    const hitRate = totalRequests > 0 ? (this.stats.hits / totalRequests) * 100 : 0;
-    const totalSize = Array.from(this.cache.values()).reduce((sum, entry) => sum + entry.size, 0);
-    
+    const hitRate =
+      totalRequests > 0 ? (this.stats.hits / totalRequests) * 100 : 0;
+    const totalSize = Array.from(this.cache.values()).reduce(
+      (sum, entry) => sum + entry.size,
+      0
+    );
+
     return {
       size: this.cache.size,
       maxSize: this.maxSize,
       hitRate: Math.round(hitRate * 10) / 10,
       totalSize: Math.round(totalSize / 1024), // KB
       totalRequests,
-      ...this.stats
+      ...this.stats,
     };
   }
 
@@ -185,7 +195,7 @@ export class EnhancedCache {
 
   // Advanced cache warming for frequently accessed data
   warmCache(warmingData) {
-    warmingData.forEach(({ key, fetchFunction, priority = 'medium' }) => {
+    warmingData.forEach(({ key, fetchFunction, priority = "medium" }) => {
       this.prefetch(key, fetchFunction, priority);
     });
   }
@@ -200,7 +210,10 @@ export class ImagePreloader {
   }
 
   async preloadImage(src, player_id) {
-    if (this.preloadedImages.has(player_id) || this.failedImages.has(player_id)) {
+    if (
+      this.preloadedImages.has(player_id) ||
+      this.failedImages.has(player_id)
+    ) {
       return this.preloadedImages.has(player_id);
     }
 
@@ -210,13 +223,13 @@ export class ImagePreloader {
 
     const promise = new Promise((resolve) => {
       const img = new Image();
-      
+
       img.onload = () => {
         this.preloadedImages.add(player_id);
         this.loadingPromises.delete(player_id);
         resolve(true);
       };
-      
+
       img.onerror = () => {
         // Try alternative URL
         const altImg = new Image();
@@ -232,7 +245,7 @@ export class ImagePreloader {
         };
         altImg.src = `https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/${player_id}.png`;
       };
-      
+
       img.src = src;
     });
 
@@ -247,17 +260,19 @@ export class ImagePreloader {
     }
 
     for (const chunk of chunks) {
-      const promises = chunk.map(player => 
+      const promises = chunk.map((player) =>
         this.preloadImage(
           `https://cdn.nba.com/headshots/nba/latest/1040x760/${player.player_id}.png`,
           player.player_id
         )
       );
-      
+
       await Promise.all(promises);
     }
 
-    console.log(`🖼️ Preloaded ${this.preloadedImages.size} player images, ${this.failedImages.size} failed`);
+    console.log(
+      `🖼️ Preloaded ${this.preloadedImages.size} player images, ${this.failedImages.size} failed`
+    );
   }
 
   isPreloaded(player_id) {
@@ -272,7 +287,7 @@ export class ImagePreloader {
     return {
       preloaded: this.preloadedImages.size,
       failed: this.failedImages.size,
-      loading: this.loadingPromises.size
+      loading: this.loadingPromises.size,
     };
   }
 }
@@ -281,7 +296,7 @@ export class ImagePreloader {
 export class PerformanceMonitor {
   constructor() {
     this.measurements = new Map();
-    this.enabled = process.env.NODE_ENV === 'development';
+    this.enabled = process.env.NODE_ENV === "development";
   }
 
   start(label) {
@@ -291,20 +306,20 @@ export class PerformanceMonitor {
 
   end(label) {
     if (!this.enabled) return null;
-    
+
     const startTime = this.measurements.get(label);
     if (!startTime) return null;
-    
+
     const duration = performance.now() - startTime;
     this.measurements.delete(label);
-    
+
     console.log(`⏱️ ${label}: ${duration.toFixed(2)}ms`);
     return duration;
   }
 
   measure(label, fn) {
     if (!this.enabled) return fn();
-    
+
     this.start(label);
     const result = fn();
     this.end(label);
@@ -313,7 +328,7 @@ export class PerformanceMonitor {
 
   async measureAsync(label, fn) {
     if (!this.enabled) return fn();
-    
+
     this.start(label);
     const result = await fn();
     this.end(label);
@@ -336,14 +351,14 @@ export const warmCaches = () => {
     1610612738, // Celtics
     1610612744, // Warriors
     1610612752, // Knicks
-    1610612748  // Heat
+    1610612748, // Heat
   ];
 
-  popularTeams.forEach(teamId => {
-    teamCache.prefetch(`team_${teamId}`, () => 
-      fetch(`http://localhost:8000/api/team/${teamId}`).then(r => r.json())
+  popularTeams.forEach((teamId) => {
+    teamCache.prefetch(`team_${teamId}`, () =>
+      fetch(`http://localhost:8000/api/team/${teamId}`).then((r) => r.json())
     );
   });
 
-  console.log('🔥 Cache warming initiated for popular teams');
+  console.log("🔥 Cache warming initiated for popular teams");
 };

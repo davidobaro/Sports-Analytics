@@ -1,5 +1,5 @@
 import React from "react";
-import TeamCard from "./TeamCard";
+import TeamNavCard from "./TeamNavCard";
 
 const DivisionSection = ({
   title,
@@ -21,7 +21,7 @@ const DivisionSection = ({
       </h3>
       <div className="grid grid-cols-2 gap-3">
         {filteredTeams.map((team) => (
-          <TeamCard key={team.id} team={team} />
+          <TeamNavCard key={team.id} team={team} />
         ))}
       </div>
     </div>

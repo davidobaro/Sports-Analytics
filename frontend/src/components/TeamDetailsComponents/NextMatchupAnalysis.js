@@ -93,9 +93,7 @@ const NextMatchupAnalysis = ({
                 </div>
                 <div className="font-mono text-xs text-gray-500">
                   {nextMatchup?.opponentData
-                    ? `${25 + Math.floor(Math.random() * 30)}-${
-                        10 + Math.floor(Math.random() * 25)
-                      }`
+                    ? "N/A"
                     : "48-17"}
                 </div>
               </div>

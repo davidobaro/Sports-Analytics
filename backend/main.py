@@ -45,6 +45,9 @@ from nba_api.stats.endpoints import (
 )
 from nba_api.stats.static import teams, players
 
+# Import hardcoded team database
+from nba_teams_database import NBA_TEAMS_DATA
+
 # ML imports
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
@@ -174,83 +177,40 @@ async def root():
 
 @app.get("/api/teams")
 async def get_all_teams():
-    """Get all NBA teams"""
+    """Get all NBA teams using hardcoded team names"""
     try:
-        if not teams_cache:
-            return JSONResponse(
-                status_code=500,
-                content={"error": "Teams data not loaded"}
-            )
+        # Use hardcoded team data to ensure correct team names
+        teams_list = []
+        for team_id, team_data in NBA_TEAMS_DATA.items():
+            basic_info = team_data["basic_info"]
+            teams_list.append({
+                "id": team_id,
+                "full_name": basic_info["full_name"],
+                "abbreviation": basic_info["abbreviation"], 
+                "city": basic_info["city"],
+                "nickname": basic_info["nickname"]
+            })
+        
+        # Sort by full name for consistency
+        teams_list.sort(key=lambda x: x["full_name"])
         
         return {
-            "teams": teams_cache,
-            "count": len(teams_cache)
+            "teams": teams_list,
+            "count": len(teams_list)
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/live-games")
-async def get_live_games():
-    """Get today's NBA games with live scores"""
-    try:
-        today = date.today().strftime("%m/%d/%Y")
-        scoreboard_data = scoreboard.Scoreboard(game_date=today)
-        
-        games = scoreboard_data.get_data_frames()[0]  # GameHeader
-        line_score = scoreboard_data.get_data_frames()[1]  # LineScore
-        
-        live_games = []
-        for _, game in games.iterrows():
-            game_id = game['GAME_ID']
-            
-            # Get team scores from line score
-            game_scores = line_score[line_score['GAME_ID'] == game_id]
-            
-            home_team_score = 0
-            away_team_score = 0
-            
-            if not game_scores.empty:
-                home_team_score = game_scores[game_scores['TEAM_ID'] == game['HOME_TEAM_ID']]['PTS'].iloc[0] if len(game_scores[game_scores['TEAM_ID'] == game['HOME_TEAM_ID']]) > 0 else 0
-                away_team_score = game_scores[game_scores['TEAM_ID'] == game['VISITOR_TEAM_ID']]['PTS'].iloc[0] if len(game_scores[game_scores['TEAM_ID'] == game['VISITOR_TEAM_ID']]) > 0 else 0
-            
-            live_games.append({
-                "game_id": game_id,
-                "home_team": game['HOME_TEAM_ID'],
-                "away_team": game['VISITOR_TEAM_ID'], 
-                "home_score": int(home_team_score) if pd.notna(home_team_score) else 0,
-                "away_score": int(away_team_score) if pd.notna(away_team_score) else 0,
-                "game_status": game['GAME_STATUS_TEXT'],
-                "game_time": game['GAME_DATE_EST']
-            })
-        
-        return {"games": live_games, "date": today}
-        
-    except Exception as e:
-        # Return mock data if API fails
-        return {
-            "games": [
-                {
-                    "game_id": 1,
-                    "home_team": "Lakers", 
-                    "away_team": "Warriors",
-                    "home_score": 108,
-                    "away_score": 112,
-                    "game_status": "Final",
-                    "game_time": "2025-06-10T20:00:00"
-                },
-                {
-                    "game_id": 2,
-                    "home_team": "Celtics",
-                    "away_team": "Heat", 
-                    "home_score": 95,
-                    "away_score": 89,
-                    "game_status": "Q3 8:42",
-                    "game_time": "2025-06-10T20:30:00"
-                }
-            ],
-            "date": date.today().strftime("%m/%d/%Y"),
-            "note": "Using mock data - NBA API may be rate limited"
-        }
+# SUSPENDED: Live games API endpoint
+# @app.get("/api/live-games")
+# async def get_live_games():
+#     """Get today's NBA games with live scores - SUSPENDED"""
+#     # API calls suspended as requested
+#     return {
+#         "games": [],
+#         "date": date.today().strftime("%m/%d/%Y"),
+#         "note": "Live games API suspended"
+#     }
 
 @app.get("/api/standings")
 async def get_league_standings():
@@ -288,20 +248,15 @@ async def get_league_standings():
 
 @app.get("/api/team/{team_id}")
 async def get_team_details(team_id: int, include_player_stats: bool = False):
-    """Get detailed information for a specific team using only NBA API data"""
+    """Get detailed information for a specific team with hardcoded names but real NBA API stats"""
     try:
-        # Get basic team info from NBA teams static data
-        nba_teams = teams.get_teams()
-        team_info = None
-        for team in nba_teams:
-            if team['id'] == team_id:
-                team_info = team
-                break
-        
-        if not team_info:
+        # Get basic team info from our hardcoded database for correct names
+        if team_id not in NBA_TEAMS_DATA:
             raise HTTPException(status_code=404, detail="Team not found")
         
-        # Initialize team data with basic info only
+        team_info = NBA_TEAMS_DATA[team_id]["basic_info"]
+        
+        # Initialize team data with hardcoded basic info
         team_data = {
             "basic_info": {
                 "id": team_id,
@@ -316,13 +271,11 @@ async def get_team_details(team_id: int, include_player_stats: bool = False):
         # Try to add real team stats from NBA API
         try:
             team_stats_data = teamdashboardbygeneralsplits.TeamDashboardByGeneralSplits(team_id=team_id)
-            stats_df = team_stats_data.get_data_frames()[0]  # OverallTeamDashboard
+            team_stats_df = team_stats_data.get_data_frames()[0]
             
-            if not stats_df.empty:
-                team_stats = stats_df.iloc[0]
-                
-                # Enhanced team statistics (only real NBA API data)
-                games_played = int(team_stats['GP']) if pd.notna(team_stats['GP']) else None
+            if not team_stats_df.empty:
+                team_stats = team_stats_df.iloc[0]
+                games_played = int(team_stats['GP']) if pd.notna(team_stats['GP']) else 0
                 
                 if games_played:  # Only proceed if we have real data
                     enhanced_stats = {
@@ -401,7 +354,7 @@ async def get_team_details(team_id: int, include_player_stats: bool = False):
                         "school": str(player['SCHOOL']) if pd.notna(player['SCHOOL']) else "N/A"
                     }
                     
-                    # Add player statistics if requested with optimized batching
+                    # Add player statistics if requested
                     if include_player_stats and player_data["player_id"]:
                         try:
                             player_stats = playerdashboardbyyearoveryear.PlayerDashboardByYearOverYear(
@@ -443,11 +396,13 @@ async def get_team_details(team_id: int, include_player_stats: bool = False):
             team_data["roster"] = []  # Ensure roster exists as empty array
             team_data["roster_count"] = 0
         
-        return team_data
+        return convert_numpy_types(team_data)
         
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Error fetching team data for {team_id}: {e}")
-        raise HTTPException(status_code=500, detail="Could not fetch team data from NBA API")
+        raise HTTPException(status_code=500, detail="Error fetching team data")
 
 @app.get("/api/player/{player_id}")
 async def get_player_details(player_id: int):
@@ -598,34 +553,15 @@ async def predict_player_stats(player_id: int):
             "note": "Using mock predictions - player data may be unavailable"
         }
 
-@app.get("/api/news")
-async def get_nba_news():
-    """Get latest NBA news (mock for now)"""
-    return {
-        "articles": [
-            {
-                "title": "MVP Race Intensifies as Season Enters Final Stretch",
-                "summary": "Three players emerge as frontrunners for the Most Valuable Player award",
-                "published_at": "2025-06-10T10:00:00Z",
-                "source": "ESPN",
-                "url": "#"
-            },
-            {
-                "title": "Trade Deadline Moves Reshape Championship Odds",
-                "summary": "Recent trades have significantly impacted the playoff picture",
-                "published_at": "2025-06-10T08:30:00Z", 
-                "source": "The Athletic",
-                "url": "#"
-            },
-            {
-                "title": "Rookie of the Year Battle Heating Up",
-                "summary": "Close competition between top rookies for the prestigious award",
-                "published_at": "2025-06-10T07:15:00Z",
-                "source": "NBA.com", 
-                "url": "#"
-            }
-        ]
-    }
+# SUSPENDED: News API endpoint
+# @app.get("/api/news")
+# async def get_nba_news():
+#     """Get latest NBA news - SUSPENDED"""
+#     # API calls suspended as requested
+#     return {
+#         "articles": [],
+#         "note": "News API suspended"
+#     }
 
 @app.get("/api/nba-teams")
 async def get_nba_teams():

@@ -7,20 +7,66 @@ import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import LiveGamesBar from "./components/LiveGamesBar";
 import Dashboard from "./pages/Dashboard";
-// Lazy load optimized components for better performance
-const TeamDetails = React.lazy(() => import("./pages/TeamDetailsOptimized"));
+import "./index.css";
+
+// Fallback teams data - basic team info only (no performance tiers)
+const FALLBACK_TEAMS = [
+  // Eastern Conference - Atlantic
+  { id: 1610612738, full_name: "Boston Celtics", abbreviation: "BOS", city: "Boston", nickname: "Celtics", conference: "Eastern", division: "Atlantic", championships: 17 },
+  { id: 1610612751, full_name: "Brooklyn Nets", abbreviation: "BRK", city: "Brooklyn", nickname: "Nets", conference: "Eastern", division: "Atlantic", championships: 0 },
+  { id: 1610612752, full_name: "New York Knicks", abbreviation: "NYK", city: "New York", nickname: "Knicks", conference: "Eastern", division: "Atlantic", championships: 2 },
+  { id: 1610612755, full_name: "Philadelphia 76ers", abbreviation: "PHI", city: "Philadelphia", nickname: "76ers", conference: "Eastern", division: "Atlantic", championships: 3 },
+  { id: 1610612761, full_name: "Toronto Raptors", abbreviation: "TOR", city: "Toronto", nickname: "Raptors", conference: "Eastern", division: "Atlantic", championships: 1 },
+
+  // Eastern Conference - Central
+  { id: 1610612741, full_name: "Chicago Bulls", abbreviation: "CHI", city: "Chicago", nickname: "Bulls", conference: "Eastern", division: "Central", championships: 6 },
+  { id: 1610612739, full_name: "Cleveland Cavaliers", abbreviation: "CLE", city: "Cleveland", nickname: "Cavaliers", conference: "Eastern", division: "Central", championships: 1 },
+  { id: 1610612765, full_name: "Detroit Pistons", abbreviation: "DET", city: "Detroit", nickname: "Pistons", conference: "Eastern", division: "Central", championships: 3 },
+  { id: 1610612754, full_name: "Indiana Pacers", abbreviation: "IND", city: "Indianapolis", nickname: "Pacers", conference: "Eastern", division: "Central", championships: 0 },
+  { id: 1610612749, full_name: "Milwaukee Bucks", abbreviation: "MIL", city: "Milwaukee", nickname: "Bucks", conference: "Eastern", division: "Central", championships: 2 },
+
+  // Eastern Conference - Southeast
+  { id: 1610612737, full_name: "Atlanta Hawks", abbreviation: "ATL", city: "Atlanta", nickname: "Hawks", conference: "Eastern", division: "Southeast", championships: 1 },
+  { id: 1610612766, full_name: "Charlotte Hornets", abbreviation: "CHA", city: "Charlotte", nickname: "Hornets", conference: "Eastern", division: "Southeast", championships: 0 },
+  { id: 1610612748, full_name: "Miami Heat", abbreviation: "MIA", city: "Miami", nickname: "Heat", conference: "Eastern", division: "Southeast", championships: 3 },
+  { id: 1610612753, full_name: "Orlando Magic", abbreviation: "ORL", city: "Orlando", nickname: "Magic", conference: "Eastern", division: "Southeast", championships: 0 },
+  { id: 1610612764, full_name: "Washington Wizards", abbreviation: "WAS", city: "Washington", nickname: "Wizards", conference: "Eastern", division: "Southeast", championships: 1 },
+
+  // Western Conference - Northwest
+  { id: 1610612743, full_name: "Denver Nuggets", abbreviation: "DEN", city: "Denver", nickname: "Nuggets", conference: "Western", division: "Northwest", championships: 1 },
+  { id: 1610612750, full_name: "Minnesota Timberwolves", abbreviation: "MIN", city: "Minneapolis", nickname: "Timberwolves", conference: "Western", division: "Northwest", championships: 0 },
+  { id: 1610612760, full_name: "Oklahoma City Thunder", abbreviation: "OKC", city: "Oklahoma City", nickname: "Thunder", conference: "Western", division: "Northwest", championships: 1 },
+  { id: 1610612757, full_name: "Portland Trail Blazers", abbreviation: "POR", city: "Portland", nickname: "Trail Blazers", conference: "Western", division: "Northwest", championships: 1 },
+  { id: 1610612762, full_name: "Utah Jazz", abbreviation: "UTA", city: "Salt Lake City", nickname: "Jazz", conference: "Western", division: "Northwest", championships: 0 },
+
+  // Western Conference - Pacific
+  { id: 1610612744, full_name: "Golden State Warriors", abbreviation: "GSW", city: "San Francisco", nickname: "Warriors", conference: "Western", division: "Pacific", championships: 7 },
+  { id: 1610612746, full_name: "LA Clippers", abbreviation: "LAC", city: "Los Angeles", nickname: "Clippers", conference: "Western", division: "Pacific", championships: 0 },
+  { id: 1610612747, full_name: "Los Angeles Lakers", abbreviation: "LAL", city: "Los Angeles", nickname: "Lakers", conference: "Western", division: "Pacific", championships: 17 },
+  { id: 1610612756, full_name: "Phoenix Suns", abbreviation: "PHX", city: "Phoenix", nickname: "Suns", conference: "Western", division: "Pacific", championships: 0 },
+  { id: 1610612758, full_name: "Sacramento Kings", abbreviation: "SAC", city: "Sacramento", nickname: "Kings", conference: "Western", division: "Pacific", championships: 1 },
+
+  // Western Conference - Southwest
+  { id: 1610612742, full_name: "Dallas Mavericks", abbreviation: "DAL", city: "Dallas", nickname: "Mavericks", conference: "Western", division: "Southwest", championships: 1 },
+  { id: 1610612745, full_name: "Houston Rockets", abbreviation: "HOU", city: "Houston", nickname: "Rockets", conference: "Western", division: "Southwest", championships: 2 },
+  { id: 1610612763, full_name: "Memphis Grizzlies", abbreviation: "MEM", city: "Memphis", nickname: "Grizzlies", conference: "Western", division: "Southwest", championships: 0 },
+  { id: 1610612740, full_name: "New Orleans Pelicans", abbreviation: "NOP", city: "New Orleans", nickname: "Pelicans", conference: "Western", division: "Southwest", championships: 0 },
+  { id: 1610612759, full_name: "San Antonio Spurs", abbreviation: "SAS", city: "San Antonio", nickname: "Spurs", conference: "Western", division: "Southwest", championships: 5 },
+];
+
+// Lazy load components
+const TeamDetails = React.lazy(() => import("./pages/TeamDetails"));
 const PlayerDetails = React.lazy(() => import("./pages/PlayerDetails"));
-const PlayerList = React.lazy(() => import("./pages/PlayerListOptimized"));
+const PlayerList = React.lazy(() => import("./pages/PlayerList"));
 const AllTeamsDemo = React.lazy(() => import("./pages/AllTeamsDemo"));
 
 // Fallback loading component
 const LoadingSpinner = () => (
   <div className="flex flex-col justify-center items-center min-h-screen bg-gray-900">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mb-4"></div>
-    <p className="font-mono text-cyan-400 text-sm">LOADING_OPTIMIZED_COMPONENTS...</p>
+    <p className="font-mono text-cyan-400 text-sm">LOADING_COMPONENTS...</p>
   </div>
 );
-import "./index.css";
 
 const API_BASE_URL = "http://localhost:8000/api";
 
@@ -45,17 +91,25 @@ function App() {
     try {
       performanceMonitor.start('Initial data fetch');
       
-      const [teamsRes, gamesRes] = await Promise.all([
-        axios.get(`${API_BASE_URL}/teams`),
-        axios.get(`${API_BASE_URL}/live-games`),
-      ]);
-
-      setTeams(teamsRes.data.teams || []);
-      setLiveGames(gamesRes.data.games || []);
+      // Use fallback teams data directly (no API needed for teams)
+      setTeams(FALLBACK_TEAMS);
+      
+      // SUSPENDED: Live games API calls per user request
+      // try {
+      //   const gamesRes = await axios.get(`${API_BASE_URL}/live-games`);
+      //   setLiveGames(gamesRes.data.games || []);
+      // } catch (gamesError) {
+      //   console.log("Live games API not available, using empty array");
+      //   setLiveGames([]);
+      // }
+      setLiveGames([]); // No live games while suspended
       
       performanceMonitor.end('Initial data fetch');
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error in data initialization:", error);
+      // Ensure teams are still set even if there's an error
+      setTeams(FALLBACK_TEAMS);
+      setLiveGames([]);
       performanceMonitor.end('Initial data fetch (error)');
     }
   };
