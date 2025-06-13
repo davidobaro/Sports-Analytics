@@ -92,9 +92,7 @@ const NextMatchupAnalysis = ({
                   {nextMatchup?.opponentData?.fullName || "Boston Celtics"}
                 </div>
                 <div className="font-mono text-xs text-gray-500">
-                  {nextMatchup?.opponentData
-                    ? "N/A"
-                    : "48-17"}
+                  {nextMatchup?.opponentData ? "N/A" : "48-17"}
                 </div>
               </div>
             </div>

@@ -16,7 +16,7 @@ const Navbar = ({ onMenuClick }) => {
     <nav className="bg-gray-900 shadow-2xl border-b border-gray-700 border-l-0">
       {/* Top accent bar */}
       <div className="h-px bg-gray-600"></div>
-      
+
       <div className="px-4">
         <div className="flex justify-between items-center h-16">
           {/* Mobile Menu Button */}
@@ -45,7 +45,7 @@ const Navbar = ({ onMenuClick }) => {
               <span className="text-gray-900 font-mono font-bold text-xl"></span>
             </div>
             <span className="text-2xl font-mono font-bold gradient-text">
-             DADDY_BETS
+              DADDY_BETS
             </span>
           </Link>
 

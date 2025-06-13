@@ -15,13 +15,13 @@ const Sidebar = ({ teams }) => {
       }`}
     >
       {/* Top accent bar - removed to make flush with navbar */}
-      
+
       {/* Sidebar Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800">
         {!isCollapsed && (
           <div className="flex items-center">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center mr-2 bg-gray-800 border border-gray-600">
-              <img 
+              <img
                 src="https://upload.wikimedia.org/wikipedia/en/thumb/0/03/National_Basketball_Association_logo.svg/1200px-National_Basketball_Association_logo.svg.png"
                 alt="NBA Logo"
                 className="w-6 h-6 object-contain filter brightness-0 invert"
@@ -36,14 +36,16 @@ const Sidebar = ({ teams }) => {
                   }
                 }}
               />
-              <div 
+              <div
                 className="w-8 h-8 bg-gradient-to-br from-green-400 to-cyan-400 rounded-lg flex items-center justify-center text-gray-900 text-sm font-mono font-bold"
                 style={{ display: "none" }}
               >
                 NBA
               </div>
             </div>
-            <span className="text-lg font-mono font-bold text-green-400">TEAMS</span>
+            <span className="text-lg font-mono font-bold text-green-400">
+              TEAMS
+            </span>
           </div>
         )}
         <button
@@ -86,7 +88,11 @@ const Sidebar = ({ teams }) => {
                   }`}
                 >
                   {/* Team Logo/Avatar */}
-                  <div className={`${isCollapsed ? 'w-8 h-8' : 'w-8 h-8'} rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200 overflow-hidden bg-gray-800 border border-gray-600`}>
+                  <div
+                    className={`${
+                      isCollapsed ? "w-8 h-8" : "w-8 h-8"
+                    } rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200 overflow-hidden bg-gray-800 border border-gray-600`}
+                  >
                     <img
                       src={`https://cdn.nba.com/logos/nba/${team.id}/global/L/logo.svg`}
                       alt={`${team.full_name} logo`}
@@ -106,7 +112,11 @@ const Sidebar = ({ teams }) => {
                       }}
                     />
                     <div
-                      className={`${isCollapsed ? 'w-8 h-8' : 'w-8 h-8'} bg-gradient-to-br from-green-400 to-cyan-400 rounded-lg flex items-center justify-center text-gray-900 ${isCollapsed ? 'text-xs' : 'text-xs'} font-mono font-bold`}
+                      className={`${
+                        isCollapsed ? "w-8 h-8" : "w-8 h-8"
+                      } bg-gradient-to-br from-green-400 to-cyan-400 rounded-lg flex items-center justify-center text-gray-900 ${
+                        isCollapsed ? "text-xs" : "text-xs"
+                      } font-mono font-bold`}
                       style={{ display: "none" }}
                     >
                       {team.abbreviation ||
@@ -119,10 +129,14 @@ const Sidebar = ({ teams }) => {
                   {!isCollapsed && (
                     <div className="flex-1 ml-3">
                       <div className="text-sm font-mono font-bold text-cyan-400 group-hover:text-green-400 transition-colors truncate">
-                        {team.city || team.full_name?.split(' ').slice(0, -1).join(' ') || `City ${index + 1}`}
+                        {team.city ||
+                          team.full_name?.split(" ").slice(0, -1).join(" ") ||
+                          `City ${index + 1}`}
                       </div>
                       <div className="text-sm font-mono font-medium text-gray-400 group-hover:text-gray-300 transition-colors truncate">
-                        {team.nickname || team.full_name?.split(' ').slice(-1)[0] || 'TEAM'}
+                        {team.nickname ||
+                          team.full_name?.split(" ").slice(-1)[0] ||
+                          "TEAM"}
                       </div>
                     </div>
                   )}

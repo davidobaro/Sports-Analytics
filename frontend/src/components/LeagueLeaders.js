@@ -4,7 +4,7 @@ const LeagueLeaders = () => {
   const [leaders, setLeaders] = useState({
     scoring: [],
     rebounding: [],
-    assists: []
+    assists: [],
   });
   const [selectedCategory, setSelectedCategory] = useState("scoring");
   const [loading, setLoading] = useState(true);
@@ -23,23 +23,38 @@ const LeagueLeaders = () => {
           { name: "Luka Dončić", team: "DAL", value: "33.2", rank: 1 },
           { name: "Joel Embiid", team: "PHI", value: "32.1", rank: 2 },
           { name: "Jayson Tatum", team: "BOS", value: "31.4", rank: 3 },
-          { name: "Shai Gilgeous-Alexander", team: "OKC", value: "30.8", rank: 4 },
-          { name: "Giannis Antetokounmpo", team: "MIL", value: "30.4", rank: 5 }
+          {
+            name: "Shai Gilgeous-Alexander",
+            team: "OKC",
+            value: "30.8",
+            rank: 4,
+          },
+          {
+            name: "Giannis Antetokounmpo",
+            team: "MIL",
+            value: "30.4",
+            rank: 5,
+          },
         ],
         rebounding: [
           { name: "Domantas Sabonis", team: "SAC", value: "12.4", rank: 1 },
           { name: "Nikola Jokić", team: "DEN", value: "12.1", rank: 2 },
-          { name: "Giannis Antetokounmpo", team: "MIL", value: "11.8", rank: 3 },
+          {
+            name: "Giannis Antetokounmpo",
+            team: "MIL",
+            value: "11.8",
+            rank: 3,
+          },
           { name: "Joel Embiid", team: "PHI", value: "11.2", rank: 4 },
-          { name: "Rudy Gobert", team: "MIN", value: "11.0", rank: 5 }
+          { name: "Rudy Gobert", team: "MIN", value: "11.0", rank: 5 },
         ],
         assists: [
           { name: "Tyrese Haliburton", team: "IND", value: "10.9", rank: 1 },
           { name: "Trae Young", team: "ATL", value: "10.7", rank: 2 },
           { name: "Chris Paul", team: "PHX", value: "9.2", rank: 3 },
           { name: "Nikola Jokić", team: "DEN", value: "9.0", rank: 4 },
-          { name: "Luka Dončić", team: "DAL", value: "8.9", rank: 5 }
-        ]
+          { name: "Luka Dončić", team: "DAL", value: "8.9", rank: 5 },
+        ],
       });
     } catch (error) {
       console.error("Error fetching league leaders:", error);
@@ -51,7 +66,7 @@ const LeagueLeaders = () => {
   const categories = [
     { key: "scoring", label: "SCORING", unit: "PPG", icon: "🏀" },
     { key: "rebounding", label: "REBOUNDING", unit: "RPG", icon: "🔄" },
-    { key: "assists", label: "ASSISTS", unit: "APG", icon: "🎯" }
+    { key: "assists", label: "ASSISTS", unit: "APG", icon: "🎯" },
   ];
 
   if (loading) {
@@ -107,14 +122,14 @@ const LeagueLeaders = () => {
         {leaders[selectedCategory]?.map((player, index) => {
           // Check if this is the MVP (Shai Gilgeous-Alexander)
           const isMVP = player.name === "Shai Gilgeous-Alexander";
-          
+
           return (
             <div
               key={index}
               className={`flex items-center justify-between p-3 rounded border transition-all duration-300 relative ${
-                isMVP 
-                  ? 'bg-gradient-to-r from-purple-900/60 via-purple-700/70 to-purple-900/60 border-purple-400/80 shadow-lg shadow-purple-500/40 hover:shadow-xl hover:shadow-purple-400/60 hover:scale-[1.02] backdrop-blur-sm'
-                  : 'bg-gray-800 border-gray-600 hover:border-gray-500 transition-colors duration-150'
+                isMVP
+                  ? "bg-gradient-to-r from-purple-900/60 via-purple-700/70 to-purple-900/60 border-purple-400/80 shadow-lg shadow-purple-500/40 hover:shadow-xl hover:shadow-purple-400/60 hover:scale-[1.02] backdrop-blur-sm"
+                  : "bg-gray-800 border-gray-600 hover:border-gray-500 transition-colors duration-150"
               }`}
             >
               {/* MVP Badge */}
@@ -125,39 +140,52 @@ const LeagueLeaders = () => {
                   </div>
                 </div>
               )}
-              
+
               <div className="flex items-center space-x-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-mono font-bold text-sm ${
-                  index === 0 ? 'bg-yellow-500 text-gray-900' :
-                  index === 1 ? 'bg-gray-400 text-gray-900' :
-                  index === 2 ? 'bg-yellow-600 text-gray-900' :
-                  'bg-gray-700 text-gray-300'
-                }`}>
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-mono font-bold text-sm ${
+                    index === 0
+                      ? "bg-yellow-500 text-gray-900"
+                      : index === 1
+                      ? "bg-gray-400 text-gray-900"
+                      : index === 2
+                      ? "bg-yellow-600 text-gray-900"
+                      : "bg-gray-700 text-gray-300"
+                  }`}
+                >
                   {player.rank}
                 </div>
                 <div>
-                  <div className={`text-sm font-mono font-semibold ${
-                    isMVP ? 'text-white drop-shadow-lg' : 'text-cyan-400'
-                  }`}>
+                  <div
+                    className={`text-sm font-mono font-semibold ${
+                      isMVP ? "text-white drop-shadow-lg" : "text-cyan-400"
+                    }`}
+                  >
                     {player.name}
                   </div>
-                  <div className={`text-xs font-mono ${
-                    isMVP ? 'text-purple-200' : 'text-gray-400'
-                  }`}>
+                  <div
+                    className={`text-xs font-mono ${
+                      isMVP ? "text-purple-200" : "text-gray-400"
+                    }`}
+                  >
                     {player.team}
                   </div>
                 </div>
               </div>
               <div className="text-right">
-                <div className={`text-lg font-mono font-bold ${
-                  isMVP ? 'text-purple-300 drop-shadow-lg' : 'text-green-400'
-                }`}>
+                <div
+                  className={`text-lg font-mono font-bold ${
+                    isMVP ? "text-purple-300 drop-shadow-lg" : "text-green-400"
+                  }`}
+                >
                   {player.value}
                 </div>
-                <div className={`text-xs font-mono ${
-                  isMVP ? 'text-purple-200' : 'text-gray-400'
-                }`}>
-                  {categories.find(c => c.key === selectedCategory)?.unit}
+                <div
+                  className={`text-xs font-mono ${
+                    isMVP ? "text-purple-200" : "text-gray-400"
+                  }`}
+                >
+                  {categories.find((c) => c.key === selectedCategory)?.unit}
                 </div>
               </div>
             </div>

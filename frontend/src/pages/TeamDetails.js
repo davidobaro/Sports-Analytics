@@ -15,46 +15,316 @@ import {
 // Fallback teams data - same as AllTeamsDemo
 const FALLBACK_TEAMS = [
   // Eastern Conference - Atlantic
-  { id: 1610612738, full_name: "Boston Celtics", abbreviation: "BOS", city: "Boston", nickname: "Celtics", conference: "Eastern", division: "Atlantic", championships: 17 },
-  { id: 1610612751, full_name: "Brooklyn Nets", abbreviation: "BRK", city: "Brooklyn", nickname: "Nets", conference: "Eastern", division: "Atlantic", championships: 0 },
-  { id: 1610612752, full_name: "New York Knicks", abbreviation: "NYK", city: "New York", nickname: "Knicks", conference: "Eastern", division: "Atlantic", championships: 2 },
-  { id: 1610612755, full_name: "Philadelphia 76ers", abbreviation: "PHI", city: "Philadelphia", nickname: "76ers", conference: "Eastern", division: "Atlantic", championships: 3 },
-  { id: 1610612761, full_name: "Toronto Raptors", abbreviation: "TOR", city: "Toronto", nickname: "Raptors", conference: "Eastern", division: "Atlantic", championships: 1 },
+  {
+    id: 1610612738,
+    full_name: "Boston Celtics",
+    abbreviation: "BOS",
+    city: "Boston",
+    nickname: "Celtics",
+    conference: "Eastern",
+    division: "Atlantic",
+    championships: 17,
+  },
+  {
+    id: 1610612751,
+    full_name: "Brooklyn Nets",
+    abbreviation: "BRK",
+    city: "Brooklyn",
+    nickname: "Nets",
+    conference: "Eastern",
+    division: "Atlantic",
+    championships: 0,
+  },
+  {
+    id: 1610612752,
+    full_name: "New York Knicks",
+    abbreviation: "NYK",
+    city: "New York",
+    nickname: "Knicks",
+    conference: "Eastern",
+    division: "Atlantic",
+    championships: 2,
+  },
+  {
+    id: 1610612755,
+    full_name: "Philadelphia 76ers",
+    abbreviation: "PHI",
+    city: "Philadelphia",
+    nickname: "76ers",
+    conference: "Eastern",
+    division: "Atlantic",
+    championships: 3,
+  },
+  {
+    id: 1610612761,
+    full_name: "Toronto Raptors",
+    abbreviation: "TOR",
+    city: "Toronto",
+    nickname: "Raptors",
+    conference: "Eastern",
+    division: "Atlantic",
+    championships: 1,
+  },
 
   // Eastern Conference - Central
-  { id: 1610612741, full_name: "Chicago Bulls", abbreviation: "CHI", city: "Chicago", nickname: "Bulls", conference: "Eastern", division: "Central", championships: 6 },
-  { id: 1610612739, full_name: "Cleveland Cavaliers", abbreviation: "CLE", city: "Cleveland", nickname: "Cavaliers", conference: "Eastern", division: "Central", championships: 1 },
-  { id: 1610612765, full_name: "Detroit Pistons", abbreviation: "DET", city: "Detroit", nickname: "Pistons", conference: "Eastern", division: "Central", championships: 3 },
-  { id: 1610612754, full_name: "Indiana Pacers", abbreviation: "IND", city: "Indianapolis", nickname: "Pacers", conference: "Eastern", division: "Central", championships: 0 },
-  { id: 1610612749, full_name: "Milwaukee Bucks", abbreviation: "MIL", city: "Milwaukee", nickname: "Bucks", conference: "Eastern", division: "Central", championships: 2 },
+  {
+    id: 1610612741,
+    full_name: "Chicago Bulls",
+    abbreviation: "CHI",
+    city: "Chicago",
+    nickname: "Bulls",
+    conference: "Eastern",
+    division: "Central",
+    championships: 6,
+  },
+  {
+    id: 1610612739,
+    full_name: "Cleveland Cavaliers",
+    abbreviation: "CLE",
+    city: "Cleveland",
+    nickname: "Cavaliers",
+    conference: "Eastern",
+    division: "Central",
+    championships: 1,
+  },
+  {
+    id: 1610612765,
+    full_name: "Detroit Pistons",
+    abbreviation: "DET",
+    city: "Detroit",
+    nickname: "Pistons",
+    conference: "Eastern",
+    division: "Central",
+    championships: 3,
+  },
+  {
+    id: 1610612754,
+    full_name: "Indiana Pacers",
+    abbreviation: "IND",
+    city: "Indianapolis",
+    nickname: "Pacers",
+    conference: "Eastern",
+    division: "Central",
+    championships: 0,
+  },
+  {
+    id: 1610612749,
+    full_name: "Milwaukee Bucks",
+    abbreviation: "MIL",
+    city: "Milwaukee",
+    nickname: "Bucks",
+    conference: "Eastern",
+    division: "Central",
+    championships: 2,
+  },
 
   // Eastern Conference - Southeast
-  { id: 1610612737, full_name: "Atlanta Hawks", abbreviation: "ATL", city: "Atlanta", nickname: "Hawks", conference: "Eastern", division: "Southeast", championships: 1 },
-  { id: 1610612766, full_name: "Charlotte Hornets", abbreviation: "CHA", city: "Charlotte", nickname: "Hornets", conference: "Eastern", division: "Southeast", championships: 0 },
-  { id: 1610612748, full_name: "Miami Heat", abbreviation: "MIA", city: "Miami", nickname: "Heat", conference: "Eastern", division: "Southeast", championships: 3 },
-  { id: 1610612753, full_name: "Orlando Magic", abbreviation: "ORL", city: "Orlando", nickname: "Magic", conference: "Eastern", division: "Southeast", championships: 0 },
-  { id: 1610612764, full_name: "Washington Wizards", abbreviation: "WAS", city: "Washington", nickname: "Wizards", conference: "Eastern", division: "Southeast", championships: 1 },
+  {
+    id: 1610612737,
+    full_name: "Atlanta Hawks",
+    abbreviation: "ATL",
+    city: "Atlanta",
+    nickname: "Hawks",
+    conference: "Eastern",
+    division: "Southeast",
+    championships: 1,
+  },
+  {
+    id: 1610612766,
+    full_name: "Charlotte Hornets",
+    abbreviation: "CHA",
+    city: "Charlotte",
+    nickname: "Hornets",
+    conference: "Eastern",
+    division: "Southeast",
+    championships: 0,
+  },
+  {
+    id: 1610612748,
+    full_name: "Miami Heat",
+    abbreviation: "MIA",
+    city: "Miami",
+    nickname: "Heat",
+    conference: "Eastern",
+    division: "Southeast",
+    championships: 3,
+  },
+  {
+    id: 1610612753,
+    full_name: "Orlando Magic",
+    abbreviation: "ORL",
+    city: "Orlando",
+    nickname: "Magic",
+    conference: "Eastern",
+    division: "Southeast",
+    championships: 0,
+  },
+  {
+    id: 1610612764,
+    full_name: "Washington Wizards",
+    abbreviation: "WAS",
+    city: "Washington",
+    nickname: "Wizards",
+    conference: "Eastern",
+    division: "Southeast",
+    championships: 1,
+  },
 
   // Western Conference - Northwest
-  { id: 1610612743, full_name: "Denver Nuggets", abbreviation: "DEN", city: "Denver", nickname: "Nuggets", conference: "Western", division: "Northwest", championships: 1 },
-  { id: 1610612750, full_name: "Minnesota Timberwolves", abbreviation: "MIN", city: "Minneapolis", nickname: "Timberwolves", conference: "Western", division: "Northwest", championships: 0 },
-  { id: 1610612760, full_name: "Oklahoma City Thunder", abbreviation: "OKC", city: "Oklahoma City", nickname: "Thunder", conference: "Western", division: "Northwest", championships: 1 },
-  { id: 1610612757, full_name: "Portland Trail Blazers", abbreviation: "POR", city: "Portland", nickname: "Trail Blazers", conference: "Western", division: "Northwest", championships: 1 },
-  { id: 1610612762, full_name: "Utah Jazz", abbreviation: "UTA", city: "Salt Lake City", nickname: "Jazz", conference: "Western", division: "Northwest", championships: 0 },
+  {
+    id: 1610612743,
+    full_name: "Denver Nuggets",
+    abbreviation: "DEN",
+    city: "Denver",
+    nickname: "Nuggets",
+    conference: "Western",
+    division: "Northwest",
+    championships: 1,
+  },
+  {
+    id: 1610612750,
+    full_name: "Minnesota Timberwolves",
+    abbreviation: "MIN",
+    city: "Minneapolis",
+    nickname: "Timberwolves",
+    conference: "Western",
+    division: "Northwest",
+    championships: 0,
+  },
+  {
+    id: 1610612760,
+    full_name: "Oklahoma City Thunder",
+    abbreviation: "OKC",
+    city: "Oklahoma City",
+    nickname: "Thunder",
+    conference: "Western",
+    division: "Northwest",
+    championships: 1,
+  },
+  {
+    id: 1610612757,
+    full_name: "Portland Trail Blazers",
+    abbreviation: "POR",
+    city: "Portland",
+    nickname: "Trail Blazers",
+    conference: "Western",
+    division: "Northwest",
+    championships: 1,
+  },
+  {
+    id: 1610612762,
+    full_name: "Utah Jazz",
+    abbreviation: "UTA",
+    city: "Salt Lake City",
+    nickname: "Jazz",
+    conference: "Western",
+    division: "Northwest",
+    championships: 0,
+  },
 
   // Western Conference - Pacific
-  { id: 1610612744, full_name: "Golden State Warriors", abbreviation: "GSW", city: "San Francisco", nickname: "Warriors", conference: "Western", division: "Pacific", championships: 7 },
-  { id: 1610612746, full_name: "LA Clippers", abbreviation: "LAC", city: "Los Angeles", nickname: "Clippers", conference: "Western", division: "Pacific", championships: 0 },
-  { id: 1610612747, full_name: "Los Angeles Lakers", abbreviation: "LAL", city: "Los Angeles", nickname: "Lakers", conference: "Western", division: "Pacific", championships: 17 },
-  { id: 1610612756, full_name: "Phoenix Suns", abbreviation: "PHX", city: "Phoenix", nickname: "Suns", conference: "Western", division: "Pacific", championships: 0 },
-  { id: 1610612758, full_name: "Sacramento Kings", abbreviation: "SAC", city: "Sacramento", nickname: "Kings", conference: "Western", division: "Pacific", championships: 1 },
+  {
+    id: 1610612744,
+    full_name: "Golden State Warriors",
+    abbreviation: "GSW",
+    city: "San Francisco",
+    nickname: "Warriors",
+    conference: "Western",
+    division: "Pacific",
+    championships: 7,
+  },
+  {
+    id: 1610612746,
+    full_name: "LA Clippers",
+    abbreviation: "LAC",
+    city: "Los Angeles",
+    nickname: "Clippers",
+    conference: "Western",
+    division: "Pacific",
+    championships: 0,
+  },
+  {
+    id: 1610612747,
+    full_name: "Los Angeles Lakers",
+    abbreviation: "LAL",
+    city: "Los Angeles",
+    nickname: "Lakers",
+    conference: "Western",
+    division: "Pacific",
+    championships: 17,
+  },
+  {
+    id: 1610612756,
+    full_name: "Phoenix Suns",
+    abbreviation: "PHX",
+    city: "Phoenix",
+    nickname: "Suns",
+    conference: "Western",
+    division: "Pacific",
+    championships: 0,
+  },
+  {
+    id: 1610612758,
+    full_name: "Sacramento Kings",
+    abbreviation: "SAC",
+    city: "Sacramento",
+    nickname: "Kings",
+    conference: "Western",
+    division: "Pacific",
+    championships: 1,
+  },
 
   // Western Conference - Southwest
-  { id: 1610612742, full_name: "Dallas Mavericks", abbreviation: "DAL", city: "Dallas", nickname: "Mavericks", conference: "Western", division: "Southwest", championships: 1 },
-  { id: 1610612745, full_name: "Houston Rockets", abbreviation: "HOU", city: "Houston", nickname: "Rockets", conference: "Western", division: "Southwest", championships: 2 },
-  { id: 1610612763, full_name: "Memphis Grizzlies", abbreviation: "MEM", city: "Memphis", nickname: "Grizzlies", conference: "Western", division: "Southwest", championships: 0 },
-  { id: 1610612740, full_name: "New Orleans Pelicans", abbreviation: "NOP", city: "New Orleans", nickname: "Pelicans", conference: "Western", division: "Southwest", championships: 0 },
-  { id: 1610612759, full_name: "San Antonio Spurs", abbreviation: "SAS", city: "San Antonio", nickname: "Spurs", conference: "Western", division: "Southwest", championships: 5 },
+  {
+    id: 1610612742,
+    full_name: "Dallas Mavericks",
+    abbreviation: "DAL",
+    city: "Dallas",
+    nickname: "Mavericks",
+    conference: "Western",
+    division: "Southwest",
+    championships: 1,
+  },
+  {
+    id: 1610612745,
+    full_name: "Houston Rockets",
+    abbreviation: "HOU",
+    city: "Houston",
+    nickname: "Rockets",
+    conference: "Western",
+    division: "Southwest",
+    championships: 2,
+  },
+  {
+    id: 1610612763,
+    full_name: "Memphis Grizzlies",
+    abbreviation: "MEM",
+    city: "Memphis",
+    nickname: "Grizzlies",
+    conference: "Western",
+    division: "Southwest",
+    championships: 0,
+  },
+  {
+    id: 1610612740,
+    full_name: "New Orleans Pelicans",
+    abbreviation: "NOP",
+    city: "New Orleans",
+    nickname: "Pelicans",
+    conference: "Western",
+    division: "Southwest",
+    championships: 0,
+  },
+  {
+    id: 1610612759,
+    full_name: "San Antonio Spurs",
+    abbreviation: "SAS",
+    city: "San Antonio",
+    nickname: "Spurs",
+    conference: "Western",
+    division: "Southwest",
+    championships: 5,
+  },
 ];
 
 // Simple cache for team data
@@ -79,8 +349,8 @@ const TeamDetails = () => {
       setLoading(true);
 
       // Find team in fallback data first (instant basic info)
-      const team = FALLBACK_TEAMS.find(t => t.id.toString() === teamId);
-      
+      const team = FALLBACK_TEAMS.find((t) => t.id.toString() === teamId);
+
       if (team) {
         // Set basic team info immediately
         const basicTeamData = {
@@ -92,10 +362,10 @@ const TeamDetails = () => {
             nickname: team.nickname,
             conference: team.conference,
             division: team.division,
-            championships: team.championships
+            championships: team.championships,
           },
           stats: null, // Stats will be loaded separately
-          recent_games: null
+          recent_games: null,
         };
 
         setTeamData(basicTeamData);
@@ -107,16 +377,18 @@ const TeamDetails = () => {
 
         try {
           // Simulate brief loading delay for UX
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise((resolve) => setTimeout(resolve, 500));
 
           // Try to fetch real NBA stats from API using the correct endpoint
-          const response = await fetch(`http://localhost:8000/api/team/${teamId}`);
-          
+          const response = await fetch(
+            `http://localhost:8000/api/team/${teamId}`
+          );
+
           let finalStats;
           if (response.ok) {
             const apiData = await response.json();
             const seasonStats = apiData.season_stats;
-            
+
             // Map the API data structure to our expected format
             finalStats = {
               wins: seasonStats?.wins || 0,
@@ -125,11 +397,14 @@ const TeamDetails = () => {
               points_per_game: seasonStats?.offensive_stats?.avg_points || 0,
               opponent_points_per_game: 0, // Not available in current API
               field_goal_percentage: seasonStats?.offensive_stats?.fg_pct || 0,
-              three_point_percentage: seasonStats?.offensive_stats?.three_pt_pct || 0,
-              free_throw_percentage: seasonStats?.offensive_stats?.free_throw_pct || 0,
-              rebounds_per_game: seasonStats?.defensive_stats?.total_rebounds || 0,
+              three_point_percentage:
+                seasonStats?.offensive_stats?.three_pt_pct || 0,
+              free_throw_percentage:
+                seasonStats?.offensive_stats?.free_throw_pct || 0,
+              rebounds_per_game:
+                seasonStats?.defensive_stats?.total_rebounds || 0,
               assists_per_game: seasonStats?.offensive_stats?.assists || 0,
-              steals_per_game: seasonStats?.defensive_stats?.steals || 0
+              steals_per_game: seasonStats?.defensive_stats?.steals || 0,
             };
           } else {
             throw new Error(`API call failed: ${response.status}`);
@@ -139,23 +414,22 @@ const TeamDetails = () => {
           const completeTeamData = {
             ...basicTeamData,
             stats: finalStats,
-            recent_games: [] // No hardcoded games - would come from API if available
+            recent_games: [], // No hardcoded games - would come from API if available
           };
 
           // Cache the complete result
           teamDataCache.set(teamId, completeTeamData);
           setTeamData(completeTeamData);
           setStatsLoading(false);
-
         } catch (error) {
           console.error("API call failed:", error);
           setStatsLoading(false);
           setStatsError(true);
-          
+
           // No fallback stats - show N/A values when API fails
           const noDataStats = {
             wins: "N/A",
-            losses: "N/A", 
+            losses: "N/A",
             win_percentage: "N/A",
             points_per_game: "N/A",
             opponent_points_per_game: "N/A",
@@ -164,13 +438,13 @@ const TeamDetails = () => {
             free_throw_percentage: "N/A",
             rebounds_per_game: "N/A",
             assists_per_game: "N/A",
-            steals_per_game: "N/A"
+            steals_per_game: "N/A",
           };
 
           const noDataTeamData = {
             ...basicTeamData,
             stats: noDataStats,
-            recent_games: [] // No fallback games
+            recent_games: [], // No fallback games
           };
 
           setTeamData(noDataTeamData);
@@ -316,9 +590,9 @@ const TeamDetails = () => {
 
       {/* Team Header and Schedule Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <TeamCard 
-          teamData={teamData} 
-          teamId={teamId} 
+        <TeamCard
+          teamData={teamData}
+          teamId={teamId}
           teamColors={teamColors}
           statsLoading={statsLoading}
           statsError={statsError}

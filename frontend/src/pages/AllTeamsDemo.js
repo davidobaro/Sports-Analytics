@@ -13,10 +13,10 @@ const convertNBATeamsToArray = () => {
     id: TEAM_ABBR_TO_ID[abbreviation], // Use proper NBA team ID
     full_name: teamData.fullName,
     abbreviation: abbreviation,
-    nickname: teamData.fullName.split(' ').pop(), // Extract nickname from full name
+    nickname: teamData.fullName.split(" ").pop(), // Extract nickname from full name
     city: teamData.city,
     conference: teamData.conference,
-    division: teamData.division
+    division: teamData.division,
   }));
 };
 

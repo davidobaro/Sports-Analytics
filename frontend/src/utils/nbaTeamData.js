@@ -199,7 +199,7 @@ export const NBA_TEAMS = {
   },
   GSW: {
     fullName: "Golden State Warriors",
-    city: "San Francisco",
+    city: "Golden State", //this was done for naming purposes, as the team is known as "Golden State Warriors"
     founded: 1946,
     championships: 7,
     colors: {
@@ -608,7 +608,7 @@ export const NBA_TEAMS = {
   },
   UTA: {
     fullName: "Utah Jazz",
-    city: "Salt Lake City",
+    city: "Utah", //this was done for naming purposes, as the team is known as "Utah Jazz"
     founded: 1974,
     championships: 0,
     colors: {

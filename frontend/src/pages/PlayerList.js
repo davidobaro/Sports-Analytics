@@ -27,23 +27,23 @@ const PlayerList = () => {
 
       // First, get basic team info without player stats to avoid total failure
       const basicResponse = await fetch(`${API_BASE_URL}/team/${teamId}`);
-      
+
       if (!basicResponse.ok) {
         throw new Error(`HTTP error! status: ${basicResponse.status}`);
       }
 
       const basicData = await basicResponse.json();
-      
+
       // Set basic team data immediately
       setTeamData({
         ...basicData,
-        roster: [] // Start with empty roster
+        roster: [], // Start with empty roster
       });
       setLoading(false);
 
       // Now try to get player stats separately and more resiliently
       setPlayersLoading(true);
-      
+
       try {
         const playerResponse = await fetch(
           `${API_BASE_URL}/team/${teamId}?include_player_stats=true`
@@ -51,12 +51,12 @@ const PlayerList = () => {
 
         if (playerResponse.ok) {
           const playerData = await playerResponse.json();
-          
+
           // Validate each player's data and filter out problematic ones
           const validPlayers = [];
           const invalidPlayers = [];
-          
-          (playerData.roster || []).forEach(player => {
+
+          (playerData.roster || []).forEach((player) => {
             try {
               // Basic validation - ensure essential fields exist
               if (player && (player.name || player.player_id)) {
@@ -64,28 +64,51 @@ const PlayerList = () => {
                 const sanitizedPlayer = {
                   ...player,
                   stats: {
-                    ppg: typeof player.stats?.ppg === 'number' ? player.stats.ppg : 0,
-                    rpg: typeof player.stats?.rpg === 'number' ? player.stats.rpg : 0,
-                    apg: typeof player.stats?.apg === 'number' ? player.stats.apg : 0,
-                    fg_pct: typeof player.stats?.fg_pct === 'number' ? player.stats.fg_pct : 0,
-                    three_pt_pct: typeof player.stats?.three_pt_pct === 'number' ? player.stats.three_pt_pct : 0,
-                    ...player.stats
-                  }
+                    ppg:
+                      typeof player.stats?.ppg === "number"
+                        ? player.stats.ppg
+                        : 0,
+                    rpg:
+                      typeof player.stats?.rpg === "number"
+                        ? player.stats.rpg
+                        : 0,
+                    apg:
+                      typeof player.stats?.apg === "number"
+                        ? player.stats.apg
+                        : 0,
+                    fg_pct:
+                      typeof player.stats?.fg_pct === "number"
+                        ? player.stats.fg_pct
+                        : 0,
+                    three_pt_pct:
+                      typeof player.stats?.three_pt_pct === "number"
+                        ? player.stats.three_pt_pct
+                        : 0,
+                    ...player.stats,
+                  },
                 };
                 validPlayers.push(sanitizedPlayer);
               } else {
-                invalidPlayers.push(player?.name || `Player ID: ${player?.player_id}` || 'Unknown Player');
+                invalidPlayers.push(
+                  player?.name ||
+                    `Player ID: ${player?.player_id}` ||
+                    "Unknown Player"
+                );
               }
             } catch (playerError) {
-              console.warn('Error processing player:', player, playerError);
-              invalidPlayers.push(player?.name || `Player ID: ${player?.player_id}` || 'Unknown Player');
+              console.warn("Error processing player:", player, playerError);
+              invalidPlayers.push(
+                player?.name ||
+                  `Player ID: ${player?.player_id}` ||
+                  "Unknown Player"
+              );
             }
           });
 
           // Update team data with valid players
           const completeData = {
             ...basicData,
-            roster: validPlayers
+            roster: validPlayers,
           };
 
           // Cache the result
@@ -99,16 +122,17 @@ const PlayerList = () => {
           }
         } else {
           // Player stats API failed, but we still have basic team info
-          console.warn('Player stats API failed, showing team with no roster');
-          setFailedPlayers(['All player data unavailable due to server issues']);
+          console.warn("Player stats API failed, showing team with no roster");
+          setFailedPlayers([
+            "All player data unavailable due to server issues",
+          ]);
         }
       } catch (playerError) {
         console.error("Error fetching player stats:", playerError);
-        setFailedPlayers(['All player data unavailable due to server issues']);
+        setFailedPlayers(["All player data unavailable due to server issues"]);
       } finally {
         setPlayersLoading(false);
       }
-
     } catch (error) {
       console.error("Error fetching team details:", error);
       setTeamData(null);
@@ -256,7 +280,11 @@ const PlayerList = () => {
               <div className="flex items-start space-x-3">
                 <div className="w-5 h-5 text-yellow-400 mt-0.5">
                   <svg fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    <path
+                      fillRule="evenodd"
+                      d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </div>
                 <div className="flex-1">
@@ -264,18 +292,25 @@ const PlayerList = () => {
                     ROSTER_DATA_INCOMPLETE
                   </h3>
                   <p className="text-sm font-mono text-yellow-200 mb-2">
-                    {failedPlayers.length === 1 && failedPlayers[0] === 'All player data unavailable due to server issues'
-                      ? 'Player roster data is currently unavailable due to server issues. Only basic team information is shown.'
-                      : `${failedPlayers.length} player${failedPlayers.length > 1 ? 's have' : ' has'} been omitted from the roster due to data loading issues:`
-                    }
+                    {failedPlayers.length === 1 &&
+                    failedPlayers[0] ===
+                      "All player data unavailable due to server issues"
+                      ? "Player roster data is currently unavailable due to server issues. Only basic team information is shown."
+                      : `${failedPlayers.length} player${
+                          failedPlayers.length > 1 ? "s have" : " has"
+                        } been omitted from the roster due to data loading issues:`}
                   </p>
-                  {failedPlayers.length > 1 || failedPlayers[0] !== 'All player data unavailable due to server issues' ? (
+                  {failedPlayers.length > 1 ||
+                  failedPlayers[0] !==
+                    "All player data unavailable due to server issues" ? (
                     <ul className="text-xs font-mono text-yellow-300 space-y-1">
                       {failedPlayers.slice(0, 5).map((playerName, index) => (
                         <li key={index}>• {playerName}</li>
                       ))}
                       {failedPlayers.length > 5 && (
-                        <li>• ...and {failedPlayers.length - 5} more players</li>
+                        <li>
+                          • ...and {failedPlayers.length - 5} more players
+                        </li>
                       )}
                     </ul>
                   ) : null}
@@ -294,20 +329,33 @@ const PlayerList = () => {
               {playersLoading && (
                 <div className="flex items-center space-x-2 px-3 py-1 bg-gray-800/50 rounded border border-gray-600/50">
                   <div className="flex space-x-1">
-                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                    <div
+                      className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    ></div>
+                    <div
+                      className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    ></div>
+                    <div
+                      className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    ></div>
                   </div>
-                  <span className="text-xs font-mono text-cyan-400">Loading players</span>
+                  <span className="text-xs font-mono text-cyan-400">
+                    Loading players
+                  </span>
                 </div>
               )}
               <div className="text-xs font-mono text-gray-500 px-2 py-1 bg-gray-800 rounded border border-gray-600">
                 {players.length}_PLAYERS
-                {failedPlayers.length > 0 && failedPlayers[0] !== 'All player data unavailable due to server issues' && (
-                  <span className="text-yellow-400 ml-1">
-                    ({failedPlayers.length}_OMITTED)
-                  </span>
-                )}
+                {failedPlayers.length > 0 &&
+                  failedPlayers[0] !==
+                    "All player data unavailable due to server issues" && (
+                    <span className="text-yellow-400 ml-1">
+                      ({failedPlayers.length}_OMITTED)
+                    </span>
+                  )}
               </div>
             </div>
           </div>
@@ -324,7 +372,8 @@ const PlayerList = () => {
                     <span className="text-white text-xs font-bold">🔥</span>
                   </div>
                   <span className="text-xs font-mono text-gray-300">
-                    <span className="text-red-400 font-bold">SHARPSHOOTER</span> • 24+ PPG
+                    <span className="text-red-400 font-bold">SHARPSHOOTER</span>{" "}
+                    • 24+ PPG
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -332,7 +381,8 @@ const PlayerList = () => {
                     <span className="text-white text-xs font-bold">💪</span>
                   </div>
                   <span className="text-xs font-mono text-gray-300">
-                    <span className="text-blue-400 font-bold">GLASSMASTER</span> • 10+ RPG
+                    <span className="text-blue-400 font-bold">GLASSMASTER</span>{" "}
+                    • 10+ RPG
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -340,7 +390,10 @@ const PlayerList = () => {
                     <span className="text-white text-xs font-bold">🧠</span>
                   </div>
                   <span className="text-xs font-mono text-gray-300">
-                    <span className="text-green-400 font-bold">FLOORGENERAL</span> • 8+ APG
+                    <span className="text-green-400 font-bold">
+                      FLOORGENERAL
+                    </span>{" "}
+                    • 8+ APG
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -348,7 +401,8 @@ const PlayerList = () => {
                     <span className="text-white text-xs font-bold">🎯</span>
                   </div>
                   <span className="text-xs font-mono text-gray-300">
-                    <span className="text-yellow-400 font-bold">SNIPER</span> • 3Pt Threat
+                    <span className="text-yellow-400 font-bold">SNIPER</span> •
+                    3Pt Threat
                   </span>
                 </div>
               </div>
@@ -361,14 +415,14 @@ const PlayerList = () => {
               {players.map((player) => {
                 // Check if this is the MVP (Shai Gilgeous-Alexander)
                 const isMVP = player.name === "Shai Gilgeous-Alexander";
-                
+
                 return (
                   <div
                     key={player.player_id}
                     className={`p-3 rounded-lg border transition-all duration-300 cursor-pointer relative ${
-                      isMVP 
-                        ? 'bg-gradient-to-r from-purple-900/60 via-purple-700/70 to-purple-900/60 border-purple-400/80 shadow-lg shadow-purple-500/40 hover:shadow-xl hover:shadow-purple-400/60 hover:scale-[1.02] backdrop-blur-sm'
-                        : 'bg-gray-800 border-gray-600 hover:border-cyan-400 transition-colors duration-200'
+                      isMVP
+                        ? "bg-gradient-to-r from-purple-900/60 via-purple-700/70 to-purple-900/60 border-purple-400/80 shadow-lg shadow-purple-500/40 hover:shadow-xl hover:shadow-purple-400/60 hover:scale-[1.02] backdrop-blur-sm"
+                        : "bg-gray-800 border-gray-600 hover:border-cyan-400 transition-colors duration-200"
                     }`}
                   >
                     {/* MVP Badge */}
@@ -379,202 +433,301 @@ const PlayerList = () => {
                         </div>
                       </div>
                     )}
-                    
+
                     {/* Player Photo Header with Badges */}
-                  <div className="flex flex-col items-center mb-3">
-                    {/* Badge Layout: [ ] [ ] headshot [ ] [ ] */}
-                    <div className="flex items-center space-x-1 mb-2">
-                      {/* Badge Slot 1 - SHARPSHOOTER (24+ PPG) */}
-                      <div className={`w-5 h-6 rounded flex items-center justify-center border-2 border-gray-800 shadow-lg ${
-                        player.stats?.ppg >= 24 
-                          ? 'bg-red-500' 
-                          : 'bg-gray-700 opacity-30'
-                      }`}>
-                        <span className="text-white text-xs">
-                          {player.stats?.ppg >= 24 ? '🔥' : '•'}
-                        </span>
-                      </div>
-
-                      {/* Badge Slot 2 - GLASSMASTER (10+ RPG) */}
-                      <div className={`w-5 h-6 rounded flex items-center justify-center border-2 border-gray-800 shadow-lg ${
-                        player.stats?.rpg >= 10 
-                          ? 'bg-blue-500' 
-                          : 'bg-gray-700 opacity-30'
-                      }`}>
-                        <span className="text-white text-xs">
-                          {player.stats?.rpg >= 10 ? '💪' : '•'}
-                        </span>
-                      </div>
-
-                      {/* Player Photo - Center */}
-                      <div className="w-16 h-16 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center border border-gray-600 overflow-hidden mx-2">
-                        <img
-                          src={`https://cdn.nba.com/headshots/nba/latest/1040x760/${player.player_id}.png`}
-                          alt={`${player.name} headshot`}
-                          className="w-full h-full object-cover rounded-full"
-                          onError={(e) => {
-                            // Try alternative NBA headshot URL
-                            if (e.target.src.includes("1040x760")) {
-                              e.target.src = `https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/${player.player_id}.png`;
-                            } else {
-                              // If both fail, hide image and show jersey number
-                              e.target.style.display = "none";
-                              e.target.nextSibling.style.display = "flex";
-                            }
-                          }}
-                        />
-                        <span
-                          className="text-white font-mono font-bold text-sm absolute w-full h-full flex items-center justify-center"
-                          style={{ display: "none" }}
-                        >
-                          #{player.jersey_number || "N/A"}
-                        </span>
-                      </div>
-
-                      {/* Badge Slot 3 - FLOORGENERAL (8+ APG) */}
-                      <div className={`w-5 h-6 rounded flex items-center justify-center border-2 border-gray-800 shadow-lg ${
-                        player.stats?.apg >= 8 
-                          ? 'bg-green-500' 
-                          : 'bg-gray-700 opacity-30'
-                      }`}>
-                        <span className="text-white text-xs">
-                          {player.stats?.apg >= 8 ? '🧠' : '•'}
-                        </span>
-                      </div>
-
-                      {/* Badge Slot 4 - SNIPER (Three-Point Threat Score ≥ 8.0: PPG × 3P%) */}
-                      <div className={`w-5 h-6 rounded flex items-center justify-center border-2 border-gray-800 shadow-lg ${
-                        isSniper(player)
-                          ? 'bg-yellow-500' 
-                          : 'bg-gray-700 opacity-30'
-                      }`}>
-                        <span className="text-white text-xs">
-                          {isSniper(player) ? '🎯' : '•'}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="text-center mt-2">
-                      <h3
-                        className={`font-mono font-semibold text-xs mb-1 ${
-                          isMVP 
-                            ? 'text-white drop-shadow-lg' 
-                            : teamColors.accent
-                        }`}
-                      >
-                        {player.name || "Unknown Player"}
-                      </h3>
-                      <p className={`text-xs font-mono ${
-                        isMVP 
-                          ? 'text-purple-200 drop-shadow-md' 
-                          : 'text-gray-400'
-                      }`}>
-                        {player.position || "N/A"} • #
-                        {player.jersey_number || "N/A"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Player Info - Condensed */}
-                  <div className="space-y-1 mb-3">
-                    <div className="flex justify-between text-xs font-mono">
-                      <span className={isMVP ? "text-purple-200" : "text-gray-500"}>HT:</span>
-                      <span className={isMVP ? "text-white drop-shadow-md" : "text-gray-300"}>
-                        {player.height
-                          ? `${player.height.replace("-", "'")}"`
-                          : "N/A"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xs font-mono">
-                      <span className={isMVP ? "text-purple-200" : "text-gray-500"}>AGE:</span>
-                      <span className={isMVP ? "text-white drop-shadow-md" : "text-gray-300"}>{player.age || "N/A"}</span>
-                    </div>
-                    <div className="flex justify-between text-xs font-mono">
-                      <span className={isMVP ? "text-purple-200" : "text-gray-500"}>EXP:</span>
-                      <span className={isMVP ? "text-white drop-shadow-md" : "text-gray-300"}>
-                        {player.experience ? `${player.experience}y` : "R"}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Player Statistics */}
-                  <div className={`border-t pt-2 ${isMVP ? 'border-purple-300' : 'border-gray-600'}`}>
-                    <div className="grid grid-cols-2 gap-1 text-center">
-                      <div>
-                        <div className={`text-xs font-mono mb-1 ${isMVP ? 'text-purple-200' : 'text-gray-500'}`}>
-                          PPG
-                        </div>
+                    <div className="flex flex-col items-center mb-3">
+                      {/* Badge Layout: [ ] [ ] headshot [ ] [ ] */}
+                      <div className="flex items-center space-x-1 mb-2">
+                        {/* Badge Slot 1 - SHARPSHOOTER (24+ PPG) */}
                         <div
-                          className={`text-xs font-mono font-bold ${
-                            player.stats?.ppg >= 24 
-                              ? (isMVP ? 'text-white drop-shadow-lg' : 'text-red-400')
-                              : (isMVP ? 'text-white drop-shadow-md' : teamColors.secondary)
+                          className={`w-5 h-6 rounded flex items-center justify-center border-2 border-gray-800 shadow-lg ${
+                            player.stats?.ppg >= 24
+                              ? "bg-red-500"
+                              : "bg-gray-700 opacity-30"
                           }`}
                         >
-                          {player.stats?.ppg?.toFixed(1) || "0.0"}
+                          <span className="text-white text-xs">
+                            {player.stats?.ppg >= 24 ? "🔥" : "•"}
+                          </span>
                         </div>
-                      </div>
-                      <div>
-                        <div className={`text-xs font-mono mb-1 ${isMVP ? 'text-purple-200' : 'text-gray-500'}`}>
-                          RPG
-                        </div>
+
+                        {/* Badge Slot 2 - GLASSMASTER (10+ RPG) */}
                         <div
-                          className={`text-xs font-mono font-bold ${
-                            player.stats?.rpg >= 10 
-                              ? (isMVP ? 'text-white drop-shadow-lg' : 'text-blue-400')
-                              : (isMVP ? 'text-white drop-shadow-md' : teamColors.secondary)
+                          className={`w-5 h-6 rounded flex items-center justify-center border-2 border-gray-800 shadow-lg ${
+                            player.stats?.rpg >= 10
+                              ? "bg-blue-500"
+                              : "bg-gray-700 opacity-30"
                           }`}
                         >
-                          {player.stats?.rpg?.toFixed(1) || "0.0"}
+                          <span className="text-white text-xs">
+                            {player.stats?.rpg >= 10 ? "💪" : "•"}
+                          </span>
                         </div>
-                      </div>
-                      <div>
-                        <div className={`text-xs font-mono mb-1 ${isMVP ? 'text-purple-200' : 'text-gray-500'}`}>
-                          APG
+
+                        {/* Player Photo - Center */}
+                        <div className="w-16 h-16 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center border border-gray-600 overflow-hidden mx-2">
+                          <img
+                            src={`https://cdn.nba.com/headshots/nba/latest/1040x760/${player.player_id}.png`}
+                            alt={`${player.name} headshot`}
+                            className="w-full h-full object-cover rounded-full"
+                            onError={(e) => {
+                              // Try alternative NBA headshot URL
+                              if (e.target.src.includes("1040x760")) {
+                                e.target.src = `https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/${player.player_id}.png`;
+                              } else {
+                                // If both fail, hide image and show jersey number
+                                e.target.style.display = "none";
+                                e.target.nextSibling.style.display = "flex";
+                              }
+                            }}
+                          />
+                          <span
+                            className="text-white font-mono font-bold text-sm absolute w-full h-full flex items-center justify-center"
+                            style={{ display: "none" }}
+                          >
+                            #{player.jersey_number || "N/A"}
+                          </span>
                         </div>
+
+                        {/* Badge Slot 3 - FLOORGENERAL (8+ APG) */}
                         <div
-                          className={`text-xs font-mono font-bold ${
-                            player.stats?.apg >= 8 
-                              ? (isMVP ? 'text-white drop-shadow-lg' : 'text-green-400')
-                              : (isMVP ? 'text-white drop-shadow-md' : teamColors.secondary)
+                          className={`w-5 h-6 rounded flex items-center justify-center border-2 border-gray-800 shadow-lg ${
+                            player.stats?.apg >= 8
+                              ? "bg-green-500"
+                              : "bg-gray-700 opacity-30"
                           }`}
                         >
-                          {player.stats?.apg?.toFixed(1) || "0.0"}
+                          <span className="text-white text-xs">
+                            {player.stats?.apg >= 8 ? "🧠" : "•"}
+                          </span>
                         </div>
-                      </div>
-                      <div>
-                        <div className={`text-xs font-mono mb-1 ${isMVP ? 'text-purple-200' : 'text-gray-500'}`}>
-                          3FG%
-                        </div>
+
+                        {/* Badge Slot 4 - SNIPER (Three-Point Threat Score ≥ 8.0: PPG × 3P%) */}
                         <div
-                          className={`text-xs font-mono font-bold ${
+                          className={`w-5 h-6 rounded flex items-center justify-center border-2 border-gray-800 shadow-lg ${
                             isSniper(player)
-                              ? (isMVP ? 'text-white drop-shadow-lg' : 'text-yellow-400')
-                              : (isMVP ? 'text-white drop-shadow-md' : teamColors.secondary)
+                              ? "bg-yellow-500"
+                              : "bg-gray-700 opacity-30"
                           }`}
                         >
-                          {player.stats?.three_pt_pct ? (player.stats.three_pt_pct * 100).toFixed(1) + '%' : "0.0%"}
+                          <span className="text-white text-xs">
+                            {isSniper(player) ? "🎯" : "•"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="text-center mt-2">
+                        <h3
+                          className={`font-mono font-semibold text-xs mb-1 ${
+                            isMVP
+                              ? "text-white drop-shadow-lg"
+                              : teamColors.accent
+                          }`}
+                        >
+                          {player.name || "Unknown Player"}
+                        </h3>
+                        <p
+                          className={`text-xs font-mono ${
+                            isMVP
+                              ? "text-purple-200 drop-shadow-md"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          {player.position || "N/A"} • #
+                          {player.jersey_number || "N/A"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Player Info - Condensed */}
+                    <div className="space-y-1 mb-3">
+                      <div className="flex justify-between text-xs font-mono">
+                        <span
+                          className={
+                            isMVP ? "text-purple-200" : "text-gray-500"
+                          }
+                        >
+                          HT:
+                        </span>
+                        <span
+                          className={
+                            isMVP
+                              ? "text-white drop-shadow-md"
+                              : "text-gray-300"
+                          }
+                        >
+                          {player.height
+                            ? `${player.height.replace("-", "'")}"`
+                            : "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-xs font-mono">
+                        <span
+                          className={
+                            isMVP ? "text-purple-200" : "text-gray-500"
+                          }
+                        >
+                          AGE:
+                        </span>
+                        <span
+                          className={
+                            isMVP
+                              ? "text-white drop-shadow-md"
+                              : "text-gray-300"
+                          }
+                        >
+                          {player.age || "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-xs font-mono">
+                        <span
+                          className={
+                            isMVP ? "text-purple-200" : "text-gray-500"
+                          }
+                        >
+                          EXP:
+                        </span>
+                        <span
+                          className={
+                            isMVP
+                              ? "text-white drop-shadow-md"
+                              : "text-gray-300"
+                          }
+                        >
+                          {player.experience ? `${player.experience}y` : "R"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Player Statistics */}
+                    <div
+                      className={`border-t pt-2 ${
+                        isMVP ? "border-purple-300" : "border-gray-600"
+                      }`}
+                    >
+                      <div className="grid grid-cols-2 gap-1 text-center">
+                        <div>
+                          <div
+                            className={`text-xs font-mono mb-1 ${
+                              isMVP ? "text-purple-200" : "text-gray-500"
+                            }`}
+                          >
+                            PPG
+                          </div>
+                          <div
+                            className={`text-xs font-mono font-bold ${
+                              player.stats?.ppg >= 24
+                                ? isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-red-400"
+                                : isMVP
+                                ? "text-white drop-shadow-md"
+                                : teamColors.secondary
+                            }`}
+                          >
+                            {player.stats?.ppg?.toFixed(1) || "0.0"}
+                          </div>
+                        </div>
+                        <div>
+                          <div
+                            className={`text-xs font-mono mb-1 ${
+                              isMVP ? "text-purple-200" : "text-gray-500"
+                            }`}
+                          >
+                            RPG
+                          </div>
+                          <div
+                            className={`text-xs font-mono font-bold ${
+                              player.stats?.rpg >= 10
+                                ? isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-blue-400"
+                                : isMVP
+                                ? "text-white drop-shadow-md"
+                                : teamColors.secondary
+                            }`}
+                          >
+                            {player.stats?.rpg?.toFixed(1) || "0.0"}
+                          </div>
+                        </div>
+                        <div>
+                          <div
+                            className={`text-xs font-mono mb-1 ${
+                              isMVP ? "text-purple-200" : "text-gray-500"
+                            }`}
+                          >
+                            APG
+                          </div>
+                          <div
+                            className={`text-xs font-mono font-bold ${
+                              player.stats?.apg >= 8
+                                ? isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-green-400"
+                                : isMVP
+                                ? "text-white drop-shadow-md"
+                                : teamColors.secondary
+                            }`}
+                          >
+                            {player.stats?.apg?.toFixed(1) || "0.0"}
+                          </div>
+                        </div>
+                        <div>
+                          <div
+                            className={`text-xs font-mono mb-1 ${
+                              isMVP ? "text-purple-200" : "text-gray-500"
+                            }`}
+                          >
+                            3FG%
+                          </div>
+                          <div
+                            className={`text-xs font-mono font-bold ${
+                              isSniper(player)
+                                ? isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-yellow-400"
+                                : isMVP
+                                ? "text-white drop-shadow-md"
+                                : teamColors.secondary
+                            }`}
+                          >
+                            {player.stats?.three_pt_pct
+                              ? (player.stats.three_pt_pct * 100).toFixed(1) +
+                                "%"
+                              : "0.0%"}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-12">
               <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-600">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                <svg
+                  className="w-8 h-8 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                  />
                 </svg>
               </div>
-              <h3 className={`text-lg font-mono font-semibold ${teamColors.accent} mb-2`}>
+              <h3
+                className={`text-lg font-mono font-semibold ${teamColors.accent} mb-2`}
+              >
                 NO_PLAYER_DATA_AVAILABLE
               </h3>
               <p className="text-gray-400 font-mono text-sm mb-4">
-                {playersLoading 
-                  ? "Loading player roster data..." 
+                {playersLoading
+                  ? "Loading player roster data..."
                   : "Player roster data is currently unavailable."}
               </p>
               {!playersLoading && (
@@ -602,10 +755,11 @@ const PlayerList = () => {
                 <>
                   <div className="text-gray-500">|</div>
                   <span className="text-yellow-400 font-mono text-sm">
-                    {failedPlayers.length > 1 || failedPlayers[0] !== 'All player data unavailable due to server issues'
+                    {failedPlayers.length > 1 ||
+                    failedPlayers[0] !==
+                      "All player data unavailable due to server issues"
                       ? `${failedPlayers.length} PLAYERS OMITTED`
-                      : 'ROSTER UNAVAILABLE'
-                    }
+                      : "ROSTER UNAVAILABLE"}
                   </span>
                 </>
               )}

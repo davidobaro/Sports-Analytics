@@ -9,12 +9,18 @@ const StandingsTable = ({ standings }) => {
     .sort((a, b) => (a.conf_rank || 0) - (b.conf_rank || 0));
 
   // Calculate conference stats
-  const eastTeams = standings.filter(team => team.conference === "East");
-  const westTeams = standings.filter(team => team.conference === "West");
+  const eastTeams = standings.filter((team) => team.conference === "East");
+  const westTeams = standings.filter((team) => team.conference === "West");
   const eastWins = eastTeams.reduce((sum, team) => sum + (team.wins || 0), 0);
   const westWins = westTeams.reduce((sum, team) => sum + (team.wins || 0), 0);
-  const eastLosses = eastTeams.reduce((sum, team) => sum + (team.losses || 0), 0);
-  const westLosses = westTeams.reduce((sum, team) => sum + (team.losses || 0), 0);
+  const eastLosses = eastTeams.reduce(
+    (sum, team) => sum + (team.losses || 0),
+    0
+  );
+  const westLosses = westTeams.reduce(
+    (sum, team) => sum + (team.losses || 0),
+    0
+  );
 
   return (
     <div className="card p-6">
@@ -24,7 +30,7 @@ const StandingsTable = ({ standings }) => {
             className="w-6 h-6 mr-2 text-cyan-400"
             fill="none"
             stroke="currentColor"
-                        viewBox="0 0 24 24"
+            viewBox="0 0 24 24"
           >
             <path
               strokeLinecap="round"
@@ -56,27 +62,46 @@ const StandingsTable = ({ standings }) => {
       {/* Conference Summary - Only show for current selected conference */}
       {standings.length > 0 && (
         <div className="mb-4">
-          <div className={`border rounded-lg p-3 ${
-            selectedConference === "East" 
-              ? "bg-cyan-900/20 border-cyan-600" 
-              : "bg-red-900/20 border-red-600"
-          }`}>
+          <div
+            className={`border rounded-lg p-3 ${
+              selectedConference === "East"
+                ? "bg-cyan-900/20 border-cyan-600"
+                : "bg-red-900/20 border-red-600"
+            }`}
+          >
             <div className="text-center">
-              <div className={`text-sm font-mono font-semibold ${
-                selectedConference === "East" ? "text-cyan-400" : "text-red-400"
-              }`}>
+              <div
+                className={`text-sm font-mono font-semibold ${
+                  selectedConference === "East"
+                    ? "text-cyan-400"
+                    : "text-red-400"
+                }`}
+              >
                 {selectedConference.toUpperCase()} CONFERENCE
               </div>
               <div className="text-xs font-mono text-gray-400 mt-1">
-                {selectedConference === "East" ? eastWins : westWins}W - {selectedConference === "East" ? eastLosses : westLosses}L ({selectedConference === "East" ? eastTeams.length : westTeams.length} teams)
+                {selectedConference === "East" ? eastWins : westWins}W -{" "}
+                {selectedConference === "East" ? eastLosses : westLosses}L (
+                {selectedConference === "East"
+                  ? eastTeams.length
+                  : westTeams.length}{" "}
+                teams)
               </div>
-              <div className={`text-xs font-mono mt-1 ${
-                selectedConference === "East" ? "text-cyan-300" : "text-red-300"
-              }`}>
-                {selectedConference === "East" 
-                  ? (eastTeams.length > 0 ? ((eastWins / (eastWins + eastLosses)) * 100).toFixed(1) : 0)
-                  : (westTeams.length > 0 ? ((westWins / (westWins + westLosses)) * 100).toFixed(1) : 0)
-                }% win rate
+              <div
+                className={`text-xs font-mono mt-1 ${
+                  selectedConference === "East"
+                    ? "text-cyan-300"
+                    : "text-red-300"
+                }`}
+              >
+                {selectedConference === "East"
+                  ? eastTeams.length > 0
+                    ? ((eastWins / (eastWins + eastLosses)) * 100).toFixed(1)
+                    : 0
+                  : westTeams.length > 0
+                  ? ((westWins / (westWins + westLosses)) * 100).toFixed(1)
+                  : 0}
+                % win rate
               </div>
             </div>
           </div>
@@ -108,25 +133,33 @@ const StandingsTable = ({ standings }) => {
             {filteredStandings.map((team, index) => {
               const isPlayoffPosition = (team.conf_rank || 0) <= 10;
               const isTopSeed = (team.conf_rank || 0) <= 6;
-              
+
               return (
                 <tr
                   key={team.team_id || index}
                   className={`border-b border-gray-700 hover:bg-gray-800 transition-colors duration-150 ${
-                    (team.conf_rank || index + 1) === 1 ? 'bg-yellow-900/20' : isTopSeed ? 'bg-green-900/20' : isPlayoffPosition ? 'bg-blue-900/20' : ''
+                    (team.conf_rank || index + 1) === 1
+                      ? "bg-yellow-900/20"
+                      : isTopSeed
+                      ? "bg-green-900/20"
+                      : isPlayoffPosition
+                      ? "bg-blue-900/20"
+                      : ""
                   }`}
                 >
                   <td className="py-3 px-4">
                     <div className="flex items-center justify-center">
-                      <span className={`font-mono font-bold text-lg ${
-                        (team.conf_rank || index + 1) === 1 
-                          ? 'text-yellow-400' 
-                          : isTopSeed 
-                          ? 'text-green-400' 
-                          : isPlayoffPosition 
-                          ? 'text-blue-400' 
-                          : 'text-cyan-400'
-                      }`}>
+                      <span
+                        className={`font-mono font-bold text-lg ${
+                          (team.conf_rank || index + 1) === 1
+                            ? "text-yellow-400"
+                            : isTopSeed
+                            ? "text-green-400"
+                            : isPlayoffPosition
+                            ? "text-blue-400"
+                            : "text-cyan-400"
+                        }`}
+                      >
                         {team.conf_rank || index + 1}
                       </span>
                     </div>
