@@ -2,28 +2,28 @@
 
 A modern, comprehensive NBA Web App that combines real-time NBA data with machine learning-driven predictions, delivering both insightful current state information and predictive insights about future player and team performances.
 
-## 🏀 Core Features
+## Core Features
 
-### 1️⃣ Real-time Data Visualization
+### Real-time Data Visualization
 
 - **Live Games Bar**: Real-time display of live NBA games with scores and status
 - **Team Dashboard**: Complete team analytics including standings, recent results, upcoming fixtures, and performance heat maps
 - **Player Dashboard**: Comprehensive player profiles with career stats, current season performance, and game logs
 - **Interactive Charts**: Beautiful data visualizations and trend analysis
 
-### 2️⃣ Predictive Analytics (ML Models)
+### Predictive Analytics (ML Models)
 
 - **Player Stats Predictions**: Projected PPG, assists, rebounds, 3-pointers, and fantasy scores
 - **Game Outcome Predictions**: Win probability, total points, margin of victory, and individual player matchup predictions
 - **Advanced ML Models**: Trained using historical NBA data with iterative improvements
 
-### 3️⃣ News & Engagement
+### News & Engagement
 
 - **NBA News Feed**: Curated headlines and stories from trusted basketball news sources
 - **Plays of the Week**: Integration with highlight reels and top plays
 - **User Dashboard**: Customizable content with favorite players, teams, and stat types
 
-## 🏗️ Architecture
+## Architecture
 
 ### Frontend (React + Tailwind CSS)
 
@@ -41,38 +41,38 @@ A modern, comprehensive NBA Web App that combines real-time NBA data with machin
 - **Scikit-learn/XGBoost/LightGBM**: Machine learning models
 - **Joblib**: Model persistence for fast inference
 
-## 📦 Project Structure
+## Project Structure
 
 ```
 Sports-Analytics/
-├── README.md
-├── requirements.txt                 # Python dependencies
-├── backend/
-│   └── main.py                     # FastAPI server with NBA API integration
-└── frontend/
-    ├── package.json                # React dependencies
-    ├── tailwind.config.js          # Tailwind CSS configuration
-    ├── postcss.config.js           # PostCSS configuration
-    ├── public/
-    │   └── index.html              # HTML template
-    └── src/
-        ├── App.js                  # Main React application
-        ├── index.js                # React entry point
-        ├── index.css               # Global styles with Tailwind
-        ├── components/             # Reusable React components
-        │   ├── LiveGamesBar.js     # Live games display
-        │   ├── Navbar.js           # Navigation bar with search
-        │   ├── NewsSection.js      # NBA news feed
-        │   ├── PredictionsWidget.js # ML predictions display
-        │   ├── StandingsTable.js   # League standings
-        │   └── TeamsList.js        # Teams sidebar
-        └── pages/                  # Page components
-            ├── Dashboard.js        # Main dashboard
-            ├── TeamDetails.js      # Individual team pages
-            └── PlayerDetails.js    # Individual player pages
+ README.md
+ requirements.txt # Python dependencies
+ backend/
+ main.py # FastAPI server with NBA API integration
+ frontend/
+ package.json # React dependencies
+ tailwind.config.js # Tailwind CSS configuration
+ postcss.config.js # PostCSS configuration
+ public/
+ index.html # HTML template
+ src/
+ App.js # Main React application
+ index.js # React entry point
+ index.css # Global styles with Tailwind
+ components/ # Reusable React components
+ LiveGamesBar.js # Live games display
+ Navbar.js # Navigation bar with search
+ NewsSection.js # NBA news feed
+ PredictionsWidget.js # ML predictions display
+ StandingsTable.js # League standings
+ TeamsList.js # Teams sidebar
+ pages/ # Page components
+ Dashboard.js # Main dashboard
+ TeamDetails.js # Individual team pages
+ PlayerDetails.js # Individual player pages
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -116,7 +116,7 @@ The React app will run on `http://localhost:3000`
 
 Navigate to `http://localhost:3000` to see the NBA Analytics Pro dashboard!
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### Core API Information
 
@@ -127,9 +127,9 @@ Navigate to `http://localhost:3000` to see the NBA Analytics Pro dashboard!
 
 - `GET /api/team/{team_id}` - **Complete team info with full roster**
 
-  - Season statistics (wins/losses, offensive/defensive stats, advanced metrics)
-  - Complete player roster with real NBA data (15+ players per team)
-  - Per-game statistics calculated from season totals
+ - Season statistics (wins/losses, offensive/defensive stats, advanced metrics)
+ - Complete player roster with real NBA data (15+ players per team)
+ - Per-game statistics calculated from season totals
 
 - `GET /api/nba-teams` - All 30 NBA teams with official information
 
@@ -137,14 +137,14 @@ Navigate to `http://localhost:3000` to see the NBA Analytics Pro dashboard!
 
 - `GET /api/player/{player_id}` - **Detailed player information**
 
-  - Current season statistics (PPG, RPG, APG, FG%, 3PT%)
-  - Per-game averages calculated from season totals
-  - Player physical attributes and experience
+ - Current season statistics (PPG, RPG, APG, FG%, 3PT%)
+ - Per-game averages calculated from season totals
+ - Player physical attributes and experience
 
 - `GET /api/predictions/player/{player_id}` - **ML performance predictions**
-  - Next game predictions with confidence scores
-  - Season projections and trending analysis
-  - Player strengths and areas for improvement
+ - Next game predictions with confidence scores
+ - Season projections and trending analysis
+ - Player strengths and areas for improvement
 
 ### Other APIs
 
@@ -153,50 +153,50 @@ Navigate to `http://localhost:3000` to see the NBA Analytics Pro dashboard!
 - `GET /api/teams` - Basic team information
 - `GET /api/news` - Latest NBA news
 
-### Key Features - 100% NBA API DATA ✅
+### Key Features - 100% NBA API DATA 
 
-✅ **Pure NBA Data**: Only authentic data from NBA Official API  
-✅ **Complete Rosters**: Real team rosters with current player details  
-✅ **Accurate Stats**: Per-game averages from current season totals  
-✅ **Real Statistics**: Comprehensive offensive/defensive/advanced metrics
-✅ **No Hardcoded Data**: All team/player info from live NBA API calls
-✅ **All Endpoints Tested**: Complete API testing completed June 11, 2025
-✅ **Error Handling**: Clean error responses when NBA API is unavailable
-✅ **JSON Serialization**: Fixed numpy type conversion for data integrity
+ **Pure NBA Data**: Only authentic data from NBA Official API 
+ **Complete Rosters**: Real team rosters with current player details 
+ **Accurate Stats**: Per-game averages from current season totals 
+ **Real Statistics**: Comprehensive offensive/defensive/advanced metrics
+ **No Hardcoded Data**: All team/player info from live NBA API calls
+ **All Endpoints Tested**: Complete API testing completed June 11, 2025
+ **Error Handling**: Clean error responses when NBA API is unavailable
+ **JSON Serialization**: Fixed numpy type conversion for data integrity
 
-## 📋 Testing Status - NBA API ONLY ✅
+## Testing Status - NBA API ONLY 
 
 **All API endpoints verified to return only authentic NBA data:**
 
-### Player Endpoints ✅
+### Player Endpoints 
 
 - **Stephen Curry (ID: 201939)**: 24.5 PPG, 4.4 RPG, 6.0 APG from real NBA stats
 - **LeBron James (ID: 2544)**: Predictions based on real current season data
 - **Per-game calculations**: Accurate averages from NBA season totals
 
-### Team Endpoints ✅
+### Team Endpoints 
 
 - **Golden State Warriors**: Real 48-34 record, authentic 17-player roster
 - **Los Angeles Lakers**: Real 50-32 record, current NBA roster data
 - **Boston Celtics**: Real 61-21 record, official NBA statistics
 - **Enhanced Statistics**: Real offensive/defensive/advanced metrics from NBA API
 
-### Data Cleanup Completed ✅
+### Data Cleanup Completed 
 
-- ❌ **Removed**: All hardcoded team strengths/weaknesses
-- ❌ **Removed**: Manual performance tier classifications
-- ❌ **Removed**: Fake championship analysis or mock data fallbacks
-- ✅ **Confirmed**: 100% authentic NBA API data only
+- **Removed**: All hardcoded team strengths/weaknesses
+- **Removed**: Manual performance tier classifications
+- **Removed**: Fake championship analysis or mock data fallbacks
+- **Confirmed**: 100% authentic NBA API data only
 
-### Technical Fixes ✅
+### Technical Fixes 
 
 - **Numpy serialization**: JSON conversion errors resolved
 - **Real NBA data**: All endpoints pulling live NBA API data
 - **Error handling**: Graceful fallbacks implemented and tested
 
-📄 **Complete testing documentation**: See [API_TESTING_RESULTS.md](./API_TESTING_RESULTS.md)
+ **Complete testing documentation**: See [API_TESTING_RESULTS.md](./API_TESTING_RESULTS.md)
 
-## 🧠 Machine Learning Features
+## Machine Learning Features
 
 The app includes several ML models for predictions:
 
@@ -205,7 +205,7 @@ The app includes several ML models for predictions:
 - **Game Outcome Models**: Win probability and scoring predictions
 - **Confidence Scoring**: ML model confidence levels for all predictions
 
-## 🎨 UI/UX Features
+## UI/UX Features
 
 - **Modern Design**: Clean, professional interface with NBA branding
 - **Responsive Layout**: Works perfectly on desktop, tablet, and mobile
@@ -213,7 +213,7 @@ The app includes several ML models for predictions:
 - **Interactive Elements**: Hover effects, smooth animations, and transitions
 - **Dark/Light Theme**: Customizable appearance (coming soon)
 
-## 🔧 Customization
+## Customization
 
 ### Adding New Data Sources
 
@@ -233,7 +233,7 @@ The app includes several ML models for predictions:
 - Update component styles in individual React files
 - Add new components in the `components/` directory
 
-## 🚧 Future Enhancements
+## Future Enhancements
 
 - [ ] Real NBA API integration (currently uses mock data for demo)
 - [ ] User authentication and personalized dashboards
@@ -244,10 +244,10 @@ The app includes several ML models for predictions:
 - [ ] Fantasy basketball integration
 - [ ] Social features and user interactions
 
-## 📝 License
+## License
 
 This project is open source and available under the MIT License.
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

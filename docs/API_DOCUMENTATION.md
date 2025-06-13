@@ -4,13 +4,13 @@
 
 The NBA Analytics API provides comprehensive NBA team and player data, including real-time statistics, complete team rosters, and performance predictions.
 
-**Base URL:** `http://localhost:8000`  
-**Version:** 1.0.0  
+**Base URL:** `http://localhost:8000` 
+**Version:** 1.0.0 
 **Data Source:** NBA Official API (nba_api) with intelligent fallbacks
 
 ---
 
-## 🏀 Team APIs
+## Team APIs
 
 ### 1. Get Team Details with Full Roster
 
@@ -26,65 +26,65 @@ The NBA Analytics API provides comprehensive NBA team and player data, including
 
 ```json
 {
-  "basic_info": {
-    "id": 1610612747,
-    "full_name": "Los Angeles Lakers",
-    "abbreviation": "LAL",
-    "city": "Los Angeles",
-    "nickname": "Lakers"
-  },
-  "season_stats": {
-    "games_played": 64,
-    "wins": 43,
-    "losses": 21,
-    "avg_points": 119.3,
-    "avg_opp_points": 108.6,
-    "fg_pct": 0.484,
-    "three_pt_pct": 0.361
-  },
-  "roster": [
-    {
-      "player_id": 1629020,
-      "name": "Jarred Vanderbilt",
-      "jersey_number": "2",
-      "position": "F",
-      "height": "6-8",
-      "weight": "214",
-      "birth_date": "APR 03, 1999",
-      "age": 26,
-      "experience": "6",
-      "school": "Kentucky"
-    }
-  ],
-  "roster_count": 17,
-  "recent_form": [
-    {
-      "GAME_DATE": "2025-06-11",
-      "MATCHUP": "@ POR",
-      "WL": "W",
-      "PTS": 115,
-      "OPP_PTS": 102
-    }
-  ],
-  "performance_analysis": {
-    "tier": "elite",
-    "strengths": ["Superstar talent", "Championship experience"],
-    "weaknesses": ["Age concerns", "Depth"],
-    "championship_count": 17,
-    "conference": "Western",
-    "division": "Pacific"
-  }
+ "basic_info": {
+ "id": 1610612747,
+ "full_name": "Los Angeles Lakers",
+ "abbreviation": "LAL",
+ "city": "Los Angeles",
+ "nickname": "Lakers"
+ },
+ "season_stats": {
+ "games_played": 64,
+ "wins": 43,
+ "losses": 21,
+ "avg_points": 119.3,
+ "avg_opp_points": 108.6,
+ "fg_pct": 0.484,
+ "three_pt_pct": 0.361
+ },
+ "roster": [
+ {
+ "player_id": 1629020,
+ "name": "Jarred Vanderbilt",
+ "jersey_number": "2",
+ "position": "F",
+ "height": "6-8",
+ "weight": "214",
+ "birth_date": "APR 03, 1999",
+ "age": 26,
+ "experience": "6",
+ "school": "Kentucky"
+ }
+ ],
+ "roster_count": 17,
+ "recent_form": [
+ {
+ "GAME_DATE": "2025-06-11",
+ "MATCHUP": "@ POR",
+ "WL": "W",
+ "PTS": 115,
+ "OPP_PTS": 102
+ }
+ ],
+ "performance_analysis": {
+ "tier": "elite",
+ "strengths": ["Superstar talent", "Championship experience"],
+ "weaknesses": ["Age concerns", "Depth"],
+ "championship_count": 17,
+ "conference": "Western",
+ "division": "Pacific"
+ }
 }
 ```
 
 **Features:**
 
-- ✅ Real NBA roster data from official API
-- ✅ Current season team statistics
-- ✅ Last 10 games with scores and results
-- ✅ Complete player roster with detailed info
-- ✅ Performance analysis and team tier classification
-- ✅ Fallback to mock data if API is unavailable
+- Real NBA roster data from official API
+- Current season team statistics
+- Last 10 games with scores and results
+- Complete player roster with detailed info
+- Performance analysis and team tier classification
+- Fallback to mock data if API is unavailable
 
 ### 2. Get All NBA Teams
 
@@ -96,28 +96,28 @@ The NBA Analytics API provides comprehensive NBA team and player data, including
 
 ```json
 {
-  "teams": [
-    {
-      "id": 1610612747,
-      "full_name": "Los Angeles Lakers",
-      "abbreviation": "LAL",
-      "city": "Los Angeles",
-      "nickname": "Lakers",
-      "conference": "Western",
-      "division": "Pacific",
-      "championships": 17,
-      "performance_tier": "elite"
-    }
-  ],
-  "count": 30,
-  "eastern_conference": [...],
-  "western_conference": [...]
+ "teams": [
+ {
+ "id": 1610612747,
+ "full_name": "Los Angeles Lakers",
+ "abbreviation": "LAL",
+ "city": "Los Angeles",
+ "nickname": "Lakers",
+ "conference": "Western",
+ "division": "Pacific",
+ "championships": 17,
+ "performance_tier": "elite"
+ }
+ ],
+ "count": 30,
+ "eastern_conference": [...],
+ "western_conference": [...]
 }
 ```
 
 ---
 
-## 🏃‍♂️ Player APIs
+## ‍ Player APIs
 
 ### 1. Get Player Details
 
@@ -133,33 +133,33 @@ The NBA Analytics API provides comprehensive NBA team and player data, including
 
 ```json
 {
-  "basic_info": {
-    "player_id": 201939,
-    "name": "Stephen Curry",
-    "team": "Warriors",
-    "position": "Guard",
-    "height": "6-2",
-    "weight": "185",
-    "experience": 15
-  },
-  "current_season": {
-    "games": 70,
-    "ppg": 24.5,
-    "rpg": 4.4,
-    "apg": 6.0,
-    "fg_pct": 0.448,
-    "three_pt_pct": 0.397
-  }
+ "basic_info": {
+ "player_id": 201939,
+ "name": "Stephen Curry",
+ "team": "Warriors",
+ "position": "Guard",
+ "height": "6-2",
+ "weight": "185",
+ "experience": 15
+ },
+ "current_season": {
+ "games": 70,
+ "ppg": 24.5,
+ "rpg": 4.4,
+ "apg": 6.0,
+ "fg_pct": 0.448,
+ "three_pt_pct": 0.397
+ }
 }
 ```
 
 **Key Features:**
 
-- ✅ Real NBA player data from official API
-- ✅ Per-game averages calculated from season totals
-- ✅ Current team and position information
-- ✅ Physical attributes and experience level
-- ✅ Accurate shooting percentages
+- Real NBA player data from official API
+- Per-game averages calculated from season totals
+- Current team and position information
+- Physical attributes and experience level
+- Accurate shooting percentages
 
 ### 2. Get Player Predictions
 
@@ -175,35 +175,35 @@ The NBA Analytics API provides comprehensive NBA team and player data, including
 
 ```json
 {
-  "next_game": {
-    "predicted_points": 28.1,
-    "predicted_rebounds": 5.2,
-    "predicted_assists": 5.5,
-    "confidence": 0.77
-  },
-  "season_projection": {
-    "projected_ppg": 24.1,
-    "projected_rpg": 4.5,
-    "projected_apg": 5.9
-  },
-  "analysis": {
-    "trending": "up",
-    "key_strengths": ["Elite scorer", "Good 3-point shooter"],
-    "areas_for_improvement": ["Field goal efficiency"]
-  }
+ "next_game": {
+ "predicted_points": 28.1,
+ "predicted_rebounds": 5.2,
+ "predicted_assists": 5.5,
+ "confidence": 0.77
+ },
+ "season_projection": {
+ "projected_ppg": 24.1,
+ "projected_rpg": 4.5,
+ "projected_apg": 5.9
+ },
+ "analysis": {
+ "trending": "up",
+ "key_strengths": ["Elite scorer", "Good 3-point shooter"],
+ "areas_for_improvement": ["Field goal efficiency"]
+ }
 }
 ```
 
 **Prediction Features:**
 
-- ✅ Next game performance predictions with confidence scores
-- ✅ Season-long projections based on current form
-- ✅ Intelligent analysis of player strengths and weaknesses
-- ✅ Trending analysis (up/down/stable performance)
+- Next game performance predictions with confidence scores
+- Season-long projections based on current form
+- Intelligent analysis of player strengths and weaknesses
+- Trending analysis (up/down/stable performance)
 
 ---
 
-## 📊 Other APIs
+## Other APIs
 
 ### Live Games
 
@@ -228,7 +228,7 @@ The NBA Analytics API provides comprehensive NBA team and player data, including
 
 ---
 
-## 🛠️ Technical Details
+## Technical Details
 
 ### Data Sources
 
@@ -258,7 +258,7 @@ The NBA Analytics API provides comprehensive NBA team and player data, including
 
 ---
 
-## 🚀 Usage Examples
+## Usage Examples
 
 ### Get Lakers Team Info with Roster
 
@@ -286,17 +286,17 @@ curl -X GET "http://localhost:8000/api/nba-teams"
 
 ---
 
-## ✅ API Status
+## API Status
 
-| Endpoint                       | Status     | Features                |
+| Endpoint | Status | Features |
 | ------------------------------ | ---------- | ----------------------- |
-| `/api/team/{id}`               | ✅ Working | Stats + Full Roster     |
-| `/api/player/{id}`             | ✅ Working | Real Player Data        |
-| `/api/predictions/player/{id}` | ✅ Working | Performance Predictions |
-| `/api/nba-teams`               | ✅ Working | All 30 Teams            |
-| `/api/live-games`              | ✅ Working | Live Scores             |
-| `/api/standings`               | ✅ Working | League Standings        |
+| `/api/team/{id}` | Working | Stats + Full Roster |
+| `/api/player/{id}` | Working | Real Player Data |
+| `/api/predictions/player/{id}` | Working | Performance Predictions |
+| `/api/nba-teams` | Working | All 30 Teams |
+| `/api/live-games` | Working | Live Scores |
+| `/api/standings` | Working | League Standings |
 
-**Last Updated:** June 11, 2025  
-**API Version:** 1.0.0  
+**Last Updated:** June 11, 2025 
+**API Version:** 1.0.0 
 **Server Status:** Running on port 8000
