@@ -3,8 +3,8 @@ import React from "react";
 const LiveGamesBar = ({ games }) => {
   if (!games || games.length === 0) {
     return (
-      <div className="px-4 py-1 bg-gray-900 border-b border-gray-700">
-        <div className="flex items-center justify-center text-gray-400">
+      <div className="px-4 py-1 bg-gray-900 border-b border-gray-700 h-12">
+        <div className="flex items-center justify-center text-gray-400 h-full">
           <span className="text-xs font-mono">● NO LIVE GAMES TODAY</span>
         </div>
       </div>
@@ -12,8 +12,8 @@ const LiveGamesBar = ({ games }) => {
   }
 
   return (
-    <div className="px-4 py-1 bg-gray-900 border-b border-gray-700 overflow-hidden">
-      <div className="flex overflow-x-auto space-x-4 py-1 scrollbar-hide items-center">
+    <div className="px-4 py-1 bg-gray-900 border-b border-gray-700 overflow-hidden h-12">
+      <div className="flex overflow-x-auto space-x-4 py-1 scrollbar-hide items-center h-full">
         {/* Live Indicator */}
         <div className="flex items-center space-x-1 flex-shrink-0">
           <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>

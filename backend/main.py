@@ -214,36 +214,64 @@ async def get_all_teams():
 
 @app.get("/api/standings")
 async def get_league_standings():
-    """Get current NBA standings"""
+    """Get current NBA standings with real NBA API data"""
     try:
+        # Get standings from NBA API
         standings_data = leaguestandings.LeagueStandings()
         standings_df = standings_data.get_data_frames()[0]
+        
+        # Get team info from NBA API static data
+        nba_teams = teams.get_teams()
+        team_dict = {team['id']: team for team in nba_teams}
         
         # Process standings data
         standings = []
         for _, team in standings_df.iterrows():
+            team_id = int(team['TeamID'])
+            team_info = team_dict.get(team_id, {})
+            
+            # Get team city and name from NBA API
+            city = team['TeamCity']
+            nickname = team['TeamName']
+            full_name = f"{city} {nickname}"
+            
+            # Calculate games behind leader for each conference
+            conference = team['Conference']
+            games_behind = float(team.get('ConferenceGamesBack', 0)) if team.get('ConferenceGamesBack') is not None else 0.0
+            
             standings.append({
-                "team_id": team['TeamID'],
-                "team_name": team['TeamName'],
-                "wins": team['WINS'],
-                "losses": team['LOSSES'],
-                "win_pct": round(team['WinPCT'], 3),
-                "conf_rank": team['ConferenceRank'],
-                "division_rank": team['DivisionRank'],
-                "conference": team['Conference']
+                "team_id": team_id,
+                "team_name": full_name,
+                "abbreviation": team_info.get('abbreviation', nickname[:3].upper()),
+                "city": city,
+                "nickname": nickname,
+                "wins": int(team['WINS']),
+                "losses": int(team['LOSSES']),
+                "win_pct": round(float(team['WinPCT']), 3),
+                "conf_rank": int(team['PlayoffRank']) if team['PlayoffRank'] else 99,
+                "division_rank": int(team['DivisionRank']) if team['DivisionRank'] else 99,
+                "conference": conference,
+                "games_behind": games_behind,
+                "last_10": team.get('L10', 'N/A').strip(),
+                "streak": team.get('strCurrentStreak', 'N/A').strip()
             })
+        
+        # Sort by conference and then by wins (descending)
+        standings.sort(key=lambda x: (x['conference'], -x['wins']))
+        
+        # Convert numpy types to native Python types
+        standings = convert_numpy_types(standings)
         
         return {"standings": standings}
         
     except Exception as e:
-        # Return mock standings data
+        print(f"Error fetching standings from NBA API: {e}")
+        # If NBA API fails, return a message explaining the issue
         return {
-            "standings": [
-                {"team_id": 1610612738, "team_name": "Boston Celtics", "wins": 45, "losses": 20, "win_pct": 0.692, "conf_rank": 1, "division_rank": 1, "conference": "East"},
-                {"team_id": 1610612744, "team_name": "Golden State Warriors", "wins": 42, "losses": 23, "win_pct": 0.646, "conf_rank": 2, "division_rank": 1, "conference": "West"},
-                {"team_id": 1610612747, "team_name": "Los Angeles Lakers", "wins": 40, "losses": 25, "win_pct": 0.615, "conf_rank": 3, "division_rank": 2, "conference": "West"},
-            ],
-            "note": "Using mock data - NBA API may be rate limited"
+            "standings": [],
+            "error": "Unable to fetch current standings from NBA API",
+            "message": "NBA API may be temporarily unavailable or rate limited. Please try again later.",
+            "note": "This endpoint now uses only real NBA API data - no mock data fallback"
         }
 
 @app.get("/api/team/{team_id}")

@@ -3,6 +3,7 @@ import axios from "axios";
 import StandingsTable from "../components/StandingsTable";
 import NewsSection from "../components/NewsSection";
 import PredictionsWidget from "../components/PredictionsWidget";
+import LeagueLeaders from "../components/LeagueLeaders";
 
 const API_BASE_URL = "http://localhost:8000/api";
 
@@ -19,10 +20,17 @@ const Dashboard = () => {
       // Only fetch standings now
       const standingsRes = await axios.get(`${API_BASE_URL}/standings`);
 
-      setStandings(standingsRes.data.standings || []);
+      // Check if the response has an error (NBA API failure)
+      if (standingsRes.data.error) {
+        console.warn("NBA API Error:", standingsRes.data.message);
+        setStandings([]); // Set empty array if NBA API fails
+      } else {
+        setStandings(standingsRes.data.standings || []);
+      }
       setNews([]); // No news while suspended
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
+      setStandings([]); // Set empty array on any error
     } finally {
       setLoading(false);
     }
@@ -77,6 +85,9 @@ const Dashboard = () => {
         <div className="lg:col-span-2 space-y-6">
           {/* Standings Table */}
           <StandingsTable standings={standings} />
+
+          {/* League Leaders */}
+          <LeagueLeaders />
 
           {/* Quick Stats Card */}
           <div className="card p-6">

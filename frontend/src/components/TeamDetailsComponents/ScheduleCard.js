@@ -8,7 +8,7 @@ const ScheduleCard = ({ teamColors, upcomingGames }) => {
           SCHEDULE
         </h3>
         <div className="text-xs font-mono text-gray-500 px-2 py-1 bg-gray-800 rounded border border-gray-600">
-          L3|N4
+          L3|N3
         </div>
       </div>
 

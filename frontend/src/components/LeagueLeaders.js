@@ -1,0 +1,177 @@
+import React, { useState, useEffect } from "react";
+
+const LeagueLeaders = () => {
+  const [leaders, setLeaders] = useState({
+    scoring: [],
+    rebounding: [],
+    assists: []
+  });
+  const [selectedCategory, setSelectedCategory] = useState("scoring");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchLeagueLeaders();
+  }, []);
+
+  const fetchLeagueLeaders = async () => {
+    try {
+      setLoading(true);
+      // For now, we'll use mock data since the API endpoint doesn't exist yet
+      // In a future update, we can add a real league leaders endpoint
+      setLeaders({
+        scoring: [
+          { name: "Luka Dončić", team: "DAL", value: "33.2", rank: 1 },
+          { name: "Joel Embiid", team: "PHI", value: "32.1", rank: 2 },
+          { name: "Jayson Tatum", team: "BOS", value: "31.4", rank: 3 },
+          { name: "Shai Gilgeous-Alexander", team: "OKC", value: "30.8", rank: 4 },
+          { name: "Giannis Antetokounmpo", team: "MIL", value: "30.4", rank: 5 }
+        ],
+        rebounding: [
+          { name: "Domantas Sabonis", team: "SAC", value: "12.4", rank: 1 },
+          { name: "Nikola Jokić", team: "DEN", value: "12.1", rank: 2 },
+          { name: "Giannis Antetokounmpo", team: "MIL", value: "11.8", rank: 3 },
+          { name: "Joel Embiid", team: "PHI", value: "11.2", rank: 4 },
+          { name: "Rudy Gobert", team: "MIN", value: "11.0", rank: 5 }
+        ],
+        assists: [
+          { name: "Tyrese Haliburton", team: "IND", value: "10.9", rank: 1 },
+          { name: "Trae Young", team: "ATL", value: "10.7", rank: 2 },
+          { name: "Chris Paul", team: "PHX", value: "9.2", rank: 3 },
+          { name: "Nikola Jokić", team: "DEN", value: "9.0", rank: 4 },
+          { name: "Luka Dončić", team: "DAL", value: "8.9", rank: 5 }
+        ]
+      });
+    } catch (error) {
+      console.error("Error fetching league leaders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const categories = [
+    { key: "scoring", label: "SCORING", unit: "PPG", icon: "🏀" },
+    { key: "rebounding", label: "REBOUNDING", unit: "RPG", icon: "🔄" },
+    { key: "assists", label: "ASSISTS", unit: "APG", icon: "🎯" }
+  ];
+
+  if (loading) {
+    return (
+      <div className="card p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-cyan-400 border-t-transparent"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="card p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-mono font-semibold text-cyan-400 flex items-center">
+          <svg
+            className="w-6 h-6 mr-2 text-cyan-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13 10V3L4 14h7v7l9-11h-7z"
+            />
+          </svg>
+          LEAGUE_LEADERS
+        </h2>
+      </div>
+
+      {/* Category Tabs */}
+      <div className="flex space-x-1 mb-4 bg-gray-800 rounded-lg p-1">
+        {categories.map((category) => (
+          <button
+            key={category.key}
+            onClick={() => setSelectedCategory(category.key)}
+            className={`flex-1 px-3 py-2 rounded text-sm font-mono font-medium transition-all duration-200 ${
+              selectedCategory === category.key
+                ? "bg-cyan-400 text-gray-900"
+                : "text-gray-300 hover:text-cyan-400"
+            }`}
+          >
+            {category.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Leaders List */}
+      <div className="space-y-2">
+        {leaders[selectedCategory]?.map((player, index) => {
+          // Check if this is the MVP (Shai Gilgeous-Alexander)
+          const isMVP = player.name === "Shai Gilgeous-Alexander";
+          
+          return (
+            <div
+              key={index}
+              className={`flex items-center justify-between p-3 rounded border transition-all duration-300 relative ${
+                isMVP 
+                  ? 'bg-gradient-to-r from-purple-900/60 via-purple-700/70 to-purple-900/60 border-purple-400/80 shadow-lg shadow-purple-500/40 hover:shadow-xl hover:shadow-purple-400/60 hover:scale-[1.02] backdrop-blur-sm'
+                  : 'bg-gray-800 border-gray-600 hover:border-gray-500 transition-colors duration-150'
+              }`}
+            >
+              {/* MVP Badge */}
+              {isMVP && (
+                <div className="absolute -top-3 -right-3 z-20">
+                  <div className="bg-gradient-to-br from-purple-400 via-purple-300 to-purple-500 hover:bg-gradient-to-br hover:from-purple-500 hover:via-purple-400 hover:to-purple-300 text-white px-2 py-1 rounded-md text-xs font-mono font-black tracking-wider shadow-lg shadow-purple-500/50 hover:shadow-purple-400/70 transition-all duration-300">
+                    <span className="drop-shadow-md">MVP</span>
+                  </div>
+                </div>
+              )}
+              
+              <div className="flex items-center space-x-3">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-mono font-bold text-sm ${
+                  index === 0 ? 'bg-yellow-500 text-gray-900' :
+                  index === 1 ? 'bg-gray-400 text-gray-900' :
+                  index === 2 ? 'bg-yellow-600 text-gray-900' :
+                  'bg-gray-700 text-gray-300'
+                }`}>
+                  {player.rank}
+                </div>
+                <div>
+                  <div className={`text-sm font-mono font-semibold ${
+                    isMVP ? 'text-white drop-shadow-lg' : 'text-cyan-400'
+                  }`}>
+                    {player.name}
+                  </div>
+                  <div className={`text-xs font-mono ${
+                    isMVP ? 'text-purple-200' : 'text-gray-400'
+                  }`}>
+                    {player.team}
+                  </div>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className={`text-lg font-mono font-bold ${
+                  isMVP ? 'text-purple-300 drop-shadow-lg' : 'text-green-400'
+                }`}>
+                  {player.value}
+                </div>
+                <div className={`text-xs font-mono ${
+                  isMVP ? 'text-purple-200' : 'text-gray-400'
+                }`}>
+                  {categories.find(c => c.key === selectedCategory)?.unit}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-4 text-center">
+        <div className="text-xs font-mono text-gray-400">
+          Statistical leaders updated nightly
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default React.memo(LeagueLeaders);

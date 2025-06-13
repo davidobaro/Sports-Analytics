@@ -135,6 +135,20 @@ const PlayerList = () => {
     return bPpg - aPpg; // Sort in descending order (highest PPG first)
   });
 
+  // Three-Point Threat Score calculation: PPG × 3P%
+  // This formula combines scoring volume with three-point efficiency
+  const calculateThreePointThreatScore = (player) => {
+    const ppg = player.stats?.ppg || 0;
+    const threePtPct = player.stats?.three_pt_pct || 0;
+    return ppg * threePtPct;
+  };
+
+  // Function to check if player qualifies for SNIPER badge (Three-Point Threat Score ≥ 8.0)
+  const isSniper = (player) => {
+    const threatScore = calculateThreePointThreatScore(player);
+    return threatScore >= 8.0; // Threshold for elite three-point threat
+  };
+
   console.log("Team data:", teamData); // Debug log to see API structure
   console.log("Roster players sorted by PPG:", players); // Debug log to see player data
 
@@ -334,7 +348,7 @@ const PlayerList = () => {
                     <span className="text-white text-xs font-bold">🎯</span>
                   </div>
                   <span className="text-xs font-mono text-gray-300">
-                    <span className="text-yellow-400 font-bold">SNIPER</span> • 40%+ 3FG
+                    <span className="text-yellow-400 font-bold">SNIPER</span> • 3Pt Threat
                   </span>
                 </div>
               </div>
@@ -344,12 +358,29 @@ const PlayerList = () => {
           {/* Player Grid */}
           {players.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-3">
-              {players.map((player) => (
-                <div
-                  key={player.player_id}
-                  className="p-3 bg-gray-800 rounded-lg border border-gray-600 hover:border-cyan-400 transition-colors duration-200 cursor-pointer"
-                >
-                  {/* Player Photo Header with Badges */}
+              {players.map((player) => {
+                // Check if this is the MVP (Shai Gilgeous-Alexander)
+                const isMVP = player.name === "Shai Gilgeous-Alexander";
+                
+                return (
+                  <div
+                    key={player.player_id}
+                    className={`p-3 rounded-lg border transition-all duration-300 cursor-pointer relative ${
+                      isMVP 
+                        ? 'bg-gradient-to-r from-purple-900/60 via-purple-700/70 to-purple-900/60 border-purple-400/80 shadow-lg shadow-purple-500/40 hover:shadow-xl hover:shadow-purple-400/60 hover:scale-[1.02] backdrop-blur-sm'
+                        : 'bg-gray-800 border-gray-600 hover:border-cyan-400 transition-colors duration-200'
+                    }`}
+                  >
+                    {/* MVP Badge */}
+                    {isMVP && (
+                      <div className="absolute -top-2 -right-2 z-20">
+                        <div className="bg-gradient-to-br from-purple-400 via-purple-300 to-purple-500 hover:bg-gradient-to-br hover:from-purple-500 hover:via-purple-400 hover:to-purple-300 text-white px-2 py-1 rounded-md text-xs font-mono font-black tracking-wider shadow-lg shadow-purple-500/50 hover:shadow-purple-400/70 transition-all duration-300">
+                          <span className="drop-shadow-md">MVP</span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Player Photo Header with Badges */}
                   <div className="flex flex-col items-center mb-3">
                     {/* Badge Layout: [ ] [ ] headshot [ ] [ ] */}
                     <div className="flex items-center space-x-1 mb-2">
@@ -411,25 +442,33 @@ const PlayerList = () => {
                         </span>
                       </div>
 
-                      {/* Badge Slot 4 - SNIPER (40%+ 3FG) */}
+                      {/* Badge Slot 4 - SNIPER (Three-Point Threat Score ≥ 8.0: PPG × 3P%) */}
                       <div className={`w-5 h-6 rounded flex items-center justify-center border-2 border-gray-800 shadow-lg ${
-                        player.stats?.three_pt_pct >= 0.40 
+                        isSniper(player)
                           ? 'bg-yellow-500' 
                           : 'bg-gray-700 opacity-30'
                       }`}>
                         <span className="text-white text-xs">
-                          {player.stats?.three_pt_pct >= 0.40 ? '🎯' : '•'}
+                          {isSniper(player) ? '🎯' : '•'}
                         </span>
                       </div>
                     </div>
                     
                     <div className="text-center mt-2">
                       <h3
-                        className={`font-mono font-semibold text-xs ${teamColors.accent} mb-1`}
+                        className={`font-mono font-semibold text-xs mb-1 ${
+                          isMVP 
+                            ? 'text-white drop-shadow-lg' 
+                            : teamColors.accent
+                        }`}
                       >
                         {player.name || "Unknown Player"}
                       </h3>
-                      <p className="text-xs font-mono text-gray-400">
+                      <p className={`text-xs font-mono ${
+                        isMVP 
+                          ? 'text-purple-200 drop-shadow-md' 
+                          : 'text-gray-400'
+                      }`}>
                         {player.position || "N/A"} • #
                         {player.jersey_number || "N/A"}
                       </p>
@@ -439,71 +478,79 @@ const PlayerList = () => {
                   {/* Player Info - Condensed */}
                   <div className="space-y-1 mb-3">
                     <div className="flex justify-between text-xs font-mono">
-                      <span className="text-gray-500">HT:</span>
-                      <span className="text-gray-300">
+                      <span className={isMVP ? "text-purple-200" : "text-gray-500"}>HT:</span>
+                      <span className={isMVP ? "text-white drop-shadow-md" : "text-gray-300"}>
                         {player.height
                           ? `${player.height.replace("-", "'")}"`
                           : "N/A"}
                       </span>
                     </div>
                     <div className="flex justify-between text-xs font-mono">
-                      <span className="text-gray-500">AGE:</span>
-                      <span className="text-gray-300">{player.age || "N/A"}</span>
+                      <span className={isMVP ? "text-purple-200" : "text-gray-500"}>AGE:</span>
+                      <span className={isMVP ? "text-white drop-shadow-md" : "text-gray-300"}>{player.age || "N/A"}</span>
                     </div>
                     <div className="flex justify-between text-xs font-mono">
-                      <span className="text-gray-500">EXP:</span>
-                      <span className="text-gray-300">
+                      <span className={isMVP ? "text-purple-200" : "text-gray-500"}>EXP:</span>
+                      <span className={isMVP ? "text-white drop-shadow-md" : "text-gray-300"}>
                         {player.experience ? `${player.experience}y` : "R"}
                       </span>
                     </div>
                   </div>
 
                   {/* Player Statistics */}
-                  <div className="border-t border-gray-600 pt-2">
+                  <div className={`border-t pt-2 ${isMVP ? 'border-purple-300' : 'border-gray-600'}`}>
                     <div className="grid grid-cols-2 gap-1 text-center">
                       <div>
-                        <div className="text-xs font-mono text-gray-500 mb-1">
+                        <div className={`text-xs font-mono mb-1 ${isMVP ? 'text-purple-200' : 'text-gray-500'}`}>
                           PPG
                         </div>
                         <div
                           className={`text-xs font-mono font-bold ${
-                            player.stats?.ppg >= 24 ? 'text-red-400' : teamColors.secondary
+                            player.stats?.ppg >= 24 
+                              ? (isMVP ? 'text-white drop-shadow-lg' : 'text-red-400')
+                              : (isMVP ? 'text-white drop-shadow-md' : teamColors.secondary)
                           }`}
                         >
                           {player.stats?.ppg?.toFixed(1) || "0.0"}
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs font-mono text-gray-500 mb-1">
+                        <div className={`text-xs font-mono mb-1 ${isMVP ? 'text-purple-200' : 'text-gray-500'}`}>
                           RPG
                         </div>
                         <div
                           className={`text-xs font-mono font-bold ${
-                            player.stats?.rpg >= 10 ? 'text-blue-400' : teamColors.secondary
+                            player.stats?.rpg >= 10 
+                              ? (isMVP ? 'text-white drop-shadow-lg' : 'text-blue-400')
+                              : (isMVP ? 'text-white drop-shadow-md' : teamColors.secondary)
                           }`}
                         >
                           {player.stats?.rpg?.toFixed(1) || "0.0"}
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs font-mono text-gray-500 mb-1">
+                        <div className={`text-xs font-mono mb-1 ${isMVP ? 'text-purple-200' : 'text-gray-500'}`}>
                           APG
                         </div>
                         <div
                           className={`text-xs font-mono font-bold ${
-                            player.stats?.apg >= 8 ? 'text-green-400' : teamColors.secondary
+                            player.stats?.apg >= 8 
+                              ? (isMVP ? 'text-white drop-shadow-lg' : 'text-green-400')
+                              : (isMVP ? 'text-white drop-shadow-md' : teamColors.secondary)
                           }`}
                         >
                           {player.stats?.apg?.toFixed(1) || "0.0"}
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs font-mono text-gray-500 mb-1">
+                        <div className={`text-xs font-mono mb-1 ${isMVP ? 'text-purple-200' : 'text-gray-500'}`}>
                           3FG%
                         </div>
                         <div
                           className={`text-xs font-mono font-bold ${
-                            player.stats?.three_pt_pct >= 0.40 ? 'text-yellow-400' : teamColors.secondary
+                            isSniper(player)
+                              ? (isMVP ? 'text-white drop-shadow-lg' : 'text-yellow-400')
+                              : (isMVP ? 'text-white drop-shadow-md' : teamColors.secondary)
                           }`}
                         >
                           {player.stats?.three_pt_pct ? (player.stats.three_pt_pct * 100).toFixed(1) + '%' : "0.0%"}
@@ -512,7 +559,8 @@ const PlayerList = () => {
                     </div>
                   </div>
                 </div>
-              ))}
+              );
+            })}
             </div>
           ) : (
             <div className="text-center py-12">

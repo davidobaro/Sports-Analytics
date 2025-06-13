@@ -10,10 +10,12 @@ const Sidebar = ({ teams }) => {
 
   return (
     <div
-      className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-gray-900 shadow-2xl border-r border-gray-700 transition-all duration-300 z-40 flex flex-col ${
+      className={`fixed left-0 top-28 h-[calc(100vh-7rem)] bg-gray-900 shadow-2xl border-r border-gray-700 border-t-0 transition-all duration-300 z-40 flex flex-col ${
         isCollapsed ? "w-20" : "w-64"
       }`}
     >
+      {/* Top accent bar - removed to make flush with navbar */}
+      
       {/* Sidebar Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800">
         {!isCollapsed && (
