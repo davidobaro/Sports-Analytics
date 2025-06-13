@@ -157,3 +157,7 @@ Thumbs.db
 # JSON files - ignore all except package.json
 *.json
 !package.json
+
+# Ignore empty/unused optimized files
+*Optimized.js
+*_new.js
