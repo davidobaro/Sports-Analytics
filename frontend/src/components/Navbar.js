@@ -42,7 +42,7 @@ const Navbar = ({ onMenuClick }) => {
               <span className="text-gray-900 font-mono font-bold text-xl"></span>
             </div>
             <span className="text-2xl font-mono font-bold gradient-text">
-              NBA_ANALYTICS_PRO
+             DADDY_BETS
             </span>
           </Link>
 
