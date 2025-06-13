@@ -1,6 +1,5 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import axios from "axios";
 import { preloadCommonLogos } from "./utils/nbaTeamData";
 import { warmCaches, performanceMonitor } from "./utils/cacheUtils";
 import Navbar from "./components/Navbar";
@@ -67,8 +66,6 @@ const LoadingSpinner = () => (
     <p className="font-mono text-cyan-400 text-sm">LOADING_COMPONENTS...</p>
   </div>
 );
-
-const API_BASE_URL = "http://localhost:8000/api";
 
 function App() {
   const [teams, setTeams] = useState([]);

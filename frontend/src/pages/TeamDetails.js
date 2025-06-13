@@ -57,90 +57,6 @@ const FALLBACK_TEAMS = [
   { id: 1610612759, full_name: "San Antonio Spurs", abbreviation: "SAS", city: "San Antonio", nickname: "Spurs", conference: "Western", division: "Southwest", championships: 5 },
 ];
 
-const API_BASE_URL = "http://localhost:8000/api";
-
-// NBA API endpoints for real stats
-const NBA_API_BASE = "https://stats.nba.com/stats";
-
-// Helper function to fetch NBA data with proper headers
-const fetchNBAData = async (endpoint) => {
-  try {
-    const response = await fetch(endpoint, {
-      headers: {
-        'Accept': 'application/json',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-        'Host': 'stats.nba.com',
-        'Pragma': 'no-cache',
-        'Referer': 'https://www.nba.com/',
-        'Sec-Fetch-Dest': 'empty',
-        'Sec-Fetch-Mode': 'cors',
-        'Sec-Fetch-Site': 'same-site',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'x-nba-stats-origin': 'stats',
-        'x-nba-stats-token': 'true'
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`NBA API error: ${response.status}`);
-    }
-    
-    return response.json();
-  } catch (error) {
-    console.warn('NBA API failed, falling back to mock data:', error);
-    return null;
-  }
-};
-
-// Function to fetch real team stats from NBA API
-const fetchRealTeamStats = async (teamId) => {
-  try {
-    // Team info summary endpoint
-    const teamInfoUrl = `${NBA_API_BASE}/teaminfocommon?TeamID=${teamId}&Season=2024-25&SeasonType=Regular%20Season`;
-    const teamStatsUrl = `${NBA_API_BASE}/teamdashboardbygeneralsplits?TeamID=${teamId}&Season=2024-25&SeasonType=Regular%20Season&MeasureType=Base&PerMode=PerGame&PlusMinus=N&PaceAdjust=N&Rank=N&Outcome=&Location=&Month=0&SeasonSegment=&DateFrom=&DateTo=&OpponentTeamID=0&VsConference=&VsDivision=&GameSegment=&Period=0&LastNGames=0`;
-    const teamGamesUrl = `${NBA_API_BASE}/teamgamelog?TeamID=${teamId}&Season=2024-25&SeasonType=Regular%20Season`;
-
-    // Fetch team basic stats
-    const [teamStatsData, teamGamesData] = await Promise.all([
-      fetchNBAData(teamStatsUrl),
-      fetchNBAData(teamGamesUrl)
-    ]);
-
-    if (teamStatsData && teamStatsData.resultSets && teamStatsData.resultSets[0]) {
-      const statsRow = teamStatsData.resultSets[0].rowSet[0];
-      const headers = teamStatsData.resultSets[0].headers;
-      
-      // Map the stats to our structure
-      const stats = {};
-      headers.forEach((header, index) => {
-        stats[header] = statsRow[index];
-      });
-
-      // Extract the stats we need
-      return {
-        wins: stats.W || 0,
-        losses: stats.L || 0,
-        win_percentage: stats.W / (stats.W + stats.L) || 0,
-        points_per_game: stats.PTS || 0,
-        opponent_points_per_game: stats.OPP_PTS || 0,
-        field_goal_percentage: stats.FG_PCT || 0,
-        three_point_percentage: stats.FG3_PCT || 0,
-        free_throw_percentage: stats.FT_PCT || 0,
-        rebounds_per_game: stats.REB || 0,
-        assists_per_game: stats.AST || 0,
-        steals_per_game: stats.STL || 0
-      };
-    }
-
-    return null;
-  } catch (error) {
-    console.error('Error fetching real NBA stats:', error);
-    return null;
-  }
-};
-
 // Simple cache for team data
 const teamDataCache = new Map();
 
@@ -149,7 +65,6 @@ const TeamDetails = () => {
   const [teamData, setTeamData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [statsLoading, setStatsLoading] = useState(false);
-  const [statsProgress, setStatsProgress] = useState(0);
   const [statsError, setStatsError] = useState(false);
 
   const fetchTeamDetails = useCallback(async () => {
@@ -406,7 +321,6 @@ const TeamDetails = () => {
           teamId={teamId} 
           teamColors={teamColors}
           statsLoading={statsLoading}
-          statsProgress={statsProgress}
           statsError={statsError}
           onRetryStats={retryStats}
         />

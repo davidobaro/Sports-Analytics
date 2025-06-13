@@ -442,7 +442,7 @@ const PlayerList = () => {
                       <span className="text-gray-500">HT:</span>
                       <span className="text-gray-300">
                         {player.height
-                          ? `${player.height.replace("-", "'")}\"`
+                          ? `${player.height.replace("-", "'")}"`
                           : "N/A"}
                       </span>
                     </div>
