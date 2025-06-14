@@ -274,6 +274,81 @@ async def get_league_standings():
             "note": "This endpoint now uses only real NBA API data - no mock data fallback"
         }
 
+@app.get("/api/league-leaders")
+async def get_league_leaders(category: str = "PTS"):
+    """Get NBA league leaders for different statistical categories"""
+    try:
+        # Import the league leaders endpoint
+        from nba_api.stats.endpoints import leagueleaders
+        
+        # Validate category parameter
+        valid_categories = [
+            'PTS', 'REB', 'AST', 'STL', 'BLK', 'FG_PCT', 'FG3_PCT', 
+            'FT_PCT', 'MIN', 'FGM', 'FG3M', 'EFF'
+        ]
+        
+        if category not in valid_categories:
+            category = 'PTS'  # Default to points if invalid category
+        
+        # Get league leaders data from NBA API
+        leaders_data = leagueleaders.LeagueLeaders(
+            stat_category_abbreviation=category,
+            season='2024-25',
+            season_type_all_star='Regular Season',
+            per_mode48='Totals'
+        )
+        
+        # Get the dataframe
+        df = leaders_data.get_data_frames()[0]
+        
+        # Take top 10 players
+        top_players = df.head(10)
+        
+        # Format the data for frontend consumption
+        leaders_list = []
+        for _, player in top_players.iterrows():
+            player_data = {
+                "player_id": int(player['PLAYER_ID']),
+                "rank": int(player['RANK']),
+                "name": player['PLAYER'],
+                "team_id": int(player['TEAM_ID']),
+                "team": player['TEAM'],
+                "games_played": int(player['GP']),
+                "minutes": float(player['MIN']),
+                "points": float(player['PTS']),
+                "rebounds": float(player['REB']),
+                "assists": float(player['AST']),
+                "steals": float(player['STL']),
+                "blocks": float(player['BLK']),
+                "field_goal_pct": float(player['FG_PCT']),
+                "three_point_pct": float(player['FG3_PCT']) if player['FG3_PCT'] else 0.0,
+                "free_throw_pct": float(player['FT_PCT']),
+                "efficiency": float(player['EFF']),
+                "category_value": float(player[category])  # The specific stat being ranked by
+            }
+            leaders_list.append(player_data)
+        
+        # Convert numpy types to native Python types
+        leaders_list = convert_numpy_types(leaders_list)
+        
+        return {
+            "category": category,
+            "leaders": leaders_list,
+            "total_players": len(df),
+            "season": "2024-25"
+        }
+        
+    except Exception as e:
+        print(f"Error fetching league leaders from NBA API: {e}")
+        # Return error message if NBA API fails
+        return {
+            "category": category,
+            "leaders": [],
+            "error": "Unable to fetch league leaders from NBA API",
+            "message": "NBA API may be temporarily unavailable or rate limited. Please try again later.",
+            "note": "This endpoint uses real NBA API data only"
+        }
+
 @app.get("/api/team/{team_id}")
 async def get_team_details(team_id: int, include_player_stats: bool = False):
     """Get detailed information for a specific team with hardcoded names but real NBA API stats"""

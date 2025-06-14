@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-const API_BASE_URL = "http://localhost:8000/api";
-
 const LeagueLeaders = () => {
   const [leaders, setLeaders] = useState({
     scoring: [],
@@ -16,58 +14,24 @@ const LeagueLeaders = () => {
   }, []);
 
   const fetchLeagueLeaders = async () => {
-    try {
-      setLoading(true);
-      
-      // Fetch data for all three categories from the NBA API
-      const [scoringRes, reboundingRes, assistsRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/league-leaders?category=PTS`),
-        fetch(`${API_BASE_URL}/league-leaders?category=REB`),
-        fetch(`${API_BASE_URL}/league-leaders?category=AST`)
-      ]);
-
-      const [scoringData, reboundingData, assistsData] = await Promise.all([
-        scoringRes.json(),
-        reboundingRes.json(),
-        assistsRes.json()
-      ]);
-
-      // Format data for the frontend
-      const formatLeaders = (data, statKey) => {
-        if (!data.leaders || data.leaders.length === 0) {
-          return [];
-        }
-        return data.leaders.slice(0, 5).map(player => ({
-          name: player.name,
-          team: player.team,
-          value: Math.round(player[statKey]).toString(),
-          rank: player.rank
-        }));
-      };
-
-      setLeaders({
-        scoring: formatLeaders(scoringData, 'points'),
-        rebounding: formatLeaders(reboundingData, 'rebounds'),
-        assists: formatLeaders(assistsData, 'assists')
+          { name: "Tyrese Haliburton", team: "IND", value: "10.9", rank: 1 },
+          { name: "Trae Young", team: "ATL", value: "10.7", rank: 2 },
+          { name: "Chris Paul", team: "PHX", value: "9.2", rank: 3 },
+          { name: "Nikola Jokić", team: "DEN", value: "9.0", rank: 4 },
+          { name: "Luka Dončić", team: "DAL", value: "8.9", rank: 5 },
+        ],
       });
-      
     } catch (error) {
       console.error("Error fetching league leaders:", error);
-      // Fallback to empty arrays if API fails
-      setLeaders({
-        scoring: [],
-        rebounding: [],
-        assists: []
-      });
     } finally {
       setLoading(false);
     }
   };
 
   const categories = [
-    { key: "scoring", label: "SCORING", unit: "PTS", icon: "🏀" },
-    { key: "rebounding", label: "REBOUNDING", unit: "REB", icon: "🔄" },
-    { key: "assists", label: "ASSISTS", unit: "AST", icon: "🎯" },
+    { key: "scoring", label: "SCORING", unit: "PPG", icon: "🏀" },
+    { key: "rebounding", label: "REBOUNDING", unit: "RPG", icon: "🔄" },
+    { key: "assists", label: "ASSISTS", unit: "APG", icon: "🎯" },
   ];
 
   if (loading) {
