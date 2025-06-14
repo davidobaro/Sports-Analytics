@@ -413,23 +413,66 @@ const PlayerList = () => {
           {players.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-3">
               {players.map((player) => {
-                // Check if this is the MVP (Shai Gilgeous-Alexander)
+                // Check for award winners
                 const isMVP = player.name === "Shai Gilgeous-Alexander";
+                const isDPOY = player.name === "Evan Mobley";
+                const isROY = player.name === "Stephon Castle";
+                const is6MOY = player.name === "Payton Pritchard";
+                const isMIP = player.name === "Dyson Daniels";
+                
+                // Determine which award this player has (priority order)
+                const award = isMVP ? 'MVP' : isDPOY ? 'DPOY' : isROY ? 'ROY' : is6MOY ? '6MOY' : isMIP ? 'MIP' : null;
+                const isAwardWinner = award !== null;
+
+                // Award-specific styling
+                const getAwardStyling = () => {
+                  switch(award) {
+                    case 'MVP':
+                      return {
+                        card: "bg-gradient-to-r from-purple-900/60 via-purple-700/70 to-purple-900/60 border-purple-400/80 shadow-lg shadow-purple-500/40 hover:shadow-xl hover:shadow-purple-400/60 hover:scale-[1.02] backdrop-blur-sm",
+                        badge: "bg-gradient-to-br from-purple-400 via-purple-300 to-purple-500 hover:bg-gradient-to-br hover:from-purple-500 hover:via-purple-400 hover:to-purple-300 shadow-lg shadow-purple-500/50 hover:shadow-purple-400/70"
+                      };
+                    case 'DPOY':
+                      return {
+                        card: "bg-gradient-to-r from-emerald-900/60 via-emerald-700/70 to-emerald-900/60 border-emerald-400/80 shadow-lg shadow-emerald-500/40 hover:shadow-xl hover:shadow-emerald-400/60 hover:scale-[1.02] backdrop-blur-sm",
+                        badge: "bg-gradient-to-br from-emerald-400 via-emerald-300 to-emerald-500 hover:bg-gradient-to-br hover:from-emerald-500 hover:via-emerald-400 hover:to-emerald-300 shadow-lg shadow-emerald-500/50 hover:shadow-emerald-400/70"
+                      };
+                    case 'ROY':
+                      return {
+                        card: "bg-gradient-to-r from-amber-900/60 via-amber-700/70 to-amber-900/60 border-amber-400/80 shadow-lg shadow-amber-500/40 hover:shadow-xl hover:shadow-amber-400/60 hover:scale-[1.02] backdrop-blur-sm",
+                        badge: "bg-gradient-to-br from-amber-400 via-amber-300 to-amber-500 hover:bg-gradient-to-br hover:from-amber-500 hover:via-amber-400 hover:to-amber-300 shadow-lg shadow-amber-500/50 hover:shadow-amber-400/70"
+                      };
+                    case '6MOY':
+                      return {
+                        card: "bg-gradient-to-r from-indigo-900/60 via-indigo-700/70 to-indigo-900/60 border-indigo-400/80 shadow-lg shadow-indigo-500/40 hover:shadow-xl hover:shadow-indigo-400/60 hover:scale-[1.02] backdrop-blur-sm",
+                        badge: "bg-gradient-to-br from-indigo-400 via-indigo-300 to-indigo-500 hover:bg-gradient-to-br hover:from-indigo-500 hover:via-indigo-400 hover:to-indigo-300 shadow-lg shadow-indigo-500/50 hover:shadow-indigo-400/70"
+                      };
+                    case 'MIP':
+                      return {
+                        card: "bg-gradient-to-r from-rose-900/60 via-rose-700/70 to-rose-900/60 border-rose-400/80 shadow-lg shadow-rose-500/40 hover:shadow-xl hover:shadow-rose-400/60 hover:scale-[1.02] backdrop-blur-sm",
+                        badge: "bg-gradient-to-br from-rose-400 via-rose-300 to-rose-500 hover:bg-gradient-to-br hover:from-rose-500 hover:via-rose-400 hover:to-rose-300 shadow-lg shadow-rose-500/50 hover:shadow-rose-400/70"
+                      };
+                    default:
+                      return { card: "", badge: "" };
+                  }
+                };
+
+                const awardStyling = getAwardStyling();
 
                 return (
                   <div
                     key={player.player_id}
                     className={`p-3 rounded-lg border transition-all duration-300 cursor-pointer relative ${
-                      isMVP
-                        ? "bg-gradient-to-r from-purple-900/60 via-purple-700/70 to-purple-900/60 border-purple-400/80 shadow-lg shadow-purple-500/40 hover:shadow-xl hover:shadow-purple-400/60 hover:scale-[1.02] backdrop-blur-sm"
+                      isAwardWinner
+                        ? awardStyling.card
                         : "bg-gray-800 border-gray-600 hover:border-cyan-400 transition-colors duration-200"
                     }`}
                   >
-                    {/* MVP Badge */}
-                    {isMVP && (
+                    {/* Award Badge */}
+                    {isAwardWinner && (
                       <div className="absolute -top-2 -right-2 z-20">
-                        <div className="bg-gradient-to-br from-purple-400 via-purple-300 to-purple-500 hover:bg-gradient-to-br hover:from-purple-500 hover:via-purple-400 hover:to-purple-300 text-white px-2 py-1 rounded-md text-xs font-mono font-black tracking-wider shadow-lg shadow-purple-500/50 hover:shadow-purple-400/70 transition-all duration-300">
-                          <span className="drop-shadow-md">MVP</span>
+                        <div className={`${awardStyling.badge} text-white px-2 py-1 rounded-md text-xs font-mono font-black tracking-wider transition-all duration-300`}>
+                          <span className="drop-shadow-md">{award}</span>
                         </div>
                       </div>
                     )}
