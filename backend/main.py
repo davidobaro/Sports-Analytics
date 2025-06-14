@@ -352,11 +352,17 @@ async def get_league_leaders(category: str = "PTS"):
 @app.get("/api/team/{team_id}")
 async def get_team_details(team_id: int, include_player_stats: bool = False):
     """Get detailed information for a specific team with hardcoded names but real NBA API stats"""
+    
+    # 🚀 ENHANCED: Log request received
+    print(f"🌐 Backend received request for team {team_id} (include_player_stats={include_player_stats})")
+    
     try:
         # Get basic team info from our hardcoded database for correct names
         if team_id not in NBA_TEAMS_DATA:
+            print(f"❌ Team {team_id} not found in database")
             raise HTTPException(status_code=404, detail="Team not found")
         
+        print(f"✅ Found team {team_id} in database, processing...")
         team_info = NBA_TEAMS_DATA[team_id]["basic_info"]
         
         # Initialize team data with hardcoded basic info
@@ -499,12 +505,13 @@ async def get_team_details(team_id: int, include_player_stats: bool = False):
             team_data["roster"] = []  # Ensure roster exists as empty array
             team_data["roster_count"] = 0
         
+        print(f"✅ Successfully processed team {team_id} request")
         return convert_numpy_types(team_data)
         
     except HTTPException:
         raise
     except Exception as e:
-        print(f"Error fetching team data for {team_id}: {e}")
+        print(f"❌ Error fetching team data for {team_id}: {e}")
         raise HTTPException(status_code=500, detail="Error fetching team data")
 
 @app.get("/api/player/{player_id}")

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 
 const API_BASE_URL = "http://localhost:8000/api";
@@ -12,8 +12,14 @@ const PlayerList = () => {
   const [loading, setLoading] = useState(true);
   const [failedPlayers, setFailedPlayers] = useState([]);
   const [playersLoading, setPlayersLoading] = useState(false);
+  
+  // 🚀 NEW: AbortController for request cancellation
+  const abortControllerRef = useRef(new AbortController());
 
   const fetchTeamDetails = useCallback(async () => {
+    const currentTeamId = teamId; // Capture current teamId
+    console.log('🚀 Starting fetch for team:', currentTeamId);
+    
     try {
       // Check cache first for instant loading
       if (teamDataCache.has(teamId)) {
@@ -25,8 +31,20 @@ const PlayerList = () => {
       setLoading(true);
       setFailedPlayers([]);
 
+      // 🚀 ENHANCED: Log request start with team info
+      console.log('🌐 Making API request to:', `${API_BASE_URL}/team/${teamId}`);
+      
       // First, get basic team info without player stats to avoid total failure
-      const basicResponse = await fetch(`${API_BASE_URL}/team/${teamId}`);
+      // 🚀 ENHANCED: Add abort signal to prevent unnecessary requests
+      const basicResponse = await fetch(`${API_BASE_URL}/team/${teamId}`, {
+        signal: abortControllerRef.current.signal
+      });
+
+      // Check if request was cancelled after fetch
+      if (abortControllerRef.current.signal.aborted) {
+        console.log('🚫 Request was cancelled during basic team fetch for:', currentTeamId);
+        return;
+      }
 
       if (!basicResponse.ok) {
         throw new Error(`HTTP error! status: ${basicResponse.status}`);
@@ -45,9 +63,23 @@ const PlayerList = () => {
       setPlayersLoading(true);
 
       try {
+        // 🚀 ENHANCED: Log player stats request
+        console.log('🌐 Making player stats request for team:', currentTeamId);
+        
+        // 🚀 ENHANCED: Add abort signal to player stats request
         const playerResponse = await fetch(
-          `${API_BASE_URL}/team/${teamId}?include_player_stats=true`
+          `${API_BASE_URL}/team/${teamId}?include_player_stats=true`,
+          {
+            signal: abortControllerRef.current.signal
+          }
         );
+
+        // Check if request was cancelled after fetch
+        if (abortControllerRef.current.signal.aborted) {
+          console.log('🚫 Request was cancelled during player stats fetch for:', currentTeamId);
+          setPlayersLoading(false);
+          return;
+        }
 
         if (playerResponse.ok) {
           const playerData = await playerResponse.json();
@@ -128,12 +160,22 @@ const PlayerList = () => {
           ]);
         }
       } catch (playerError) {
+        // 🚀 ENHANCED: Handle cancelled requests gracefully
+        if (playerError.name === 'AbortError') {
+          console.log('🚫 Player stats request cancelled - user navigated away');
+          return; // Don't set error states for cancelled requests
+        }
         console.error("Error fetching player stats:", playerError);
         setFailedPlayers(["All player data unavailable due to server issues"]);
       } finally {
         setPlayersLoading(false);
       }
     } catch (error) {
+      // 🚀 ENHANCED: Handle cancelled requests gracefully
+      if (error.name === 'AbortError') {
+        console.log('🚫 Team details request cancelled - user navigated away');
+        return; // Don't set error states for cancelled requests
+      }
       console.error("Error fetching team details:", error);
       setTeamData(null);
       setLoading(false);
@@ -142,8 +184,21 @@ const PlayerList = () => {
   }, [teamId]);
 
   useEffect(() => {
+    // 🚀 ENHANCED: Cancel any existing requests immediately when teamId changes
+    abortControllerRef.current.abort();
+    console.log('🚫 Cancelling previous requests - teamId changed to:', teamId);
+    
+    // Create new AbortController for new requests
+    abortControllerRef.current = new AbortController();
+    
     fetchTeamDetails();
-  }, [fetchTeamDetails]);
+    
+    // Cleanup function to cancel requests on unmount
+    return () => {
+      console.log('🚫 Component cleanup - cancelling requests for teamId:', teamId);
+      abortControllerRef.current.abort();
+    };
+  }, [fetchTeamDetails, teamId]);
 
   // Simple static values for team colors
   const teamColors = {
@@ -231,12 +286,21 @@ const PlayerList = () => {
           </div>
 
           {/* Back Button */}
-          <Link
-            to={`/team/${teamId}`}
-            className={`btn-secondary text-sm px-4 py-2 ${teamColors.accent}`}
-          >
-            ← BACK_TO_TEAM
-          </Link>
+          <div className="flex items-center space-x-4">
+            {/* 🚀 NEW: Request Cancellation Status Indicator */}
+            <div className="flex items-center space-x-2 px-3 py-1 bg-green-900/30 border border-green-600/50 rounded-lg">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-green-400 font-mono text-xs">
+                REQUEST_CANCELLATION_ACTIVE
+              </span>
+            </div>
+            <Link
+              to={`/team/${teamId}`}
+              className={`btn-secondary text-sm px-4 py-2 ${teamColors.accent}`}
+            >
+              ← BACK_TO_TEAM
+            </Link>
+          </div>
         </div>
 
         {/* Team Header with Logo */}
