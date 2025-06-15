@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import betDaddyLogo from "../assets/images/betDaddy.png";
 
 const Navbar = ({ onMenuClick }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -38,24 +39,26 @@ const Navbar = ({ onMenuClick }) => {
               />
             </svg>
           </button>
-
           {/* Logo and App Name - Hidden on mobile */}
           <Link to="/" className="hidden lg:flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-cyan-400 rounded-lg flex items-center justify-center border border-gray-600">
-              <span className="text-gray-900 font-mono font-bold text-xl"></span>
-            </div>
+            <img
+              src={betDaddyLogo}
+              alt="BetDaddy Logo"
+              className="w-14 h-14 object-contain"
+            />
             <span className="text-2xl font-mono font-bold gradient-text">
-              DADDY_BETS
+              BET
+              <span className="italic">DADDY </span>
             </span>
           </Link>
-
           {/* Mobile Logo - Only visible on mobile */}
           <Link to="/" className="lg:hidden flex items-center">
-            <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-cyan-400 rounded-lg flex items-center justify-center border border-gray-600">
-              <span className="text-gray-900 font-mono font-bold text-sm"></span>
-            </div>
+            <img
+              src={betDaddyLogo}
+              alt="BetDaddy Logo"
+              className="w-10 h-10 object-contain"
+            />
           </Link>
-
           {/* Search Bar */}
           <div className="flex-1 max-w-lg mx-4 lg:mx-8">
             <form onSubmit={handleSearch} className="relative">
@@ -83,7 +86,6 @@ const Navbar = ({ onMenuClick }) => {
               </div>
             </form>
           </div>
-
           {/* Navigation Links - Hidden on mobile */}
           <div className="hidden lg:flex items-center space-x-6">
             <Link
@@ -106,7 +108,6 @@ const Navbar = ({ onMenuClick }) => {
             </Link>
             <button className="btn-primary">HIDDEN_GEMS</button>
           </div>
-
           {/* Mobile Action Button */}
           <div className="lg:hidden">
             <button className="p-2 rounded-lg hover:bg-gray-800 transition-colors border border-gray-600">

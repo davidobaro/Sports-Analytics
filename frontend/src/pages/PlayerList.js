@@ -12,14 +12,14 @@ const PlayerList = () => {
   const [loading, setLoading] = useState(true);
   const [failedPlayers, setFailedPlayers] = useState([]);
   const [playersLoading, setPlayersLoading] = useState(false);
-  
+
   // 🚀 NEW: AbortController for request cancellation
   const abortControllerRef = useRef(new AbortController());
 
   const fetchTeamDetails = useCallback(async () => {
     const currentTeamId = teamId; // Capture current teamId
-    console.log('🚀 Starting fetch for team:', currentTeamId);
-    
+    console.log("🚀 Starting fetch for team:", currentTeamId);
+
     try {
       // Check cache first for instant loading
       if (teamDataCache.has(teamId)) {
@@ -32,17 +32,23 @@ const PlayerList = () => {
       setFailedPlayers([]);
 
       // 🚀 ENHANCED: Log request start with team info
-      console.log('🌐 Making API request to:', `${API_BASE_URL}/team/${teamId}`);
-      
+      console.log(
+        "🌐 Making API request to:",
+        `${API_BASE_URL}/team/${teamId}`
+      );
+
       // First, get basic team info without player stats to avoid total failure
       // 🚀 ENHANCED: Add abort signal to prevent unnecessary requests
       const basicResponse = await fetch(`${API_BASE_URL}/team/${teamId}`, {
-        signal: abortControllerRef.current.signal
+        signal: abortControllerRef.current.signal,
       });
 
       // Check if request was cancelled after fetch
       if (abortControllerRef.current.signal.aborted) {
-        console.log('🚫 Request was cancelled during basic team fetch for:', currentTeamId);
+        console.log(
+          "🚫 Request was cancelled during basic team fetch for:",
+          currentTeamId
+        );
         return;
       }
 
@@ -64,19 +70,22 @@ const PlayerList = () => {
 
       try {
         // 🚀 ENHANCED: Log player stats request
-        console.log('🌐 Making player stats request for team:', currentTeamId);
-        
+        console.log("🌐 Making player stats request for team:", currentTeamId);
+
         // 🚀 ENHANCED: Add abort signal to player stats request
         const playerResponse = await fetch(
           `${API_BASE_URL}/team/${teamId}?include_player_stats=true`,
           {
-            signal: abortControllerRef.current.signal
+            signal: abortControllerRef.current.signal,
           }
         );
 
         // Check if request was cancelled after fetch
         if (abortControllerRef.current.signal.aborted) {
-          console.log('🚫 Request was cancelled during player stats fetch for:', currentTeamId);
+          console.log(
+            "🚫 Request was cancelled during player stats fetch for:",
+            currentTeamId
+          );
           setPlayersLoading(false);
           return;
         }
@@ -161,8 +170,10 @@ const PlayerList = () => {
         }
       } catch (playerError) {
         // 🚀 ENHANCED: Handle cancelled requests gracefully
-        if (playerError.name === 'AbortError') {
-          console.log('🚫 Player stats request cancelled - user navigated away');
+        if (playerError.name === "AbortError") {
+          console.log(
+            "🚫 Player stats request cancelled - user navigated away"
+          );
           return; // Don't set error states for cancelled requests
         }
         console.error("Error fetching player stats:", playerError);
@@ -172,8 +183,8 @@ const PlayerList = () => {
       }
     } catch (error) {
       // 🚀 ENHANCED: Handle cancelled requests gracefully
-      if (error.name === 'AbortError') {
-        console.log('🚫 Team details request cancelled - user navigated away');
+      if (error.name === "AbortError") {
+        console.log("🚫 Team details request cancelled - user navigated away");
         return; // Don't set error states for cancelled requests
       }
       console.error("Error fetching team details:", error);
@@ -186,16 +197,19 @@ const PlayerList = () => {
   useEffect(() => {
     // 🚀 ENHANCED: Cancel any existing requests immediately when teamId changes
     abortControllerRef.current.abort();
-    console.log('🚫 Cancelling previous requests - teamId changed to:', teamId);
-    
+    console.log("🚫 Cancelling previous requests - teamId changed to:", teamId);
+
     // Create new AbortController for new requests
     abortControllerRef.current = new AbortController();
-    
+
     fetchTeamDetails();
-    
+
     // Cleanup function to cancel requests on unmount
     return () => {
-      console.log('🚫 Component cleanup - cancelling requests for teamId:', teamId);
+      console.log(
+        "🚫 Component cleanup - cancelling requests for teamId:",
+        teamId
+      );
       abortControllerRef.current.abort();
     };
   }, [fetchTeamDetails, teamId]);
@@ -222,10 +236,48 @@ const PlayerList = () => {
     return ppg * threePtPct;
   };
 
-  // Function to check if player qualifies for SNIPER badge (Three-Point Threat Score ≥ 8.0)
-  const isSniper = (player) => {
-    const threatScore = calculateThreePointThreatScore(player);
-    return threatScore >= 8.0; // Threshold for elite three-point threat
+  // Badge Tier System - Bronze/Silver/Gold tiers
+
+  // BUCKET Badge Tiers: Bronze → Silver → Gold → Diamond
+  const getBucketTier = (player) => {
+    const ppg = player.stats?.ppg || 0;
+    if (ppg >= 30) return 4; // Diamond BUCKET
+    if (ppg >= 25) return 3; // Gold BUCKET
+    if (ppg >= 22) return 2; // Silver BUCKET
+    if (ppg >= 18) return 1; // Bronze BUCKET
+    return 0; // No badge
+  };
+
+  // GLASSMASTER Badge Tiers: Bronze → Silver → Gold → Diamond
+  const getGlassTier = (player) => {
+    const rpg = player.stats?.rpg || 0;
+    if (rpg >= 14) return 4; // Diamond GLASSMASTER
+    if (rpg >= 11) return 3; // Gold GLASSMASTER
+    if (rpg >= 8) return 2; // Silver GLASSMASTER
+    if (rpg >= 5) return 1; // Bronze GLASSMASTER
+    return 0; // No badge
+  };
+
+  // FLOORGENERAL Badge Tiers: Bronze → Silver → Gold → Diamond
+  const getFloorTier = (player) => {
+    const apg = player.stats?.apg || 0;
+    if (apg >= 10) return 4; // Diamond FLOORGENERAL
+    if (apg >= 8) return 3; // Gold FLOORGENERAL
+    if (apg >= 6) return 2; // Silver FLOORGENERAL
+    if (apg >= 4) return 1; // Bronze FLOORGENERAL
+    return 0; // No badge
+  };
+
+  // SNIPER Badge Tiers: Bronze → Silver → Gold → Diamond
+  const getSniperTier = (player) => {
+    const threePtPct = player.stats?.three_pt_pct || 0;
+    const ppg = player.stats?.ppg || 0;
+
+    if (threePtPct >= 0.37 && ppg >= 23) return 4; // Diamond SNIPER
+    if (threePtPct >= 0.35 && ppg >= 16) return 3; // Gold SNIPER
+    if (threePtPct >= 0.33 && ppg >= 14) return 2; // Silver SNIPER
+    if (threePtPct >= 0.32 && ppg >= 10) return 1; // Bronze SNIPER
+    return 0; // No badge
   };
 
   console.log("Team data:", teamData); // Debug log to see API structure
@@ -428,46 +480,82 @@ const PlayerList = () => {
           {players.length > 0 && (
             <div className="mb-6 p-4 bg-gray-800/50 rounded-lg border border-gray-600/50">
               <h3 className="text-sm font-mono font-semibold text-gray-400 mb-3">
-                PERFORMANCE_BADGES_LEGEND
+                PERFORMANCE_BADGES_TIER_SYSTEM
               </h3>
+              
+              {/* Universal Tier System */}
+              <div className="mb-4 p-3 bg-gray-700/30 rounded border border-gray-600/30">
+                <div className="flex items-center justify-center space-x-6">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-5 h-5 bg-gradient-to-br from-amber-500 via-amber-400 to-amber-600 rounded border border-amber-500 shadow-lg shadow-amber-500/30 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 animate-pulse"></div>
+                    </div>
+                    <span className="text-xs font-mono text-amber-400">Novice</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-5 h-5 bg-gradient-to-br from-slate-300 via-slate-200 to-slate-400 rounded border border-slate-300 shadow-lg shadow-slate-300/30 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 animate-pulse"></div>
+                    </div>
+                    <span className="text-xs font-mono text-slate-300">Tested</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-5 h-5 bg-gradient-to-br from-yellow-300 via-yellow-200 to-yellow-400 rounded border border-yellow-300 shadow-lg shadow-yellow-300/40 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent transform -skew-x-12 animate-pulse"></div>
+                    </div>
+                    <span className="text-xs font-mono text-yellow-400">Dominant</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-5 h-5 bg-gradient-to-br from-cyan-300 via-cyan-200 to-cyan-400 rounded border border-cyan-300 shadow-lg shadow-cyan-300/50 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent transform -skew-x-12 animate-pulse"></div>
+                    </div>
+                    <span className="text-xs font-mono text-cyan-400">Elite</span>
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {/* Scoring Badge */}
                 <div className="flex items-center space-x-2">
                   <div className="w-5 h-5 bg-red-500 rounded flex items-center justify-center">
                     <span className="text-white text-xs font-bold">🔥</span>
                   </div>
-                  <span className="text-xs font-mono text-gray-300">
-                    <span className="text-red-400 font-bold">SHARPSHOOTER</span>{" "}
-                    • 24+ PPG
-                  </span>
+                  <div>
+                    <div className="text-xs font-mono text-red-400 font-bold">BUCKET</div>
+                    <div className="text-xs font-mono text-gray-400">High Scoring</div>
+                  </div>
                 </div>
+
+                {/* Rebounding Badge */}
                 <div className="flex items-center space-x-2">
                   <div className="w-5 h-5 bg-blue-500 rounded flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">💪</span>
+                    <span className="text-white text-xs font-bold">🛡️</span>
                   </div>
-                  <span className="text-xs font-mono text-gray-300">
-                    <span className="text-blue-400 font-bold">GLASSMASTER</span>{" "}
-                    • 10+ RPG
-                  </span>
+                  <div>
+                    <div className="text-xs font-mono text-blue-400 font-bold">GLASSMASTER</div>
+                    <div className="text-xs font-mono text-gray-400">Rebounding</div>
+                  </div>
                 </div>
+
+                {/* Playmaking Badge */}
                 <div className="flex items-center space-x-2">
                   <div className="w-5 h-5 bg-green-500 rounded flex items-center justify-center">
                     <span className="text-white text-xs font-bold">🧠</span>
                   </div>
-                  <span className="text-xs font-mono text-gray-300">
-                    <span className="text-green-400 font-bold">
-                      FLOORGENERAL
-                    </span>{" "}
-                    • 8+ APG
-                  </span>
+                  <div>
+                    <div className="text-xs font-mono text-green-400 font-bold">FLOORGENERAL</div>
+                    <div className="text-xs font-mono text-gray-400">Playmaking</div>
+                  </div>
                 </div>
+
+                {/* Shooting Badge */}
                 <div className="flex items-center space-x-2">
                   <div className="w-5 h-5 bg-yellow-500 rounded flex items-center justify-center">
                     <span className="text-white text-xs font-bold">🎯</span>
                   </div>
-                  <span className="text-xs font-mono text-gray-300">
-                    <span className="text-yellow-400 font-bold">SNIPER</span> •
-                    3Pt Threat
-                  </span>
+                  <div>
+                    <div className="text-xs font-mono text-yellow-400 font-bold">SNIPER</div>
+                    <div className="text-xs font-mono text-gray-400">3-Point Shooting</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -483,38 +571,53 @@ const PlayerList = () => {
                 const isROY = player.name === "Stephon Castle";
                 const is6MOY = player.name === "Payton Pritchard";
                 const isMIP = player.name === "Dyson Daniels";
-                
+
                 // Determine which award this player has (priority order)
-                const award = isMVP ? 'MVP' : isDPOY ? 'DPOY' : isROY ? 'ROY' : is6MOY ? '6MOY' : isMIP ? 'MIP' : null;
+                const award = isMVP
+                  ? "MVP"
+                  : isDPOY
+                  ? "DPOY"
+                  : isROY
+                  ? "ROY"
+                  : is6MOY
+                  ? "6MOY"
+                  : isMIP
+                  ? "MIP"
+                  : null;
                 const isAwardWinner = award !== null;
 
                 // Award-specific styling
                 const getAwardStyling = () => {
-                  switch(award) {
-                    case 'MVP':
+                  switch (award) {
+                    case "MVP":
                       return {
                         card: "bg-gradient-to-r from-purple-900/60 via-purple-700/70 to-purple-900/60 border-purple-400/80 shadow-lg shadow-purple-500/40 hover:shadow-xl hover:shadow-purple-400/60 hover:scale-[1.02] backdrop-blur-sm",
-                        badge: "bg-gradient-to-br from-purple-400 via-purple-300 to-purple-500 hover:bg-gradient-to-br hover:from-purple-500 hover:via-purple-400 hover:to-purple-300 shadow-lg shadow-purple-500/50 hover:shadow-purple-400/70"
+                        badge:
+                          "bg-gradient-to-br from-purple-400 via-purple-300 to-purple-500 hover:bg-gradient-to-br hover:from-purple-500 hover:via-purple-400 hover:to-purple-300 shadow-lg shadow-purple-500/50 hover:shadow-purple-400/70",
                       };
-                    case 'DPOY':
+                    case "DPOY":
                       return {
                         card: "bg-gradient-to-r from-emerald-900/60 via-emerald-700/70 to-emerald-900/60 border-emerald-400/80 shadow-lg shadow-emerald-500/40 hover:shadow-xl hover:shadow-emerald-400/60 hover:scale-[1.02] backdrop-blur-sm",
-                        badge: "bg-gradient-to-br from-emerald-400 via-emerald-300 to-emerald-500 hover:bg-gradient-to-br hover:from-emerald-500 hover:via-emerald-400 hover:to-emerald-300 shadow-lg shadow-emerald-500/50 hover:shadow-emerald-400/70"
+                        badge:
+                          "bg-gradient-to-br from-emerald-400 via-emerald-300 to-emerald-500 hover:bg-gradient-to-br hover:from-emerald-500 hover:via-emerald-400 hover:to-emerald-300 shadow-lg shadow-emerald-500/50 hover:shadow-emerald-400/70",
                       };
-                    case 'ROY':
+                    case "ROY":
                       return {
                         card: "bg-gradient-to-r from-amber-900/60 via-amber-700/70 to-amber-900/60 border-amber-400/80 shadow-lg shadow-amber-500/40 hover:shadow-xl hover:shadow-amber-400/60 hover:scale-[1.02] backdrop-blur-sm",
-                        badge: "bg-gradient-to-br from-amber-400 via-amber-300 to-amber-500 hover:bg-gradient-to-br hover:from-amber-500 hover:via-amber-400 hover:to-amber-300 shadow-lg shadow-amber-500/50 hover:shadow-amber-400/70"
+                        badge:
+                          "bg-gradient-to-br from-amber-400 via-amber-300 to-amber-500 hover:bg-gradient-to-br hover:from-amber-500 hover:via-amber-400 hover:to-amber-300 shadow-lg shadow-amber-500/50 hover:shadow-amber-400/70",
                       };
-                    case '6MOY':
+                    case "6MOY":
                       return {
                         card: "bg-gradient-to-r from-indigo-900/60 via-indigo-700/70 to-indigo-900/60 border-indigo-400/80 shadow-lg shadow-indigo-500/40 hover:shadow-xl hover:shadow-indigo-400/60 hover:scale-[1.02] backdrop-blur-sm",
-                        badge: "bg-gradient-to-br from-indigo-400 via-indigo-300 to-indigo-500 hover:bg-gradient-to-br hover:from-indigo-500 hover:via-indigo-400 hover:to-indigo-300 shadow-lg shadow-indigo-500/50 hover:shadow-indigo-400/70"
+                        badge:
+                          "bg-gradient-to-br from-indigo-400 via-indigo-300 to-indigo-500 hover:bg-gradient-to-br hover:from-indigo-500 hover:via-indigo-400 hover:to-indigo-300 shadow-lg shadow-indigo-500/50 hover:shadow-indigo-400/70",
                       };
-                    case 'MIP':
+                    case "MIP":
                       return {
                         card: "bg-gradient-to-r from-rose-900/60 via-rose-700/70 to-rose-900/60 border-rose-400/80 shadow-lg shadow-rose-500/40 hover:shadow-xl hover:shadow-rose-400/60 hover:scale-[1.02] backdrop-blur-sm",
-                        badge: "bg-gradient-to-br from-rose-400 via-rose-300 to-rose-500 hover:bg-gradient-to-br hover:from-rose-500 hover:via-rose-400 hover:to-rose-300 shadow-lg shadow-rose-500/50 hover:shadow-rose-400/70"
+                        badge:
+                          "bg-gradient-to-br from-rose-400 via-rose-300 to-rose-500 hover:bg-gradient-to-br hover:from-rose-500 hover:via-rose-400 hover:to-rose-300 shadow-lg shadow-rose-500/50 hover:shadow-rose-400/70",
                       };
                     default:
                       return { card: "", badge: "" };
@@ -535,7 +638,9 @@ const PlayerList = () => {
                     {/* Award Badge */}
                     {isAwardWinner && (
                       <div className="absolute -top-2 -right-2 z-20">
-                        <div className={`${awardStyling.badge} text-white px-2 py-1 rounded-md text-xs font-mono font-black tracking-wider transition-all duration-300`}>
+                        <div
+                          className={`${awardStyling.badge} text-white px-2 py-1 rounded-md text-xs font-mono font-black tracking-wider transition-all duration-300`}
+                        >
                           <span className="drop-shadow-md">{award}</span>
                         </div>
                       </div>
@@ -545,31 +650,169 @@ const PlayerList = () => {
                     <div className="flex flex-col items-center mb-3">
                       {/* Badge Layout: [ ] [ ] headshot [ ] [ ] */}
                       <div className="flex items-center space-x-1 mb-2">
-                        {/* Badge Slot 1 - SHARPSHOOTER (24+ PPG) */}
-                        <div
-                          className={`w-5 h-6 rounded flex items-center justify-center border-2 border-gray-800 shadow-lg ${
-                            player.stats?.ppg >= 24
-                              ? "bg-red-500"
-                              : "bg-gray-700 opacity-30"
-                          }`}
-                        >
-                          <span className="text-white text-xs">
-                            {player.stats?.ppg >= 24 ? "🔥" : "•"}
-                          </span>
-                        </div>
+                        {/* Badge Slot 1 - SCORING TIERS */}
+                        {(() => {
+                          const bucketTier = getBucketTier(player);
+                          const bucketStyles = [
+                            {
+                              bg: "bg-gray-700 opacity-30",
+                              icon: "•",
+                              numeral: "",
+                            }, // No badge
+                            {
+                              bg: "bg-gradient-to-br from-amber-500 via-amber-400 to-amber-600 shadow-lg shadow-amber-500/30 relative overflow-hidden",
+                              icon: "🔥",
+                              numeral: "IV",
+                            }, // Bronze BUCKET
+                            {
+                              bg: "bg-gradient-to-br from-slate-300 via-slate-200 to-slate-400 shadow-lg shadow-slate-300/30 relative overflow-hidden",
+                              icon: "🔥",
+                              numeral: "III",
+                            }, // Silver BUCKET
+                            {
+                              bg: "bg-gradient-to-br from-yellow-300 via-yellow-200 to-yellow-400 shadow-lg shadow-yellow-300/40 relative overflow-hidden",
+                              icon: "🔥",
+                              numeral: "II",
+                            }, // Gold BUCKET
+                            {
+                              bg: "bg-gradient-to-br from-cyan-300 via-cyan-200 to-cyan-400 shadow-lg shadow-cyan-300/50 relative overflow-hidden",
+                              icon: "🔥",
+                              numeral: "I",
+                            }, // Diamond BUCKET
+                          ];
+                          return (
+                            <div className="flex flex-col items-center h-8">
+                              <div className="h-3 flex items-center justify-center">
+                                {bucketTier > 0 ? (
+                                  <span
+                                    className={`font-mono font-bold drop-shadow-md leading-none ${
+                                      bucketTier === 4
+                                        ? "text-[#4EE2EC]" // Diamond
+                                        : bucketTier === 3
+                                        ? "text-yellow-400" // Gold
+                                        : bucketTier === 2
+                                        ? "text-gray-300" // Silver
+                                        : "text-amber-400" // Bronze
+                                    }`}
+                                    style={{ fontSize: "6px" }}
+                                  >
+                                    {bucketStyles[bucketTier].numeral}
+                                  </span>
+                                ) : (
+                                  <span
+                                    className="opacity-0"
+                                    style={{ fontSize: "6px" }}
+                                  >
+                                    I
+                                  </span>
+                                )}
+                              </div>
+                              <div
+                                className={`w-5 h-5 rounded flex items-center justify-center border-2 shadow-lg ${bucketStyles[bucketTier].bg} ${
+                                  bucketTier === 4
+                                    ? "border-cyan-300" // Diamond
+                                    : bucketTier === 3
+                                    ? "border-yellow-300" // Gold
+                                    : bucketTier === 2
+                                    ? "border-slate-300" // Silver
+                                    : bucketTier === 1
+                                    ? "border-amber-500" // Bronze
+                                    : "border-gray-800" // No badge
+                                }`}
+                              >
+                                {bucketTier > 0 && (
+                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 animate-pulse"></div>
+                                )}
+                                <span className="text-white text-xs font-bold relative z-10">
+                                  {bucketStyles[bucketTier].icon}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })()}
 
-                        {/* Badge Slot 2 - GLASSMASTER (10+ RPG) */}
-                        <div
-                          className={`w-5 h-6 rounded flex items-center justify-center border-2 border-gray-800 shadow-lg ${
-                            player.stats?.rpg >= 10
-                              ? "bg-blue-500"
-                              : "bg-gray-700 opacity-30"
-                          }`}
-                        >
-                          <span className="text-white text-xs">
-                            {player.stats?.rpg >= 10 ? "💪" : "•"}
-                          </span>
-                        </div>
+                        {/* Badge Slot 2 - REBOUNDING TIERS */}
+                        {(() => {
+                          const glassTier = getGlassTier(player);
+                          const glassStyles = [
+                            {
+                              bg: "bg-gray-700 opacity-30",
+                              icon: "•",
+                              numeral: "",
+                            }, // No badge
+                            {
+                              bg: "bg-gradient-to-br from-amber-500 via-amber-400 to-amber-600 shadow-lg shadow-amber-500/30 relative overflow-hidden",
+                              icon: "🛡️",
+                              numeral: "IV",
+                            }, // Bronze GLASSMASTER
+                            {
+                              bg: "bg-gradient-to-br from-slate-300 via-slate-200 to-slate-400 shadow-lg shadow-slate-300/30 relative overflow-hidden",
+                              icon: "🛡️",
+                              numeral: "III",
+                            }, // Silver GLASSMASTER
+                            {
+                              bg: "bg-gradient-to-br from-yellow-300 via-yellow-200 to-yellow-400 shadow-lg shadow-yellow-300/40 relative overflow-hidden",
+                              icon: "🛡️",
+                              numeral: "II",
+                            }, // Gold GLASSMASTER
+                            {
+                              bg: "bg-gradient-to-br from-cyan-300 via-cyan-200 to-cyan-400 shadow-lg shadow-cyan-300/50 relative overflow-hidden",
+                              icon: "🛡️",
+                              numeral: "I",
+                            }, // Diamond GLASSMASTER
+                          ];
+                          return (
+                            <div className="flex flex-col items-center h-8">
+                              <div className="h-3 flex items-center justify-center">
+                                {glassTier > 0 ? (
+                                  <span
+                                    className={`font-mono font-bold drop-shadow-md leading-none ${
+                                      glassTier === 4
+                                        ? "text-[#4EE2EC]" // Diamond
+                                        : glassTier === 3
+                                        ? "text-yellow-400" // Gold
+                                        : glassTier === 2
+                                        ? "text-gray-300" // Silver
+                                        : "text-amber-400" // Bronze
+                                    }`}
+                                    style={{ fontSize: "6px" }}
+                                  >
+                                    {glassStyles[glassTier].numeral}
+                                  </span>
+                                ) : (
+                                  <span
+                                    className="opacity-0"
+                                    style={{ fontSize: "6px" }}
+                                  >
+                                    I
+                                  </span>
+                                )}
+                              </div>
+                              <div
+                                className={`w-5 h-5 rounded flex items-center justify-center border-2 shadow-lg ${
+                                  glassStyles[glassTier].bg
+                                } ${
+                                  glassTier === 4
+                                    ? "border-cyan-300" // Diamond
+                                    : glassTier === 3
+                                    ? "border-yellow-300" // Gold
+                                    : glassTier === 2
+                                    ? "border-slate-300" // Silver
+                                    : glassTier === 1
+                                    ? "border-amber-500" // Bronze
+                                    : "border-gray-800" // No badge
+                                }`}
+                              >
+                                {glassTier > 0 && (
+                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 animate-pulse"></div>
+                                )}
+                                <span className="text-white text-xs font-bold relative z-10">
+                                  {glassStyles[glassTier].icon}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })()}
 
                         {/* Player Photo - Center */}
                         <div className="w-16 h-16 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center border border-gray-600 overflow-hidden mx-2">
@@ -596,31 +839,171 @@ const PlayerList = () => {
                           </span>
                         </div>
 
-                        {/* Badge Slot 3 - FLOORGENERAL (8+ APG) */}
-                        <div
-                          className={`w-5 h-6 rounded flex items-center justify-center border-2 border-gray-800 shadow-lg ${
-                            player.stats?.apg >= 8
-                              ? "bg-green-500"
-                              : "bg-gray-700 opacity-30"
-                          }`}
-                        >
-                          <span className="text-white text-xs">
-                            {player.stats?.apg >= 8 ? "🧠" : "•"}
-                          </span>
-                        </div>
+                        {/* Badge Slot 3 - PLAYMAKING TIERS */}
+                        {(() => {
+                          const floorTier = getFloorTier(player);
+                          const floorStyles = [
+                            {
+                              bg: "bg-gray-700 opacity-30",
+                              icon: "•",
+                              numeral: "",
+                            }, // No badge
+                            {
+                              bg: "bg-gradient-to-br from-amber-500 via-amber-400 to-amber-600 shadow-lg shadow-amber-500/30 relative overflow-hidden",
+                              icon: "🧠",
+                              numeral: "IV",
+                            }, // Bronze FLOORGENERAL
+                            {
+                              bg: "bg-gradient-to-br from-slate-300 via-slate-200 to-slate-400 shadow-lg shadow-slate-300/30 relative overflow-hidden",
+                              icon: "🧠",
+                              numeral: "III",
+                            }, // Silver FLOORGENERAL
+                            {
+                              bg: "bg-gradient-to-br from-yellow-300 via-yellow-200 to-yellow-400 shadow-lg shadow-yellow-300/40 relative overflow-hidden",
+                              icon: "🧠",
+                              numeral: "II",
+                            }, // Gold FLOORGENERAL
+                            {
+                              bg: "bg-gradient-to-br from-cyan-300 via-cyan-200 to-cyan-400 shadow-lg shadow-cyan-300/50 relative overflow-hidden",
+                              icon: "🧠",
+                              numeral: "I",
+                            }, // Diamond FLOORGENERAL
+                          ];
+                          return (
+                            <div className="flex flex-col items-center h-8">
+                              <div className="h-3 flex items-center justify-center">
+                                {floorTier > 0 ? (
+                                  <span
+                                    className={`font-mono font-bold drop-shadow-md leading-none ${
+                                      floorTier === 4
+                                        ? "text-[#4EE2EC]" // Diamond
+                                        : floorTier === 3
+                                        ? "text-yellow-400" // Gold
+                                        : floorTier === 2
+                                        ? "text-gray-300" // Silver
+                                        : "text-amber-400" // Bronze
+                                    }`}
+                                    style={{ fontSize: "6px" }}
+                                  >
+                                    {floorStyles[floorTier].numeral}
+                                  </span>
+                                ) : (
+                                  <span
+                                    className="opacity-0"
+                                    style={{ fontSize: "6px" }}
+                                  >
+                                    I
+                                  </span>
+                                )}
+                              </div>
+                              <div
+                                className={`w-5 h-5 rounded flex items-center justify-center border-2 shadow-lg ${
+                                  floorStyles[floorTier].bg
+                                } ${
+                                  floorTier === 4
+                                    ? "border-cyan-300" // Diamond
+                                    : floorTier === 3
+                                    ? "border-yellow-300" // Gold
+                                    : floorTier === 2
+                                    ? "border-slate-300" // Silver
+                                    : floorTier === 1
+                                    ? "border-amber-500" // Bronze
+                                    : "border-gray-800" // No badge
+                                }`}
+                              >
+                                {floorTier > 0 && (
+                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 animate-pulse"></div>
+                                )}
+                                <span className="text-white text-xs font-bold relative z-10">
+                                  {floorStyles[floorTier].icon}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })()}
 
-                        {/* Badge Slot 4 - SNIPER (Three-Point Threat Score ≥ 8.0: PPG × 3P%) */}
-                        <div
-                          className={`w-5 h-6 rounded flex items-center justify-center border-2 border-gray-800 shadow-lg ${
-                            isSniper(player)
-                              ? "bg-yellow-500"
-                              : "bg-gray-700 opacity-30"
-                          }`}
-                        >
-                          <span className="text-white text-xs">
-                            {isSniper(player) ? "🎯" : "•"}
-                          </span>
-                        </div>
+                        {/* Badge Slot 4 - SHOOTING TIERS */}
+                        {(() => {
+                          const sniperTier = getSniperTier(player);
+                          const sniperStyles = [
+                            {
+                              bg: "bg-gray-700 opacity-30",
+                              icon: "•",
+                              numeral: "",
+                            }, // No badge
+                            {
+                              bg: "bg-gradient-to-br from-amber-500 via-amber-400 to-amber-600 shadow-lg shadow-amber-500/30 relative overflow-hidden",
+                              icon: "🎯",
+                              numeral: "IV",
+                            }, // Bronze SNIPER
+                            {
+                              bg: "bg-gradient-to-br from-slate-300 via-slate-200 to-slate-400 shadow-lg shadow-slate-300/30 relative overflow-hidden",
+                              icon: "🎯",
+                              numeral: "III",
+                            }, // Silver SNIPER
+                            {
+                              bg: "bg-gradient-to-br from-yellow-300 via-yellow-200 to-yellow-400 shadow-lg shadow-yellow-300/40 relative overflow-hidden",
+                              icon: "🎯",
+                              numeral: "II",
+                            }, // Gold SNIPER
+                            {
+                              bg: "bg-gradient-to-br from-cyan-300 via-cyan-200 to-cyan-400 shadow-lg shadow-cyan-300/50 relative overflow-hidden",
+                              icon: "🎯",
+                              numeral: "I",
+                            }, // Diamond SNIPER
+                          ];
+                          return (
+                            <div className="flex flex-col items-center h-8">
+                              <div className="h-3 flex items-center justify-center">
+                                {sniperTier > 0 ? (
+                                  <span
+                                    className={`font-mono font-bold drop-shadow-md leading-none ${
+                                      sniperTier === 4
+                                        ? "text-[#4EE2EC]" // Diamond
+                                        : sniperTier === 3
+                                        ? "text-yellow-400" // Gold
+                                        : sniperTier === 2
+                                        ? "text-gray-300" // Silver
+                                        : "text-amber-400" // Bronze
+                                    }`}
+                                    style={{ fontSize: "6px" }}
+                                  >
+                                    {sniperStyles[sniperTier].numeral}
+                                  </span>
+                                ) : (
+                                  <span
+                                    className="opacity-0"
+                                    style={{ fontSize: "6px" }}
+                                  >
+                                    I
+                                  </span>
+                                )}
+                              </div>
+                              <div
+                                className={`w-5 h-5 rounded flex items-center justify-center border-2 shadow-lg ${
+                                  sniperStyles[sniperTier].bg
+                                } ${
+                                  sniperTier === 4
+                                    ? "border-cyan-300" // Diamond
+                                    : sniperTier === 3
+                                    ? "border-yellow-300" // Gold
+                                    : sniperTier === 2
+                                    ? "border-slate-300" // Silver
+                                    : sniperTier === 1
+                                    ? "border-amber-500" // Bronze
+                                    : "border-gray-800" // No badge
+                                }`}
+                              >
+                                {sniperTier > 0 && (
+                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 animate-pulse"></div>
+                                )}
+                                <span className="text-white text-xs font-bold relative z-10">
+                                  {sniperStyles[sniperTier].icon}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
 
                       <div className="text-center mt-2">
@@ -722,15 +1105,28 @@ const PlayerList = () => {
                             PPG
                           </div>
                           <div
-                            className={`text-xs font-mono font-bold ${
-                              player.stats?.ppg >= 24
-                                ? isMVP
+                            className={`text-xs font-mono font-bold ${(() => {
+                              const bucketTier = getBucketTier(player);
+                              if (bucketTier === 4)
+                                return isMVP
                                   ? "text-white drop-shadow-lg"
-                                  : "text-red-400"
-                                : isMVP
+                                  : "text-[#4EE2EC]"; // Diamond BUCKET
+                              if (bucketTier === 3)
+                                return isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-yellow-400"; // Gold BUCKET
+                              if (bucketTier === 2)
+                                return isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-gray-300"; // Silver BUCKET
+                              if (bucketTier === 1)
+                                return isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-amber-400"; // Bronze BUCKET
+                              return isMVP
                                 ? "text-white drop-shadow-md"
-                                : teamColors.secondary
-                            }`}
+                                : teamColors.secondary;
+                            })()}`}
                           >
                             {player.stats?.ppg?.toFixed(1) || "0.0"}
                           </div>
@@ -744,15 +1140,28 @@ const PlayerList = () => {
                             RPG
                           </div>
                           <div
-                            className={`text-xs font-mono font-bold ${
-                              player.stats?.rpg >= 10
-                                ? isMVP
+                            className={`text-xs font-mono font-bold ${(() => {
+                              const glassTier = getGlassTier(player);
+                              if (glassTier === 4)
+                                return isMVP
                                   ? "text-white drop-shadow-lg"
-                                  : "text-blue-400"
-                                : isMVP
+                                  : "text-[#4EE2EC]"; // Diamond GLASSMASTER
+                              if (glassTier === 3)
+                                return isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-yellow-400"; // Gold GLASSMASTER
+                              if (glassTier === 2)
+                                return isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-gray-300"; // Silver GLASSMASTER
+                              if (glassTier === 1)
+                                return isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-amber-400"; // Bronze GLASSMASTER
+                              return isMVP
                                 ? "text-white drop-shadow-md"
-                                : teamColors.secondary
-                            }`}
+                                : teamColors.secondary;
+                            })()}`}
                           >
                             {player.stats?.rpg?.toFixed(1) || "0.0"}
                           </div>
@@ -766,15 +1175,28 @@ const PlayerList = () => {
                             APG
                           </div>
                           <div
-                            className={`text-xs font-mono font-bold ${
-                              player.stats?.apg >= 8
-                                ? isMVP
+                            className={`text-xs font-mono font-bold ${(() => {
+                              const floorTier = getFloorTier(player);
+                              if (floorTier === 4)
+                                return isMVP
                                   ? "text-white drop-shadow-lg"
-                                  : "text-green-400"
-                                : isMVP
+                                  : "text-[#4EE2EC]"; // Diamond FLOORGENERAL
+                              if (floorTier === 3)
+                                return isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-yellow-400"; // Gold FLOORGENERAL
+                              if (floorTier === 2)
+                                return isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-gray-300"; // Silver FLOORGENERAL
+                              if (floorTier === 1)
+                                return isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-amber-400"; // Bronze FLOORGENERAL
+                              return isMVP
                                 ? "text-white drop-shadow-md"
-                                : teamColors.secondary
-                            }`}
+                                : teamColors.secondary;
+                            })()}`}
                           >
                             {player.stats?.apg?.toFixed(1) || "0.0"}
                           </div>
@@ -788,15 +1210,28 @@ const PlayerList = () => {
                             3FG%
                           </div>
                           <div
-                            className={`text-xs font-mono font-bold ${
-                              isSniper(player)
-                                ? isMVP
+                            className={`text-xs font-mono font-bold ${(() => {
+                              const sniperTier = getSniperTier(player);
+                              if (sniperTier === 4)
+                                return isMVP
                                   ? "text-white drop-shadow-lg"
-                                  : "text-yellow-400"
-                                : isMVP
+                                  : "text-[#4EE2EC]"; // Diamond SNIPER
+                              if (sniperTier === 3)
+                                return isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-yellow-400"; // Gold SNIPER
+                              if (sniperTier === 2)
+                                return isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-gray-300"; // Silver SNIPER
+                              if (sniperTier === 1)
+                                return isMVP
+                                  ? "text-white drop-shadow-lg"
+                                  : "text-amber-400"; // Bronze SNIPER
+                              return isMVP
                                 ? "text-white drop-shadow-md"
-                                : teamColors.secondary
-                            }`}
+                                : teamColors.secondary;
+                            })()}`}
                           >
                             {player.stats?.three_pt_pct
                               ? (player.stats.three_pt_pct * 100).toFixed(1) +

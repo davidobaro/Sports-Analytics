@@ -18,18 +18,18 @@ const LeagueLeaders = () => {
   const fetchLeagueLeaders = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch data for all three categories from the NBA API
       const [scoringRes, reboundingRes, assistsRes] = await Promise.all([
         fetch(`${API_BASE_URL}/league-leaders?category=PTS`),
         fetch(`${API_BASE_URL}/league-leaders?category=REB`),
-        fetch(`${API_BASE_URL}/league-leaders?category=AST`)
+        fetch(`${API_BASE_URL}/league-leaders?category=AST`),
       ]);
 
       const [scoringData, reboundingData, assistsData] = await Promise.all([
         scoringRes.json(),
         reboundingRes.json(),
-        assistsRes.json()
+        assistsRes.json(),
       ]);
 
       // Format data for the frontend
@@ -37,27 +37,26 @@ const LeagueLeaders = () => {
         if (!data.leaders || data.leaders.length === 0) {
           return [];
         }
-        return data.leaders.slice(0, 5).map(player => ({
+        return data.leaders.slice(0, 5).map((player) => ({
           name: player.name,
           team: player.team,
           value: Math.round(player[statKey]).toString(),
-          rank: player.rank
+          rank: player.rank,
         }));
       };
 
       setLeaders({
-        scoring: formatLeaders(scoringData, 'points'),
-        rebounding: formatLeaders(reboundingData, 'rebounds'),
-        assists: formatLeaders(assistsData, 'assists')
+        scoring: formatLeaders(scoringData, "points"),
+        rebounding: formatLeaders(reboundingData, "rebounds"),
+        assists: formatLeaders(assistsData, "assists"),
       });
-      
     } catch (error) {
       console.error("Error fetching league leaders:", error);
       // Fallback to empty arrays if API fails
       setLeaders({
         scoring: [],
         rebounding: [],
-        assists: []
+        assists: [],
       });
     } finally {
       setLoading(false);
@@ -127,99 +126,108 @@ const LeagueLeaders = () => {
           const isROY = player.name === "Stephon Castle";
           const is6MOY = player.name === "Payton Pritchard";
           const isMIP = player.name === "Dyson Daniels";
-          
+
           // Determine which award this player has (awards take precedence over position)
           const getAwardInfo = () => {
-            if (isMVP) return { type: 'MVP', badge: 'MVP', color: 'purple' };
-            if (isDPOY) return { type: 'DPOY', badge: 'DPOY', color: 'red' };
-            if (isROY) return { type: 'ROY', badge: 'ROY', color: 'green' };
-            if (is6MOY) return { type: '6MOY', badge: '6MOY', color: 'orange' };
-            if (isMIP) return { type: 'MIP', badge: 'MIP', color: 'blue' };
+            if (isMVP) return { type: "MVP", badge: "MVP", color: "purple" };
+            if (isDPOY) return { type: "DPOY", badge: "DPOY", color: "red" };
+            if (isROY) return { type: "ROY", badge: "ROY", color: "green" };
+            if (is6MOY) return { type: "6MOY", badge: "6MOY", color: "orange" };
+            if (isMIP) return { type: "MIP", badge: "MIP", color: "blue" };
             return null;
           };
-          
+
           const awardInfo = getAwardInfo();
           const hasAward = awardInfo !== null;
-          
+
           // Determine position-based styling (awards take precedence)
           const getPositionStyling = () => {
             if (hasAward) {
               const colorMap = {
                 purple: {
-                  container: "bg-gradient-to-r from-purple-900/60 via-purple-700/70 to-purple-900/60 border-purple-400/80 shadow-lg shadow-purple-500/40 hover:shadow-xl hover:shadow-purple-400/60 hover:scale-[1.02] backdrop-blur-sm",
+                  container:
+                    "bg-gradient-to-r from-purple-900/60 via-purple-700/70 to-purple-900/60 border-purple-400/80 shadow-lg shadow-purple-500/40 hover:shadow-xl hover:shadow-purple-400/60 hover:scale-[1.02] backdrop-blur-sm",
                   nameText: "text-white drop-shadow-lg",
                   teamText: "text-purple-200",
                   valueText: "text-purple-300 drop-shadow-lg",
-                  rankBg: "bg-purple-500"
+                  rankBg: "bg-purple-500",
                 },
                 red: {
-                  container: "bg-gradient-to-r from-red-900/60 via-red-700/70 to-red-900/60 border-red-400/80 shadow-lg shadow-red-500/40 hover:shadow-xl hover:shadow-red-400/60 hover:scale-[1.02] backdrop-blur-sm",
+                  container:
+                    "bg-gradient-to-r from-red-900/60 via-red-700/70 to-red-900/60 border-red-400/80 shadow-lg shadow-red-500/40 hover:shadow-xl hover:shadow-red-400/60 hover:scale-[1.02] backdrop-blur-sm",
                   nameText: "text-white drop-shadow-lg",
                   teamText: "text-red-200",
                   valueText: "text-red-300 drop-shadow-lg",
-                  rankBg: "bg-red-500"
+                  rankBg: "bg-red-500",
                 },
                 green: {
-                  container: "bg-gradient-to-r from-green-900/60 via-green-700/70 to-green-900/60 border-green-400/80 shadow-lg shadow-green-500/40 hover:shadow-xl hover:shadow-green-400/60 hover:scale-[1.02] backdrop-blur-sm",
+                  container:
+                    "bg-gradient-to-r from-green-900/60 via-green-700/70 to-green-900/60 border-green-400/80 shadow-lg shadow-green-500/40 hover:shadow-xl hover:shadow-green-400/60 hover:scale-[1.02] backdrop-blur-sm",
                   nameText: "text-white drop-shadow-lg",
                   teamText: "text-green-200",
                   valueText: "text-green-300 drop-shadow-lg",
-                  rankBg: "bg-green-500"
+                  rankBg: "bg-green-500",
                 },
                 orange: {
-                  container: "bg-gradient-to-r from-orange-900/60 via-orange-700/70 to-orange-900/60 border-orange-400/80 shadow-lg shadow-orange-500/40 hover:shadow-xl hover:shadow-orange-400/60 hover:scale-[1.02] backdrop-blur-sm",
+                  container:
+                    "bg-gradient-to-r from-orange-900/60 via-orange-700/70 to-orange-900/60 border-orange-400/80 shadow-lg shadow-orange-500/40 hover:shadow-xl hover:shadow-orange-400/60 hover:scale-[1.02] backdrop-blur-sm",
                   nameText: "text-white drop-shadow-lg",
                   teamText: "text-orange-200",
                   valueText: "text-orange-300 drop-shadow-lg",
-                  rankBg: "bg-orange-500"
+                  rankBg: "bg-orange-500",
                 },
                 blue: {
-                  container: "bg-gradient-to-r from-blue-900/60 via-blue-700/70 to-blue-900/60 border-blue-400/80 shadow-lg shadow-blue-500/40 hover:shadow-xl hover:shadow-blue-400/60 hover:scale-[1.02] backdrop-blur-sm",
+                  container:
+                    "bg-gradient-to-r from-blue-900/60 via-blue-700/70 to-blue-900/60 border-blue-400/80 shadow-lg shadow-blue-500/40 hover:shadow-xl hover:shadow-blue-400/60 hover:scale-[1.02] backdrop-blur-sm",
                   nameText: "text-white drop-shadow-lg",
                   teamText: "text-blue-200",
                   valueText: "text-blue-300 drop-shadow-lg",
-                  rankBg: "bg-blue-500"
-                }
+                  rankBg: "bg-blue-500",
+                },
               };
               return colorMap[awardInfo.color];
             }
-            
+
             switch (index) {
               case 0: // 1st place - Gold (keeps glow effects)
                 return {
-                  container: "bg-gradient-to-r from-yellow-900/60 via-yellow-700/70 to-yellow-900/60 border-yellow-400/80 shadow-lg shadow-yellow-500/40 hover:shadow-xl hover:shadow-yellow-400/60 hover:scale-[1.02] backdrop-blur-sm",
+                  container:
+                    "bg-gradient-to-r from-yellow-900/60 via-yellow-700/70 to-yellow-900/60 border-yellow-400/80 shadow-lg shadow-yellow-500/40 hover:shadow-xl hover:shadow-yellow-400/60 hover:scale-[1.02] backdrop-blur-sm",
                   nameText: "text-yellow-100 drop-shadow-lg",
                   teamText: "text-yellow-200",
                   valueText: "text-yellow-300 drop-shadow-lg",
-                  rankBg: "bg-yellow-500"
+                  rankBg: "bg-yellow-500",
                 };
               case 1: // 2nd place - Silver (no glow effects)
                 return {
-                  container: "bg-gradient-to-r from-gray-700/60 via-gray-500/70 to-gray-700/60 border-gray-400/80 hover:border-gray-300 transition-colors duration-200",
+                  container:
+                    "bg-gradient-to-r from-gray-700/60 via-gray-500/70 to-gray-700/60 border-gray-400/80 hover:border-gray-300 transition-colors duration-200",
                   nameText: "text-gray-100",
                   teamText: "text-gray-200",
                   valueText: "text-gray-300",
-                  rankBg: "bg-gray-400"
+                  rankBg: "bg-gray-400",
                 };
               case 2: // 3rd place - Bronze (no glow effects)
                 return {
-                  container: "bg-gradient-to-r from-amber-900/60 via-amber-700/70 to-amber-900/60 border-amber-400/80 hover:border-amber-300 transition-colors duration-200",
+                  container:
+                    "bg-gradient-to-r from-amber-900/60 via-amber-700/70 to-amber-900/60 border-amber-400/80 hover:border-amber-300 transition-colors duration-200",
                   nameText: "text-amber-100",
                   teamText: "text-amber-200",
                   valueText: "text-amber-300",
-                  rankBg: "bg-yellow-600"
+                  rankBg: "bg-yellow-600",
                 };
               default: // 4th and 5th place - Default
                 return {
-                  container: "bg-gray-800 border-gray-600 hover:border-gray-500 transition-colors duration-150",
+                  container:
+                    "bg-gray-800 border-gray-600 hover:border-gray-500 transition-colors duration-150",
                   nameText: "text-cyan-400",
                   teamText: "text-gray-400",
                   valueText: "text-green-400",
-                  rankBg: "bg-gray-700"
+                  rankBg: "bg-gray-700",
                 };
             }
           };
-          
+
           const styling = getPositionStyling();
 
           return (
@@ -230,13 +238,19 @@ const LeagueLeaders = () => {
               {/* Award Badges - Shows for any award winner */}
               {hasAward && (
                 <div className="absolute -top-3 -right-3 z-20">
-                  <div className={`bg-gradient-to-br ${
-                    awardInfo.color === 'purple' ? 'from-purple-400 via-purple-300 to-purple-500 hover:from-purple-500 hover:via-purple-400 hover:to-purple-300 shadow-purple-500/50 hover:shadow-purple-400/70' :
-                    awardInfo.color === 'red' ? 'from-red-400 via-red-300 to-red-500 hover:from-red-500 hover:via-red-400 hover:to-red-300 shadow-red-500/50 hover:shadow-red-400/70' :
-                    awardInfo.color === 'green' ? 'from-green-400 via-green-300 to-green-500 hover:from-green-500 hover:via-green-400 hover:to-green-300 shadow-green-500/50 hover:shadow-green-400/70' :
-                    awardInfo.color === 'orange' ? 'from-orange-400 via-orange-300 to-orange-500 hover:from-orange-500 hover:via-orange-400 hover:to-orange-300 shadow-orange-500/50 hover:shadow-orange-400/70' :
-                    'from-blue-400 via-blue-300 to-blue-500 hover:from-blue-500 hover:via-blue-400 hover:to-blue-300 shadow-blue-500/50 hover:shadow-blue-400/70'
-                  } text-white px-2 py-1 rounded-md text-xs font-mono font-black tracking-wider shadow-lg transition-all duration-300`}>
+                  <div
+                    className={`bg-gradient-to-br ${
+                      awardInfo.color === "purple"
+                        ? "from-purple-400 via-purple-300 to-purple-500 hover:from-purple-500 hover:via-purple-400 hover:to-purple-300 shadow-purple-500/50 hover:shadow-purple-400/70"
+                        : awardInfo.color === "red"
+                        ? "from-red-400 via-red-300 to-red-500 hover:from-red-500 hover:via-red-400 hover:to-red-300 shadow-red-500/50 hover:shadow-red-400/70"
+                        : awardInfo.color === "green"
+                        ? "from-green-400 via-green-300 to-green-500 hover:from-green-500 hover:via-green-400 hover:to-green-300 shadow-green-500/50 hover:shadow-green-400/70"
+                        : awardInfo.color === "orange"
+                        ? "from-orange-400 via-orange-300 to-orange-500 hover:from-orange-500 hover:via-orange-400 hover:to-orange-300 shadow-orange-500/50 hover:shadow-orange-400/70"
+                        : "from-blue-400 via-blue-300 to-blue-500 hover:from-blue-500 hover:via-blue-400 hover:to-blue-300 shadow-blue-500/50 hover:shadow-blue-400/70"
+                    } text-white px-2 py-1 rounded-md text-xs font-mono font-black tracking-wider shadow-lg transition-all duration-300`}
+                  >
                     <span className="drop-shadow-md">{awardInfo.badge}</span>
                   </div>
                 </div>
@@ -264,9 +278,7 @@ const LeagueLeaders = () => {
                   >
                     {player.name}
                   </div>
-                  <div
-                    className={`text-xs font-mono ${styling.teamText}`}
-                  >
+                  <div className={`text-xs font-mono ${styling.teamText}`}>
                     {player.team}
                   </div>
                 </div>
@@ -277,9 +289,7 @@ const LeagueLeaders = () => {
                 >
                   {player.value}
                 </div>
-                <div
-                  className={`text-xs font-mono ${styling.teamText}`}
-                >
+                <div className={`text-xs font-mono ${styling.teamText}`}>
                   {categories.find((c) => c.key === selectedCategory)?.unit}
                 </div>
               </div>
