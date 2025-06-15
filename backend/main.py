@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
@@ -350,13 +350,18 @@ async def get_league_leaders(category: str = "PTS"):
         }
 
 @app.get("/api/team/{team_id}")
-async def get_team_details(team_id: int, include_player_stats: bool = False):
+async def get_team_details(team_id: int, include_player_stats: bool = False, request: Request = None):
     """Get detailed information for a specific team with hardcoded names but real NBA API stats"""
     
     # 🚀 ENHANCED: Log request received
     print(f"🌐 Backend received request for team {team_id} (include_player_stats={include_player_stats})")
     
     try:
+        # Check if client disconnected
+        if request and await request.is_disconnected():
+            print(f"🔌 Client disconnected for team {team_id} request")
+            return
+            
         # Get basic team info from our hardcoded database for correct names
         if team_id not in NBA_TEAMS_DATA:
             print(f"❌ Team {team_id} not found in database")
@@ -379,6 +384,11 @@ async def get_team_details(team_id: int, include_player_stats: bool = False):
         
         # Try to add real team stats from NBA API
         try:
+            # Check if client disconnected before expensive API call
+            if request and await request.is_disconnected():
+                print(f"🔌 Client disconnected during team stats fetch for team {team_id}")
+                return
+                
             team_stats_data = teamdashboardbygeneralsplits.TeamDashboardByGeneralSplits(team_id=team_id)
             team_stats_df = team_stats_data.get_data_frames()[0]
             
@@ -444,6 +454,11 @@ async def get_team_details(team_id: int, include_player_stats: bool = False):
         
         # Try to add real roster data from NBA API
         try:
+            # Check if client disconnected before roster API call
+            if request and await request.is_disconnected():
+                print(f"🔌 Client disconnected during roster fetch for team {team_id}")
+                return
+                
             roster_data = commonteamroster.CommonTeamRoster(team_id=team_id)
             roster_df = roster_data.get_data_frames()[0]
             
@@ -466,6 +481,11 @@ async def get_team_details(team_id: int, include_player_stats: bool = False):
                     # Add player statistics if requested
                     if include_player_stats and player_data["player_id"]:
                         try:
+                            # Check if client disconnected before player stats API call
+                            if request and await request.is_disconnected():
+                                print(f"🔌 Client disconnected during player stats fetch for {player_data['name']}")
+                                return
+                                
                             player_stats = playerdashboardbyyearoveryear.PlayerDashboardByYearOverYear(
                                 player_id=player_data["player_id"]
                             )
@@ -515,13 +535,23 @@ async def get_team_details(team_id: int, include_player_stats: bool = False):
         raise HTTPException(status_code=500, detail="Error fetching team data")
 
 @app.get("/api/player/{player_id}")
-async def get_player_details(player_id: int):
+async def get_player_details(player_id: int, request: Request = None):
     """Get detailed information for a specific player"""
     try:
+        # Check if client disconnected
+        if request and await request.is_disconnected():
+            print(f"🔌 Client disconnected for player {player_id} request")
+            return
+            
         # Get player basic info
         player_info = commonplayerinfo.CommonPlayerInfo(player_id=player_id)
         player_data = player_info.get_data_frames()[0].iloc[0]
         
+        # Check if client disconnected before additional API call
+        if request and await request.is_disconnected():
+            print(f"🔌 Client disconnected during player stats fetch for player {player_id}")
+            return
+            
         # Get player season stats
         player_stats = playerdashboardbyyearoveryear.PlayerDashboardByYearOverYear(
             player_id=player_id
