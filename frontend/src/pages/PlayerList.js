@@ -482,7 +482,7 @@ const PlayerList = () => {
               <h3 className="text-sm font-mono font-semibold text-gray-400 mb-3">
                 PERFORMANCE_BADGES_TIER_SYSTEM
               </h3>
-              
+
               {/* Universal Tier System */}
               <div className="mb-4 p-3 bg-gray-700/30 rounded border border-gray-600/30">
                 <div className="flex items-center justify-center space-x-6">
@@ -490,25 +490,33 @@ const PlayerList = () => {
                     <div className="w-5 h-5 bg-gradient-to-br from-amber-500 via-amber-400 to-amber-600 rounded border border-amber-500 shadow-lg shadow-amber-500/30 relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 animate-pulse"></div>
                     </div>
-                    <span className="text-xs font-mono text-amber-400">Novice</span>
+                    <span className="text-xs font-mono text-amber-400">
+                      Novice
+                    </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="w-5 h-5 bg-gradient-to-br from-slate-300 via-slate-200 to-slate-400 rounded border border-slate-300 shadow-lg shadow-slate-300/30 relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 animate-pulse"></div>
                     </div>
-                    <span className="text-xs font-mono text-slate-300">Tested</span>
+                    <span className="text-xs font-mono text-slate-300">
+                      Tested
+                    </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="w-5 h-5 bg-gradient-to-br from-yellow-300 via-yellow-200 to-yellow-400 rounded border border-yellow-300 shadow-lg shadow-yellow-300/40 relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent transform -skew-x-12 animate-pulse"></div>
                     </div>
-                    <span className="text-xs font-mono text-yellow-400">Dominant</span>
+                    <span className="text-xs font-mono text-yellow-400">
+                      Dominant
+                    </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="w-5 h-5 bg-gradient-to-br from-cyan-300 via-cyan-200 to-cyan-400 rounded border border-cyan-300 shadow-lg shadow-cyan-300/50 relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent transform -skew-x-12 animate-pulse"></div>
                     </div>
-                    <span className="text-xs font-mono text-cyan-400">Elite</span>
+                    <span className="text-xs font-mono text-cyan-400">
+                      Elite
+                    </span>
                   </div>
                 </div>
               </div>
@@ -520,8 +528,12 @@ const PlayerList = () => {
                     <span className="text-white text-xs font-bold">🔥</span>
                   </div>
                   <div>
-                    <div className="text-xs font-mono text-red-400 font-bold">BUCKET</div>
-                    <div className="text-xs font-mono text-gray-400">High Scoring</div>
+                    <div className="text-xs font-mono text-red-400 font-bold">
+                      BUCKET
+                    </div>
+                    <div className="text-xs font-mono text-gray-400">
+                      High Scoring
+                    </div>
                   </div>
                 </div>
 
@@ -531,8 +543,12 @@ const PlayerList = () => {
                     <span className="text-white text-xs font-bold">🛡️</span>
                   </div>
                   <div>
-                    <div className="text-xs font-mono text-blue-400 font-bold">GLASSMASTER</div>
-                    <div className="text-xs font-mono text-gray-400">Rebounding</div>
+                    <div className="text-xs font-mono text-blue-400 font-bold">
+                      GLASSMASTER
+                    </div>
+                    <div className="text-xs font-mono text-gray-400">
+                      Rebounding
+                    </div>
                   </div>
                 </div>
 
@@ -542,8 +558,12 @@ const PlayerList = () => {
                     <span className="text-white text-xs font-bold">🧠</span>
                   </div>
                   <div>
-                    <div className="text-xs font-mono text-green-400 font-bold">FLOORGENERAL</div>
-                    <div className="text-xs font-mono text-gray-400">Playmaking</div>
+                    <div className="text-xs font-mono text-green-400 font-bold">
+                      FLOORGENERAL
+                    </div>
+                    <div className="text-xs font-mono text-gray-400">
+                      Playmaking
+                    </div>
                   </div>
                 </div>
 
@@ -553,8 +573,12 @@ const PlayerList = () => {
                     <span className="text-white text-xs font-bold">🎯</span>
                   </div>
                   <div>
-                    <div className="text-xs font-mono text-yellow-400 font-bold">SNIPER</div>
-                    <div className="text-xs font-mono text-gray-400">3-Point Shooting</div>
+                    <div className="text-xs font-mono text-yellow-400 font-bold">
+                      SNIPER
+                    </div>
+                    <div className="text-xs font-mono text-gray-400">
+                      3-Point Shooting
+                    </div>
                   </div>
                 </div>
               </div>
@@ -649,7 +673,7 @@ const PlayerList = () => {
                     {/* Player Photo Header with Badges */}
                     <div className="flex flex-col items-center mb-3">
                       {/* Badge Layout: [ ] [ ] headshot [ ] [ ] */}
-                      <div className="flex items-center space-x-1 mb-2">
+                      <div className="flex items-center space-x-3 mb-2">
                         {/* Badge Slot 1 - SCORING TIERS */}
                         {(() => {
                           const bucketTier = getBucketTier(player);
@@ -708,7 +732,9 @@ const PlayerList = () => {
                                 )}
                               </div>
                               <div
-                                className={`w-5 h-5 rounded flex items-center justify-center border-2 shadow-lg ${bucketStyles[bucketTier].bg} ${
+                                className={`w-5 h-5 rounded flex items-center justify-center border-2 shadow-lg ${
+                                  bucketStyles[bucketTier].bg
+                                } ${
                                   bucketTier === 4
                                     ? "border-cyan-300" // Diamond
                                     : bucketTier === 3
@@ -815,7 +841,7 @@ const PlayerList = () => {
                         })()}
 
                         {/* Player Photo - Center */}
-                        <div className="w-16 h-16 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center border border-gray-600 overflow-hidden mx-2">
+                        <div className="w-16 h-16 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center border border-gray-600 overflow-hidden mx-4">
                           <img
                             src={`https://cdn.nba.com/headshots/nba/latest/1040x760/${player.player_id}.png`}
                             alt={`${player.name} headshot`}
