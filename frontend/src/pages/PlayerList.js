@@ -228,14 +228,6 @@ const PlayerList = () => {
     return bPpg - aPpg; // Sort in descending order (highest PPG first)
   });
 
-  // Three-Point Threat Score calculation: PPG × 3P%
-  // This formula combines scoring volume with three-point efficiency
-  const calculateThreePointThreatScore = (player) => {
-    const ppg = player.stats?.ppg || 0;
-    const threePtPct = player.stats?.three_pt_pct || 0;
-    return ppg * threePtPct;
-  };
-
   // Badge Tier System - Bronze/Silver/Gold tiers
 
   // BUCKET Badge Tiers: Bronze → Silver → Gold → Diamond
